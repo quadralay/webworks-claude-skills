@@ -1,0 +1,335 @@
+#!/bin/bash
+#
+# detect-installation.sh
+# Detects WebWorks ePublisher AutoMap installation using Windows Registry
+#
+# Usage:
+#   ./detect-installation.sh [--version VERSION] [--verbose]
+#
+# Exit Codes:
+#   0 - AutoMap found
+#   1 - AutoMap not found
+#   2 - Invalid arguments
+#
+# Output:
+#   Prints full path to AutoMap executable on success
+#
+
+set -euo pipefail
+
+# Script configuration
+SCRIPT_NAME="$(basename "$0")"
+VERBOSE=false
+REQUESTED_VERSION=""
+
+# Registry paths
+REG_PATH_64BIT="HKLM\\SOFTWARE\\WebWorks\\ePublisher AutoMap"
+REG_PATH_32BIT="HKLM\\SOFTWARE\\WOW6432Node\\WebWorks\\ePublisher AutoMap"
+
+# Fallback installation paths
+FALLBACK_PATHS=(
+    "C:\\Program Files\\WebWorks\\ePublisher"
+    "C:\\Program Files (x86)\\WebWorks\\ePublisher"
+)
+
+#
+# Helper Functions
+#
+
+log_verbose() {
+    if [ "$VERBOSE" = true ]; then
+        echo "[VERBOSE] $*" >&2
+    fi
+}
+
+log_error() {
+    echo "[ERROR] $*" >&2
+}
+
+usage() {
+    cat <<EOF
+Usage: $SCRIPT_NAME [OPTIONS]
+
+Detects WebWorks ePublisher AutoMap installation on Windows systems.
+
+OPTIONS:
+    --version VERSION    Detect specific version (e.g., 2024.1)
+    --verbose           Enable verbose output
+    --help              Show this help message
+
+EXIT CODES:
+    0    AutoMap found
+    1    AutoMap not found
+    2    Invalid arguments
+
+EXAMPLES:
+    # Detect latest AutoMap installation
+    $SCRIPT_NAME
+
+    # Detect specific version
+    $SCRIPT_NAME --version 2024.1
+
+    # Verbose mode
+    $SCRIPT_NAME --verbose
+
+OUTPUT:
+    On success, prints full path to AutoMap executable:
+    C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\ePublisher AutoMap\\WebWorks.Automap.exe
+EOF
+}
+
+#
+# Registry Query Functions
+#
+
+query_registry_versions() {
+    local reg_path="$1"
+
+    log_verbose "Querying registry path: $reg_path"
+
+    # Query registry for subkeys (versions)
+    local versions
+    versions=$(reg query "$reg_path" 2>/dev/null | grep "HKEY" | sed 's/.*\\//' || true)
+
+    if [ -n "$versions" ]; then
+        log_verbose "Found versions: $versions"
+        echo "$versions"
+        return 0
+    fi
+
+    return 1
+}
+
+query_registry_exepath() {
+    local reg_path="$1"
+    local version="$2"
+
+    local full_path="$reg_path\\$version"
+    log_verbose "Querying ExePath from: $full_path"
+
+    # Query ExePath value
+    local exe_path
+    exe_path=$(reg query "$full_path" /v ExePath 2>/dev/null | grep "ExePath" | awk '{for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' | sed 's/ $//' || true)
+
+    if [ -n "$exe_path" ]; then
+        log_verbose "Found ExePath: $exe_path"
+        echo "$exe_path"
+        return 0
+    fi
+
+    return 1
+}
+
+validate_executable() {
+    local exe_path="$1"
+
+    # Convert Windows path to Unix-style for test
+    local unix_path
+    unix_path=$(cygpath "$exe_path" 2>/dev/null || echo "$exe_path")
+
+    if [ -f "$unix_path" ]; then
+        log_verbose "Validated executable exists: $exe_path"
+        return 0
+    fi
+
+    log_verbose "Executable does not exist: $exe_path"
+    return 1
+}
+
+#
+# Detection Functions
+#
+
+detect_via_registry() {
+    local requested_version="$1"
+
+    # Try 64-bit registry first
+    log_verbose "Attempting 64-bit registry detection..."
+
+    if versions=$(query_registry_versions "$REG_PATH_64BIT"); then
+        log_verbose "Found 64-bit installations"
+
+        if [ -n "$requested_version" ]; then
+            # Check for specific version
+            if echo "$versions" | grep -q "^${requested_version}$"; then
+                log_verbose "Found requested version: $requested_version"
+
+                if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$requested_version"); then
+                    if validate_executable "$exe_path"; then
+                        echo "$exe_path"
+                        return 0
+                    fi
+                fi
+            fi
+        else
+            # Find latest version
+            local latest_version
+            latest_version=$(echo "$versions" | sort -V | tail -1)
+            log_verbose "Latest version: $latest_version"
+
+            if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$latest_version"); then
+                if validate_executable "$exe_path"; then
+                    echo "$exe_path"
+                    return 0
+                fi
+            fi
+        fi
+    fi
+
+    # Try 32-bit registry
+    log_verbose "Attempting 32-bit registry detection..."
+
+    if versions=$(query_registry_versions "$REG_PATH_32BIT"); then
+        log_verbose "Found 32-bit installations"
+
+        if [ -n "$requested_version" ]; then
+            # Check for specific version
+            if echo "$versions" | grep -q "^${requested_version}$"; then
+                log_verbose "Found requested version: $requested_version"
+
+                if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$requested_version"); then
+                    if validate_executable "$exe_path"; then
+                        echo "$exe_path"
+                        return 0
+                    fi
+                fi
+            fi
+        else
+            # Find latest version
+            local latest_version
+            latest_version=$(echo "$versions" | sort -V | tail -1)
+            log_verbose "Latest version: $latest_version"
+
+            if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$latest_version"); then
+                if validate_executable "$exe_path"; then
+                    echo "$exe_path"
+                    return 0
+                fi
+            fi
+        fi
+    fi
+
+    return 1
+}
+
+detect_via_filesystem() {
+    local requested_version="$1"
+
+    log_verbose "Attempting filesystem detection..."
+
+    for base_path in "${FALLBACK_PATHS[@]}"; do
+        log_verbose "Checking: $base_path"
+
+        # Convert to Unix path for find
+        local unix_base
+        unix_base=$(cygpath "$base_path" 2>/dev/null || echo "$base_path")
+
+        if [ ! -d "$unix_base" ]; then
+            log_verbose "Directory does not exist: $base_path"
+            continue
+        fi
+
+        if [ -n "$requested_version" ]; then
+            # Check specific version
+            local exe_path="$base_path\\$requested_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
+
+            if validate_executable "$exe_path"; then
+                echo "$exe_path"
+                return 0
+            fi
+        else
+            # Find all versions and select latest
+            local versions
+            versions=$(find "$unix_base" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null | grep -E '^[0-9]+\.[0-9]+' | sort -V || true)
+
+            if [ -n "$versions" ]; then
+                local latest_version
+                latest_version=$(echo "$versions" | tail -1)
+                log_verbose "Found version via filesystem: $latest_version"
+
+                local exe_path="$base_path\\$latest_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
+
+                if validate_executable "$exe_path"; then
+                    echo "$exe_path"
+                    return 0
+                fi
+            fi
+        fi
+    done
+
+    return 1
+}
+
+#
+# Main Detection Logic
+#
+
+detect_automap() {
+    local requested_version="$1"
+
+    # Try registry first (preferred method)
+    if exe_path=$(detect_via_registry "$requested_version"); then
+        log_verbose "Detection successful via registry"
+        echo "$exe_path"
+        return 0
+    fi
+
+    log_verbose "Registry detection failed, trying filesystem..."
+
+    # Fallback to filesystem search
+    if exe_path=$(detect_via_filesystem "$requested_version"); then
+        log_verbose "Detection successful via filesystem"
+        echo "$exe_path"
+        return 0
+    fi
+
+    log_error "AutoMap installation not found"
+    return 1
+}
+
+#
+# Argument Parsing
+#
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --version)
+            if [ -z "${2:-}" ]; then
+                log_error "Missing VERSION argument"
+                usage
+                exit 2
+            fi
+            REQUESTED_VERSION="$2"
+            shift 2
+            ;;
+        --verbose)
+            VERBOSE=true
+            shift
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            log_error "Unknown option: $1"
+            usage
+            exit 2
+            ;;
+    esac
+done
+
+#
+# Execute Detection
+#
+
+log_verbose "Starting AutoMap detection..."
+if [ -n "$REQUESTED_VERSION" ]; then
+    log_verbose "Requested version: $REQUESTED_VERSION"
+fi
+
+if automap_path=$(detect_automap "$REQUESTED_VERSION"); then
+    echo "$automap_path"
+    exit 0
+else
+    exit 1
+fi
