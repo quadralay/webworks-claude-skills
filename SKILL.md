@@ -164,6 +164,95 @@ find . -maxdepth 1 -name "*.wep" -o -name "*.wrp" -o -name "*.wxsp"
 ls -la Formats/ Targets/ Source/
 ```
 
+### Determining Base Format Version
+
+The Base Format Version determines which version of format files (templates, stylesheets, transforms) to use when creating customizations. This is critical because different format versions may have incompatible file structures.
+
+**Project Root Element Structure:**
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Project Version="1.1.2.0"
+         ProjectID="W8CC-Starter-001"
+         ChangeID="CC-Initial-Setup"
+         RuntimeVersion="2024.1"
+         FormatVersion="{Current}"
+         xmlns="urn:WebWorks-Publish-Project">
+  <!-- Project content -->
+</Project>
+```
+
+**Key Attributes:**
+
+- `Version` - Project file schema version (e.g., "1.1.2.0")
+- `ProjectID` - Unique identifier for the project
+- `RuntimeVersion` - ePublisher version used to last save project (e.g., "2024.1")
+- `FormatVersion` - Format version override (typically "{Current}" or specific version)
+- `ChangeID` - Incremental build tracking (can be ignored)
+
+**Base Format Version Logic:**
+
+```
+IF FormatVersion == "{Current}" THEN
+    Base Format Version = RuntimeVersion
+ELSE
+    Base Format Version = FormatVersion
+END IF
+```
+
+**Examples:**
+
+Example 1 - Current format (most common):
+```xml
+<Project RuntimeVersion="2024.1" FormatVersion="{Current}" ...>
+```
+Base Format Version = `2024.1` (uses current runtime version)
+
+Example 2 - Locked to older format:
+```xml
+<Project RuntimeVersion="2024.1" FormatVersion="2020.2" ...>
+```
+Base Format Version = `2020.2` (uses older format for compatibility)
+
+**Extracting Version Information:**
+
+```bash
+# Get RuntimeVersion
+grep -oP '<Project[^>]*RuntimeVersion="\K[^"]+' project.wep
+
+# Get FormatVersion
+grep -oP '<Project[^>]*FormatVersion="\K[^"]+' project.wep
+
+# Determine Base Format Version (bash logic)
+runtime=$(grep -oP '<Project[^>]*RuntimeVersion="\K[^"]+' project.wep)
+format=$(grep -oP '<Project[^>]*FormatVersion="\K[^"]+' project.wep)
+if [ "$format" = "{Current}" ]; then
+    base_format_version="$runtime"
+else
+    base_format_version="$format"
+fi
+echo "Base Format Version: $base_format_version"
+```
+
+**Why This Matters for Customization:**
+
+When copying format files from the installation directory to create customizations, you must use files from the correct format version:
+
+**Correct approach:**
+```bash
+# For project with Base Format Version = 2020.2
+source_path="C:\Program Files\WebWorks\ePublisher\2020.2\Formats\WebWorks Reverb 2.0\..."
+
+# For project with Base Format Version = 2024.1
+source_path="C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\..."
+```
+
+**Important Notes:**
+- Always check Base Format Version before creating customizations
+- Mixing format versions can cause build errors or unexpected output
+- Older projects may intentionally use older formats for stability
+- When upgrading a project, consider whether to update FormatVersion to {Current}
+
 ### Parsing Project Files for Targets
 
 Project files (`.wep`, `.wrp`) are XML files containing target and format configuration.

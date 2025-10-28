@@ -9,6 +9,7 @@
 # Features:
 #   - Extract target names (for AutoMap -t parameter)
 #   - Extract format names (for customization paths)
+#   - Extract Base Format Version (for customization file sources)
 #   - List all targets with details
 #   - Validate specific target names
 #   - JSON output option for programmatic use
@@ -28,6 +29,7 @@ OUTPUT_FORMAT="text"
 VALIDATE_TARGET=""
 LIST_TARGETS=false
 SHOW_FORMAT_NAMES=false
+SHOW_VERSION=false
 VERBOSE=false
 
 # Color codes for output
@@ -63,6 +65,7 @@ REQUIRED:
 OPTIONS:
     -l, --list              List all targets with details
     -f, --format-names      Show format names (used for customization paths)
+    --version               Show Base Format Version for customizations
     -v, --validate TARGET   Validate that specific target exists
     -j, --json              Output in JSON format
     --verbose               Enable verbose output
@@ -83,6 +86,9 @@ EXAMPLES:
 
     # Show format names for customization paths
     $SCRIPT_NAME --format-names project.wep
+
+    # Show Base Format Version
+    $SCRIPT_NAME --version project.wep
 
     # Validate target exists
     $SCRIPT_NAME --validate "WebWorks Reverb 2.0" project.wep
@@ -170,6 +176,33 @@ extract_format_names_text() {
     fi
 
     echo "$formats"
+}
+
+extract_base_format_version() {
+    local project_file="$1"
+
+    log_verbose "Extracting Base Format Version from: $project_file"
+
+    # Extract RuntimeVersion and FormatVersion from Project element
+    local runtime_version format_version
+
+    runtime_version=$(grep -oP '<Project[^>]*RuntimeVersion="\K[^"]+' "$project_file" 2>/dev/null || echo "")
+    format_version=$(grep -oP '<Project[^>]*FormatVersion="\K[^"]+' "$project_file" 2>/dev/null || echo "")
+
+    if [ -z "$runtime_version" ]; then
+        log_error "RuntimeVersion not found in project file"
+        return 3
+    fi
+
+    # Determine Base Format Version
+    local base_format_version
+    if [ "$format_version" = "{Current}" ] || [ -z "$format_version" ]; then
+        base_format_version="$runtime_version"
+    else
+        base_format_version="$format_version"
+    fi
+
+    echo "$base_format_version"
 }
 
 extract_output_directory() {
@@ -323,6 +356,10 @@ while [[ $# -gt 0 ]]; do
             SHOW_FORMAT_NAMES=true
             shift
             ;;
+        --version)
+            SHOW_VERSION=true
+            shift
+            ;;
         -v|--validate)
             if [ -z "${2:-}" ]; then
                 log_error "Missing TARGET argument"
@@ -405,6 +442,12 @@ fi
 # Format names only
 if [ "$SHOW_FORMAT_NAMES" = true ]; then
     extract_format_names_text "$PROJECT_FILE"
+    exit 0
+fi
+
+# Base Format Version
+if [ "$SHOW_VERSION" = true ]; then
+    extract_base_format_version "$PROJECT_FILE"
     exit 0
 fi
 

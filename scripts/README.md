@@ -98,6 +98,9 @@ Parse ePublisher project files to extract target and format information from `<F
 # Show format names for customization paths
 ./parse-targets.sh --format-names project.wep
 
+# Show Base Format Version for customizations
+./parse-targets.sh --version project.wep
+
 # Validate target exists
 ./parse-targets.sh --validate "WebWorks Reverb 2.0" project.wep
 
@@ -108,6 +111,7 @@ Parse ePublisher project files to extract target and format information from `<F
 **Options:**
 - `-l, --list` - List all targets with details
 - `-f, --format-names` - Show format names for customization paths
+- `--version` - Show Base Format Version (for determining customization source paths)
 - `-v, --validate TARGET` - Validate that specific target exists
 - `-j, --json` - Output in JSON format
 - `--verbose` - Enable verbose output
@@ -164,10 +168,27 @@ JSON output (`--json`):
 **Features:**
 - Extract target names for AutoMap `-t` parameter
 - Extract format names for customization path construction
+- Extract Base Format Version for determining customization file sources
 - Extract output directories (custom or default `Output\[TargetName]`)
 - Validate target existence before builds
 - Multiple output formats (text, detailed, JSON)
 - Color-coded validation feedback
+
+**Base Format Version:**
+
+The Base Format Version determines which ePublisher installation directory to use when copying format files for customization. It's calculated from the project's `<Project>` element:
+- If `FormatVersion="{Current}"`: Base Format Version = `RuntimeVersion`
+- Otherwise: Base Format Version = `FormatVersion`
+
+Example:
+```bash
+# Get Base Format Version
+version=$(./parse-targets.sh --version project.wep)
+# Returns: 2024.1
+
+# Use it to construct installation path
+install_path="C:\Program Files\WebWorks\ePublisher\$version\Formats\..."
+```
 
 ### manage-sources.sh
 

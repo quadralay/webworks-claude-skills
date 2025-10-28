@@ -417,12 +417,29 @@ grep -oP '<Format[^>]*Name="\K[^"]+' project.wep
 # Parse targets with output directory detection
 ./scripts/parse-targets.sh --list project.wep
 ./scripts/parse-targets.sh --json project.wep
+
+# Get Base Format Version
+./scripts/parse-targets.sh --version project.wep
 ```
+
+**Base Format Version:**
+
+The Base Format Version determines which ePublisher installation directory version to use when copying format files for customizations. Extract from `<Project>` element:
+
+```xml
+<Project RuntimeVersion="2024.1" FormatVersion="{Current}" ...>
+```
+
+Logic:
+- If `FormatVersion="{Current}"` → Base Format Version = `RuntimeVersion`
+- Otherwise → Base Format Version = `FormatVersion`
+
+This is critical for Phase 2 customization work because format files vary between versions.
 
 **Override Resolution Priority:**
 1. Target-specific: `[Project]\Targets\[TargetName]\`
 2. Format-level: `[Project]\Formats\[FormatName]\`
-3. Installation: `Program Files\WebWorks\ePublisher\[version]\Formats\`
+3. Installation: `Program Files\WebWorks\ePublisher\[Base Format Version]\Formats\`
 
 ---
 
