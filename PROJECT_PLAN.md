@@ -83,7 +83,13 @@ The skill will enable Claude Code to:
 
 5. **Assist with Project Operations**
    - Parse `.wep` (Designer project, the precursor to Stationery), `.wxsp` (Stationery project with no source documents, deep copy of all applicable installation XSL files) and `.wrp` (Project, deep copy) files
+   - Extract target information from `<Format>` elements:
+     - `TargetName` attribute - for AutoMap `-t` parameter
+     - `Name` attribute - for customization path construction
+     - `Type` and `TargetID` attributes - for validation
    - Identify configured targets and formats
+   - List available targets to users
+   - Validate target names before AutoMap execution
    - Guide users through common customization workflows
 
 ### Example Workflows
@@ -376,6 +382,34 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 **File Types:**
 - Project files: `.wep` (Stationery), `.wrp` (Project), `.wxsp` (Stationery archive)
 - Customization files: `.asp` (templates), `.scss` (stylesheets), `.xsl` (transforms), `.js` (Reverb javascript runtime)
+
+**Project File Structure (XML):**
+
+Project files contain `<Format>` elements defining each target:
+
+```xml
+<Format TargetName="WebWorks Reverb 2.0"
+        Name="WebWorks Reverb 2.0"
+        Type="Application"
+        TargetID="CC-Reverb-Target">
+  <!-- Target configuration -->
+</Format>
+```
+
+Key attributes:
+- `TargetName` - Target name for AutoMap `-t` parameter
+- `Name` - Format name for customization paths
+- `Type` - Format type (typically "Application")
+- `TargetID` - Unique target identifier
+
+**Target Detection:**
+```bash
+# Extract all target names from project file
+grep -oP 'TargetName="\K[^"]+' project.wep
+
+# Extract all format names
+grep -oP '<Format[^>]*Name="\K[^"]+' project.wep
+```
 
 **Override Resolution Priority:**
 1. Target-specific: `[Project]\Targets\[TargetName]\`

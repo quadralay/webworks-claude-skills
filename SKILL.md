@@ -164,6 +164,76 @@ find . -maxdepth 1 -name "*.wep" -o -name "*.wrp" -o -name "*.wxsp"
 ls -la Formats/ Targets/ Source/
 ```
 
+### Parsing Project Files for Targets
+
+Project files (`.wep`, `.wrp`) are XML files containing target and format configuration.
+
+**Target/Format Element Structure:**
+
+Project files contain `<Format>` elements that define each target:
+
+```xml
+<Format TargetName="WebWorks Reverb 2.0"
+        Name="WebWorks Reverb 2.0"
+        Type="Application"
+        TargetID="CC-Reverb-Target">
+  <!-- Target configuration -->
+</Format>
+```
+
+**Key Attributes:**
+- `TargetName` - The target name used in AutoMap `-t` parameter (e.g., "WebWorks Reverb 2.0")
+- `Name` - The format name used for customization paths (e.g., "WebWorks Reverb 2.0")
+- `Type` - Format type (typically "Application")
+- `TargetID` - Unique identifier for this target in the project
+
+**Extracting Target Information:**
+
+```bash
+# List all target names in a project
+grep -oP 'TargetName="\K[^"]+' project.wep
+
+# List all format names
+grep -oP '<Format[^>]*Name="\K[^"]+' project.wep
+
+# Get full Format elements
+grep '<Format ' project.wep
+```
+
+**Example Project File Targets:**
+
+```xml
+<!-- HTML5 (Reverb) Output -->
+<Format TargetName="WebWorks Reverb 2.0"
+        Name="WebWorks Reverb 2.0"
+        Type="Application"
+        TargetID="Reverb-Target">
+</Format>
+
+<!-- PDF Output -->
+<Format TargetName="PDF - XSL-FO"
+        Name="PDF - XSL-FO"
+        Type="Application"
+        TargetID="PDF-Target">
+</Format>
+```
+
+**Use Cases:**
+
+1. **List Available Targets:**
+   Parse project file to show user all configured targets
+
+2. **Validate Target Name:**
+   Before executing AutoMap, confirm target exists in project
+
+3. **Determine Format for Customization:**
+   Use `Name` attribute to construct correct customization paths:
+   - `Formats\[Name]\...`
+   - `Targets\[TargetName]\...`
+
+4. **Batch Processing:**
+   Extract all target names for building multiple targets sequentially
+
 ## File Resolver Pattern
 
 ### Understanding the Override Hierarchy
@@ -426,12 +496,19 @@ Common XSL customizations:
 
 **Steps:**
 1. Locate `.wep` or `.wrp` file in current directory using Glob
-2. Identify target name (typically "WebWorks Reverb 2.0" or similar)
-3. Detect AutoMap installation path via registry
-4. Construct command: `"[AutoMap]" -c -l -t "[TargetName]" "[ProjectFile]"`
-5. Execute with Bash tool (timeout: 600000ms)
-6. Monitor output for success/failure
-7. Report result with deployment location
+2. Parse project file to extract available targets:
+   ```bash
+   grep -oP 'TargetName="\K[^"]+' project.wep
+   ```
+3. Identify Reverb target (typically "WebWorks Reverb 2.0" or similar)
+   - If multiple targets exist, find one containing "Reverb" or "WebWorks Reverb"
+   - If only one target exists, use it
+   - If ambiguous, ask user to specify
+4. Detect AutoMap installation path via registry
+5. Construct command: `"[AutoMap]" -c -l -t "[TargetName]" "[ProjectFile]"`
+6. Execute with Bash tool (timeout: 600000ms)
+7. Monitor output for success/failure
+8. Report result with deployment location
 
 ### Workflow B: Customize Header Template
 
@@ -481,11 +558,16 @@ Common XSL customizations:
 
 **Steps:**
 1. Locate project file
-2. Parse project file to identify configured targets (optional)
-3. Execute AutoMap without `-t` flag to build all targets
-4. Monitor progress for each target
-5. Report individual target results
-6. Summarize overall success/failure
+2. Parse project file to identify configured targets:
+   ```bash
+   grep -oP 'TargetName="\K[^"]+' project.wep
+   ```
+3. Report to user: "Found [N] targets: [list of target names]"
+4. Execute AutoMap without `-t` flag to build all targets (builds all in one execution)
+   - OR build each target sequentially with separate AutoMap calls for better progress reporting
+5. Monitor progress for each target
+6. Report individual target results
+7. Summarize overall success/failure with build times
 
 ### Workflow F: Build with Custom Deployment Location
 
