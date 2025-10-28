@@ -83,6 +83,87 @@ Wrapper script for AutoMap CLI with automatic detection and enhanced error repor
 - Build duration reporting
 - Proper path handling and quoting
 
+### parse-targets.sh
+
+Parse ePublisher project files to extract target and format information from `<Format>` XML elements.
+
+**Usage:**
+```bash
+# List all target names (simple)
+./parse-targets.sh project.wep
+
+# List all targets with details
+./parse-targets.sh --list project.wep
+
+# Show format names for customization paths
+./parse-targets.sh --format-names project.wep
+
+# Validate target exists
+./parse-targets.sh --validate "WebWorks Reverb 2.0" project.wep
+
+# JSON output for scripts
+./parse-targets.sh --json project.wep
+```
+
+**Options:**
+- `-l, --list` - List all targets with details
+- `-f, --format-names` - Show format names for customization paths
+- `-v, --validate TARGET` - Validate that specific target exists
+- `-j, --json` - Output in JSON format
+- `--verbose` - Enable verbose output
+
+**Exit Codes:**
+- `0` - Success
+- `1` - Project file not found or invalid
+- `2` - Invalid arguments
+- `3` - No targets found in project
+
+**Output Examples:**
+
+Default (target names only):
+```
+WebWorks Reverb 2.0
+PDF - XSL-FO
+```
+
+Detailed list (`--list`):
+```
+Target 1: WebWorks Reverb 2.0
+  Format: WebWorks Reverb 2.0
+  Type: Application
+  ID: CC-Reverb-Target
+
+Target 2: PDF - XSL-FO
+  Format: PDF - XSL-FO
+  Type: Application
+  ID: CC-PDF-Target
+```
+
+JSON output (`--json`):
+```json
+[
+  {
+    "targetName": "WebWorks Reverb 2.0",
+    "formatName": "WebWorks Reverb 2.0",
+    "type": "Application",
+    "targetId": "CC-Reverb-Target"
+  },
+  {
+    "targetName": "PDF - XSL-FO",
+    "formatName": "PDF - XSL-FO",
+    "type": "Application",
+    "targetId": "CC-PDF-Target"
+  }
+]
+```
+
+**Features:**
+- Extract target names for AutoMap `-t` parameter
+- Extract format names for customization path construction
+- Validate target existence before builds
+- Multiple output formats (text, detailed, JSON)
+- Color-coded validation feedback
+
 ## Integration with Claude Code
 
 These scripts are designed to be called from the Claude Code skill (`SKILL.md`) to provide reliable AutoMap detection and execution.
@@ -91,6 +172,12 @@ These scripts are designed to be called from the Claude Code skill (`SKILL.md`) 
 ```bash
 # Detect AutoMap
 AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+
+# Parse project targets
+TARGETS=$(./scripts/parse-targets.sh "C:\Projects\MyDoc\MyDoc.wep")
+
+# Validate target exists
+./scripts/parse-targets.sh --validate "WebWorks Reverb 2.0" "C:\Projects\MyDoc\MyDoc.wep"
 
 # Execute build
 ./scripts/automap-wrapper.sh -c -l "C:\Projects\MyDoc\MyDoc.wep"
