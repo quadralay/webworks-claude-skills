@@ -392,15 +392,19 @@ Project files contain `<Format>` elements defining each target:
         Name="WebWorks Reverb 2.0"
         Type="Application"
         TargetID="CC-Reverb-Target">
-  <!-- Target configuration -->
+  <OutputDirectory>Output\WebWorks Reverb 2.0</OutputDirectory>
+  <!-- Other target configuration -->
 </Format>
 ```
 
-Key attributes:
+Key attributes and elements:
 - `TargetName` - Target name for AutoMap `-t` parameter
 - `Name` - Format name for customization paths
 - `Type` - Format type (typically "Application")
 - `TargetID` - Unique target identifier
+- `<OutputDirectory>` (optional child element) - Custom output location
+  - If present: Output generated to this directory
+  - If absent: Output defaults to `Output\[TargetName]\`
 
 **Target Detection:**
 ```bash
@@ -409,6 +413,10 @@ grep -oP 'TargetName="\K[^"]+' project.wep
 
 # Extract all format names
 grep -oP '<Format[^>]*Name="\K[^"]+' project.wep
+
+# Parse targets with output directory detection
+./scripts/parse-targets.sh --list project.wep
+./scripts/parse-targets.sh --json project.wep
 ```
 
 **Override Resolution Priority:**

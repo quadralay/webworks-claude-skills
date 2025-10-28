@@ -132,11 +132,13 @@ Target 1: WebWorks Reverb 2.0
   Format: WebWorks Reverb 2.0
   Type: Application
   ID: CC-Reverb-Target
+  Output: Output\WebWorks Reverb 2.0
 
 Target 2: PDF - XSL-FO
   Format: PDF - XSL-FO
   Type: Application
   ID: CC-PDF-Target
+  Output: C:\CustomOutput\PDF
 ```
 
 JSON output (`--json`):
@@ -146,13 +148,15 @@ JSON output (`--json`):
     "targetName": "WebWorks Reverb 2.0",
     "formatName": "WebWorks Reverb 2.0",
     "type": "Application",
-    "targetId": "CC-Reverb-Target"
+    "targetId": "CC-Reverb-Target",
+    "outputDirectory": "Output\\WebWorks Reverb 2.0"
   },
   {
     "targetName": "PDF - XSL-FO",
     "formatName": "PDF - XSL-FO",
     "type": "Application",
-    "targetId": "CC-PDF-Target"
+    "targetId": "CC-PDF-Target",
+    "outputDirectory": "C:\\CustomOutput\\PDF"
   }
 ]
 ```
@@ -160,9 +164,104 @@ JSON output (`--json`):
 **Features:**
 - Extract target names for AutoMap `-t` parameter
 - Extract format names for customization path construction
+- Extract output directories (custom or default `Output\[TargetName]`)
 - Validate target existence before builds
 - Multiple output formats (text, detailed, JSON)
 - Color-coded validation feedback
+
+### manage-sources.sh
+
+Manage source documents in ePublisher project files by examining and modifying `<Groups>` and `<Document>` elements.
+
+**Usage:**
+```bash
+# List all source documents
+./manage-sources.sh --list project.wep
+
+# List in JSON format
+./manage-sources.sh --list --json project.wep
+
+# Validate all source file paths exist
+./manage-sources.sh --validate project.wep
+
+# Get guidance for adding a document
+./manage-sources.sh --add "Source\new-chapter.md" --group "Group1" project.wep
+
+# Get guidance for removing a document
+./manage-sources.sh --remove "Source\old-content.md" project.wep
+
+# Get guidance for toggling document inclusion
+./manage-sources.sh --toggle "Source\draft.md" project.wep
+```
+
+**Options:**
+- `-l, --list` - List all source documents with paths and status
+- `-a, --add PATH` - Add document (provides instructions for Edit tool)
+- `-r, --remove PATH` - Remove document (provides instructions for Edit tool)
+- `-t, --toggle PATH` - Toggle document inclusion (provides instructions for Edit tool)
+- `-v, --validate` - Validate all source file paths exist
+- `-g, --group NAME` - Group name (required for --add)
+- `--type TYPE` - Document type (default: fm-maker)
+- `--json` - Output in JSON format (list only)
+- `--verbose` - Enable verbose output
+
+**Exit Codes:**
+- `0` - Success
+- `1` - Project file not found or invalid
+- `2` - Invalid arguments
+- `3` - No documents found in project
+- `4` - Source file validation failed
+
+**Output Examples:**
+
+Default list:
+```
+Source Documents:
+
+1. [true] Source\content-seed.md
+   Type: fm-maker
+
+2. [false] Source\draft-chapter.md
+   Type: fm-maker
+```
+
+JSON output (`--json`):
+```json
+[
+  {
+    "path": "Source\\content-seed.md",
+    "included": true,
+    "type": "fm-maker",
+    "documentId": "abc123xyz"
+  },
+  {
+    "path": "Source\\draft-chapter.md",
+    "included": false,
+    "type": "fm-maker",
+    "documentId": "def456uvw"
+  }
+]
+```
+
+Validation output:
+```
+[INFO] Validating source file paths...
+✓ Source\content-seed.md
+✗ Source\missing-file.md (not found)
+
+[ERROR] 1 source file(s) not found
+```
+
+**Features:**
+- List all source documents with inclusion status
+- Validate source file paths exist on filesystem
+- Provide guidance for adding/removing/toggling documents
+- Support for multiple document types (Markdown, HTML, DITA, Word, FrameMaker)
+- JSON output for programmatic use
+- Color-coded output for visibility
+
+**Note on Add/Remove/Toggle:**
+Due to XML manipulation complexity, these commands provide instructions for using the Edit tool rather than modifying files directly. This ensures safe XML editing with proper validation.
 
 ## Integration with Claude Code
 

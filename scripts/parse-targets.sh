@@ -101,6 +101,7 @@ OUTPUT FORMATS:
           Format: WebWorks Reverb 2.0
           Type: Application
           ID: CC-Reverb-Target
+          Output: Output\WebWorks Reverb 2.0
 
     --json:
         [
@@ -108,7 +109,8 @@ OUTPUT FORMATS:
             "targetName": "WebWorks Reverb 2.0",
             "formatName": "WebWorks Reverb 2.0",
             "type": "Application",
-            "targetId": "CC-Reverb-Target"
+            "targetId": "CC-Reverb-Target",
+            "outputDirectory": "Output\\WebWorks Reverb 2.0"
           }
         ]
 EOF
@@ -170,6 +172,38 @@ extract_format_names_text() {
     echo "$formats"
 }
 
+extract_output_directory() {
+    local project_file="$1"
+    local target_name="$2"
+
+    # Find the Format element for this target and check for OutputDirectory child element
+    # Using awk to parse multi-line Format blocks
+    local output_dir
+    output_dir=$(awk -v target="$target_name" '
+        /<Format [^>]*TargetName="/ {
+            if ($0 ~ "TargetName=\"" target "\"") {
+                in_target = 1
+            }
+        }
+        in_target && /<OutputDirectory>/ {
+            match($0, /<OutputDirectory>([^<]+)<\/OutputDirectory>/, arr)
+            if (arr[1]) {
+                print arr[1]
+                exit
+            }
+        }
+        in_target && /<\/Format>/ {
+            in_target = 0
+        }
+    ' "$project_file" || true)
+
+    if [ -n "$output_dir" ]; then
+        echo "$output_dir"
+    else
+        echo "Output\\$target_name"
+    fi
+}
+
 list_targets_detailed() {
     local project_file="$1"
 
@@ -186,17 +220,19 @@ list_targets_detailed() {
 
     local count=1
     while IFS= read -r line; do
-        local target_name format_name type target_id
+        local target_name format_name type target_id output_dir
 
         target_name=$(echo "$line" | grep -oP 'TargetName="\K[^"]+' || echo "Unknown")
         format_name=$(echo "$line" | grep -oP '\sName="\K[^"]+' || echo "Unknown")
         type=$(echo "$line" | grep -oP 'Type="\K[^"]+' || echo "Unknown")
         target_id=$(echo "$line" | grep -oP 'TargetID="\K[^"]+' || echo "Unknown")
+        output_dir=$(extract_output_directory "$project_file" "$target_name")
 
         echo -e "${GREEN}Target $count:${NC} $target_name"
         echo "  Format: $format_name"
         echo "  Type: $type"
         echo "  ID: $target_id"
+        echo "  Output: $output_dir"
         echo ""
 
         ((count++))
@@ -221,12 +257,13 @@ list_targets_json() {
 
     local first=true
     while IFS= read -r line; do
-        local target_name format_name type target_id
+        local target_name format_name type target_id output_dir
 
         target_name=$(echo "$line" | grep -oP 'TargetName="\K[^"]+' || echo "Unknown")
         format_name=$(echo "$line" | grep -oP '\sName="\K[^"]+' || echo "Unknown")
         type=$(echo "$line" | grep -oP 'Type="\K[^"]+' || echo "Unknown")
         target_id=$(echo "$line" | grep -oP 'TargetID="\K[^"]+' || echo "Unknown")
+        output_dir=$(extract_output_directory "$project_file" "$target_name")
 
         if [ "$first" = true ]; then
             first=false
@@ -239,7 +276,8 @@ list_targets_json() {
     "targetName": "$target_name",
     "formatName": "$format_name",
     "type": "$type",
-    "targetId": "$target_id"
+    "targetId": "$target_id",
+    "outputDirectory": "$output_dir"
   }
 JSON_ENTRY
     done <<< "$format_lines"

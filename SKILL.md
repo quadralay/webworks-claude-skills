@@ -203,20 +203,32 @@ grep '<Format ' project.wep
 **Example Project File Targets:**
 
 ```xml
-<!-- HTML5 (Reverb) Output -->
+<!-- HTML5 (Reverb) Output with Default Output Location -->
 <Format TargetName="WebWorks Reverb 2.0"
         Name="WebWorks Reverb 2.0"
         Type="Application"
         TargetID="Reverb-Target">
 </Format>
 
-<!-- PDF Output -->
+<!-- PDF Output with Custom Output Directory -->
 <Format TargetName="PDF - XSL-FO"
         Name="PDF - XSL-FO"
         Type="Application"
         TargetID="PDF-Target">
+  <OutputDirectory>C:\CustomOutput\PDF</OutputDirectory>
 </Format>
 ```
+
+**Key Attributes and Elements:**
+
+- **TargetName** - Target identifier for AutoMap `-t` parameter
+- **Name** - Format name for customization path construction (`Formats\[Name]\`)
+- **Type** - Format type (typically "Application")
+- **TargetID** - Unique identifier for the target
+- **OutputDirectory** (optional child element) - Custom output location
+  - If present: Output generated to this directory
+  - If absent: Output defaults to `Output\[TargetName]\`
+  - Can be absolute path (e.g., `C:\CustomOutput\PDF`) or relative to project
 
 **Use Cases:**
 
@@ -231,8 +243,149 @@ grep '<Format ' project.wep
    - `Formats\[Name]\...`
    - `Targets\[TargetName]\...`
 
-4. **Batch Processing:**
+4. **Find Generated Output:**
+   Check for `<OutputDirectory>` child element to determine where output was generated:
+   - If `<OutputDirectory>` exists: Use that path
+   - Otherwise: Default to `Output\[TargetName]\`
+
+5. **Batch Processing:**
    Extract all target names for building multiple targets sequentially
+
+### Managing Source Files in Projects
+
+Project files contain source document references organized in a hierarchical structure: `<Groups>` → `<Group>` → `<Document>`.
+
+**Source File Structure:**
+
+```xml
+<Groups>
+  <Group Name="Group1" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
+    <Document Path="Source\content-seed.md" Type="fm-maker" Included="true" DocumentID="abc123xyz" />
+    <Document Path="Source\getting-started.md" Type="fm-maker" Included="true" DocumentID="def456uvw" />
+  </Group>
+  <Group Name="Reference" Type="normal" Included="true" GroupID="xYz987aBc">
+    <Document Path="Source\api-reference.md" Type="fm-maker" Included="true" DocumentID="ghi789rst" />
+  </Group>
+</Groups>
+```
+
+**Key Attributes:**
+
+**Group Element:**
+- `Name` - Display name for the group
+- `Type` - Group type (typically "normal")
+- `Included` - Boolean ("true"/"false") to include/exclude group from generation
+- `GroupID` - Unique identifier for the group (required, auto-generated)
+- `ChangeID` - Incremental build tracking (can be ignored, not needed for AutoMap)
+
+**Document Element:**
+- `Path` - **Most Important** - Path to source file (relative to project or absolute)
+  - Relative: `Source\content-seed.md`
+  - Absolute: `C:\Docs\content-seed.md`
+- `Type` - Document type (e.g., "fm-maker" for Markdown, "fm-html" for HTML)
+- `Included` - Boolean ("true"/"false") to include/exclude from generation
+- `DocumentID` - Unique identifier for the document (required, auto-generated)
+- `ChangeID` - Incremental build tracking (can be ignored)
+
+**Common Operations:**
+
+**1. List All Source Files:**
+```bash
+# Extract all document paths
+grep -oP 'Document Path="\K[^"]+' project.wep
+
+# Show document paths with inclusion status
+grep '<Document ' project.wep | grep -oP 'Path="\K[^"]+|Included="\K[^"]+'
+```
+
+**2. Check If Document Included:**
+```bash
+# Find specific document and check Included status
+grep 'Path="Source\\content-seed.md"' project.wep | grep -oP 'Included="\K[^"]+'
+```
+
+**3. Add New Document to Project:**
+- Generate unique DocumentID (e.g., using random alphanumeric string)
+- Optionally generate unique ChangeID (or omit)
+- Add `<Document>` element inside existing `<Group>`
+- Ensure proper XML structure and escaping
+
+**4. Remove Document from Project:**
+- Use Edit tool to remove entire `<Document>` element
+- Ensure no orphaned formatting or whitespace
+
+**5. Toggle Document Inclusion:**
+- Change `Included="true"` to `Included="false"` (or vice versa)
+- Allows temporary exclusion without removing document reference
+
+**6. Add New Group:**
+- Generate unique GroupID
+- Create `<Group>` element with attributes
+- Add one or more `<Document>` child elements
+
+**ID Generation Guidelines:**
+
+When adding new groups or documents, generate unique IDs:
+- **Format:** Alphanumeric string (typically 11 characters for GroupID, variable for DocumentID)
+- **Example GroupID:** `w3KcSrHh-HI`, `xYz987aBc`
+- **Example DocumentID:** `abc123xyz`, `def456uvw`
+- **Generation:** Use random alphanumeric characters (letters and numbers)
+
+**Example: Adding a New Document**
+
+```xml
+<!-- Before -->
+<Group Name="Group1" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
+  <Document Path="Source\content-seed.md" Type="fm-maker" Included="true" DocumentID="abc123xyz" />
+</Group>
+
+<!-- After: Add new document to existing group -->
+<Group Name="Group1" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
+  <Document Path="Source\content-seed.md" Type="fm-maker" Included="true" DocumentID="abc123xyz" />
+  <Document Path="Source\new-chapter.md" Type="fm-maker" Included="true" DocumentID="jkl012mno" />
+</Group>
+```
+
+**Example: Adding a New Group with Documents**
+
+```xml
+<!-- Add after existing groups -->
+<Group Name="Tutorials" Type="normal" Included="true" GroupID="aBc123DeF">
+  <Document Path="Source\tutorial-intro.md" Type="fm-maker" Included="true" DocumentID="pqr345stu" />
+  <Document Path="Source\tutorial-advanced.md" Type="fm-maker" Included="true" DocumentID="vwx678yz0" />
+</Group>
+```
+
+**Example: Excluding Document from Generation**
+
+```xml
+<!-- Temporarily exclude without deleting -->
+<Document Path="Source\draft-content.md" Type="fm-maker" Included="false" DocumentID="abc999xyz" />
+```
+
+**Document Type Reference:**
+
+Common document types:
+- `fm-maker` - Markdown files (.md)
+- `fm-html` - HTML files (.html, .htm)
+- `fm-dita` - DITA XML files (.dita, .xml)
+- `fm-word` - Microsoft Word documents (.docx)
+- `fm-unstructured` - FrameMaker unstructured files (.fm)
+
+**Path Handling:**
+
+- Use backslashes (`\`) for Windows paths in XML
+- Use forward slashes (`/`) for cross-platform compatibility
+- Relative paths are relative to project file directory
+- Always verify source file exists at specified path before adding
+
+**Validation Before Generation:**
+
+Before running AutoMap, verify:
+1. All `Path` attributes point to existing files
+2. All `DocumentID` and `GroupID` values are unique
+3. At least one document has `Included="true"`
+4. No XML syntax errors in modified structure
 
 ## File Resolver Pattern
 
