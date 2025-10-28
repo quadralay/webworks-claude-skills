@@ -1,0 +1,58 @@
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Environment and secrets
+.env
+.env.local
+secrets/
+
+# Build and output directories
+dist/
+build/
+output/
+
+# Node modules (if we add any JS utilities)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+test-results/
+
+# Claude Code specific
+.claude/local/
