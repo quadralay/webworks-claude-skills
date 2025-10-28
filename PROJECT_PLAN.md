@@ -55,8 +55,12 @@ epublisher-automap/
 The skill will enable Claude Code to:
 
 1. **Detect AutoMap Installation**
-   - Locate `WebWorks.AutoMap.exe` in standard paths
-   - Identify installed ePublisher version
+   - Query Windows Registry for AutoMap installation path
+     - 64-bit: `HKEY_LOCAL_MACHINE\SOFTWARE\WebWorks\ePublisher AutoMap\[VERSION]`
+     - 32-bit: `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WebWorks\ePublisher AutoMap\[VERSION]`
+     - Read `ExePath` key for full path to executable
+   - Identify installed ePublisher version from registry
+   - Fallback to standard installation paths if registry unavailable
    - Validate AutoMap accessibility
 
 2. **Run AutoMap Commands**
@@ -78,15 +82,15 @@ The skill will enable Claude Code to:
    - Track customizations with documentation
 
 5. **Assist with Project Operations**
-   - Parse `.wep` (Stationery) and `.wrp` (Project) files
+   - Parse `.wep` (Designer project, the precursor to Stationery), `.wxsp` (Stationery project with no source documents, deep copy of all applicable installation XSL files) and `.wrp` (Project, deep copy) files
    - Identify configured targets and formats
    - Guide users through common customization workflows
 
 ### Example Workflows
 
-**Workflow 1: Generate WebHelp Output**
+**Workflow 1: Generate HTML5 (Reverb) Output**
 ```
-User: "Build the WebHelp target for this project"
+User: "Build the Reverb target for this project"
 Claude: [Locates .wep file, constructs AutoMap command, executes build, reports results]
 ```
 
@@ -99,8 +103,13 @@ Claude: [Identifies header.asp in installation, creates parallel structure, copi
 **Workflow 3: Style Override**
 ```
 User: "Change the primary color scheme for Reverb output"
-Claude: [Copies skin.scss, creates _overrides.scss, modifies SASS variables, rebuilds output]
+Claude: [Copies skin.scss, creates _overrides.scss, modifies SASS variables in `_*.scss` overrides, rebuilds output]
 ```
+
+**Workflow 4: Customize Toolbar**
+```
+User: "Change the toolbar layout for Reverb output"
+Claude: [Copies `Connect.asp`, `skin.scss`, creates `_overrides.scss`, rebuilds output]
 
 ## Technical Considerations
 
@@ -115,8 +124,7 @@ Claude: [Copies skin.scss, creates _overrides.scss, modifies SASS variables, reb
 **File Resolver Hierarchy (Priority Order):**
 1. Target overrides: `[Project]\Targets\[TargetName]\`
 2. Format overrides: `[Project]\Formats\[FormatName]\`
-3. Stationery overrides: `[Stationery]\Formats\[OutputFormat]\`
-4. Installation defaults: `Program Files\WebWorks\ePublisher\[version]\Formats\`
+3. Installation defaults: `Program Files\WebWorks\ePublisher\[version]\Formats\`
 
 **Critical Requirement:** File and folder names must exactly match installation hierarchy. The skill must enforce this constraint.
 
@@ -126,9 +134,10 @@ Claude: [Copies skin.scss, creates _overrides.scss, modifies SASS variables, reb
   - Solution: Use Bash tool with extended timeout (600000ms)
   - Monitor progress through output streaming
 
-- **Path Detection:** Installation path searches could be slow
-  - Solution: Cache detected path for session duration
-  - Use Windows registry hints to speed up search
+- **Path Detection:** Registry-based detection is fast and reliable
+  - Primary method: Query Windows Registry for `ExePath` value
+  - Cache detected path for session duration
+  - Fallback to file system search only if registry unavailable
 
 ### Security Considerations
 
@@ -152,7 +161,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 - Skill must detect version and handle version-specific syntax
 
 **Backwards Compatibility:**
-- Support AutoMap 2020.1+
+- Support AutoMap 2024.1+
 - Handle both `.wep` and `.wrp` project file types
 - Accommodate legacy folder structures
 
@@ -220,7 +229,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ### Prerequisites
 
 **Required Software:**
-- WebWorks ePublisher 2020.1 or later installed
+- WebWorks ePublisher 2024.1 or later installed
 - AutoMap CLI component installed
 - Windows operating system (ePublisher is Windows-only)
 - Git for version control (optional but recommended)
@@ -323,7 +332,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 - `reverb2-both-name-logo-toolbar\CLAUDE.md:1` - Customization pattern examples
 - `reverb2-both-name-logo-toolbar\Formats\WebWorks Reverb 2.0\Pages\Connect.asp:1` - ASP template example
 - `reverb2-both-name-logo-toolbar\Formats\WebWorks Reverb 2.0\Pages\sass\skin.scss:1` - SCSS customization example
-- `epub2628-reverb2-cache-buster\Formats.hide\Shared\common\pages\pagetemplate.xsl:1` - XSL transform example
+- `epub2628-reverb2-cache-buster\Formats\Shared\common\pages\pagetemplate.xsl:1` - XSL transform example
 
 **Project Structure Patterns:**
 - Installation: `C:\Program Files\WebWorks\ePublisher\2024.1\Formats\`
@@ -334,8 +343,8 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 
 **Official WebWorks Resources:**
 - AutoMap CLI Reference: https://static.webworks.com/docs/epublisher/latest/help/ePublisher%20Interface/Automating%20Projects.4.38.html
-- File Override How It Works: http://docs.webworks.com/ePublisher/2010.2/Help/04.Reference_Information/1.27.How_It_Works
-- Understanding Customization: http://blogs.webworks.com/blog/2018/07/05/understanding-customization-in-epublisher/
+- File Override How It Works: https://static.webworks.com/docs/epublisher/latest/help/Advanced%20Customizations_%20Overrides_%20and%20Extensions/How%20It%20Works.2.10.html
+- Understanding Customization: https://webworks.com/blog/post/2018/understanding-customization-in-epublisher
 - Page Templates: http://wiki.webworks.com/DevCenter/Documentation/PageTemplates
 - Project .wrp Structure: https://static.webworks.com/docs/epublisher/latest/help/Advanced%20Customizations_%20Overrides_%20and%20Extensions/How%20It%20Works.2.18.html
 - Stationery .wep Structure: https://static.webworks.com/docs/epublisher/latest/help/Advanced%20Customizations_%20Overrides_%20and%20Extensions/How%20It%20Works.2.17.html
@@ -356,19 +365,22 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ### Technical Specifications
 
 **AutoMap Executable:**
-- Path: `C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe`
+- Default path: `C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe`
+- Registry detection (preferred method):
+  - 64-bit key: `HKEY_LOCAL_MACHINE\SOFTWARE\WebWorks\ePublisher AutoMap\[VERSION]`
+  - 32-bit key: `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WebWorks\ePublisher AutoMap\[VERSION]`
+  - Value: `ExePath` (full path to executable)
 - Known switches: `-c` (clean), `-l` (clean deploy), `-t` (target), `--deployfolder`
 - Exit codes: 0=success, non-zero=failure
 
 **File Types:**
 - Project files: `.wep` (Stationery), `.wrp` (Project), `.wxsp` (Stationery archive)
-- Customization files: `.asp` (templates), `.scss` (stylesheets), `.xsl` (transforms)
+- Customization files: `.asp` (templates), `.scss` (stylesheets), `.xsl` (transforms), `.js` (Reverb javascript runtime)
 
 **Override Resolution Priority:**
 1. Target-specific: `[Project]\Targets\[TargetName]\`
 2. Format-level: `[Project]\Formats\[FormatName]\`
-3. Stationery: `[Stationery]\Formats\[OutputFormat]\`
-4. Installation: `Program Files\WebWorks\ePublisher\[version]\Formats\`
+3. Installation: `Program Files\WebWorks\ePublisher\[version]\Formats\`
 
 ---
 
