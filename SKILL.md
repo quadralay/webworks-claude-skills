@@ -224,7 +224,7 @@ C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
 **ASP Templates (`.asp`):**
 - Active Server Pages template files
 - Define HTML page structure and dynamic content
-- Common files: `Connect.asp`, `Header.asp`, `Search.asp`
+- Common files: `Connect.asp`, `Page.asp`, `Header.asp`, `Footer.asp`, `Search.asp`, `Body.asp` (PDF - XSL-FO), `Title.asp` (PDF - XSL-FO)
 - Located in: `Formats\[FormatName]\Pages\`
 
 **SCSS Stylesheets (`.scss`):**
@@ -237,13 +237,13 @@ C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
 **XSL Transforms (`.xsl`):**
 - XSLT transformation files
 - Process content and generate output
-- Common files: `pagetemplate.xsl`, various content transforms
+- Common files: `content.xsl`, `pages.xsl`, `pagetemplate.xsl`, various content transforms
 - Located in: `Formats\[FormatName]\Transforms\` or `Formats\Shared\common\pages\`
 
 **JavaScript Files (`.js`):**
 - Reverb runtime JavaScript
 - Client-side functionality
-- Located in: `Formats\[FormatName]\Pages\`
+- Located in: `Formats\[FormatName]\Pages\scripts\`
 
 ## File Customization Workflows
 
