@@ -1,0 +1,61 @@
+{
+  "name": "epublisher-automap",
+  "version": "1.0.0",
+  "description": "WebWorks ePublisher AutoMap CLI integration for generating documentation and customizing project files (asp/scss/xsl templates).",
+  "author": "Quadralay Corporation",
+  "license": "MIT",
+  "homepage": "https://github.com/quadralay/epublisher-claude-code-skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quadralay/epublisher-claude-code-skills.git"
+  },
+  "keywords": [
+    "epublisher",
+    "automap",
+    "documentation",
+    "technical-writing",
+    "webworks",
+    "reverb",
+    "html5",
+    "pdf",
+    "publishing",
+    "automation"
+  ],
+  "categories": [
+    "development-tools",
+    "documentation",
+    "automation"
+  ],
+  "compatibility": {
+    "ePublisher": "2024.1+",
+    "platforms": ["windows"]
+  },
+  "skill": {
+    "path": "SKILL.md",
+    "triggers": [
+      "ePublisher",
+      "AutoMap",
+      "documentation",
+      "asp",
+      "scss",
+      "xsl",
+      "Reverb",
+      "WebWorks"
+    ]
+  },
+  "scripts": {
+    "detect-installation": "scripts/detect-installation.sh",
+    "automap-wrapper": "scripts/automap-wrapper.sh",
+    "parse-targets": "scripts/parse-targets.sh",
+    "manage-sources": "scripts/manage-sources.sh",
+    "copy-customization": "scripts/copy-customization.py"
+  },
+  "documentation": {
+    "readme": "README.md",
+    "references": [
+      "references/AUTOMAP_INSTALLATION_DETECTION.md",
+      "references/FILE_RESOLVER_GUIDE.md"
+    ],
+    "templates": "templates/"
+  }
+}
