@@ -1,7 +1,7 @@
 {
-  "name": "epublisher-automap",
-  "version": "1.0.0",
-  "description": "WebWorks ePublisher AutoMap CLI integration for generating documentation and customizing project files (asp/scss/xsl templates).",
+  "name": "epublisher-skills",
+  "version": "2.0.0",
+  "description": "Modular Claude Code skills for WebWorks ePublisher development: build automation, project management, and format customization.",
   "author": "Quadralay Corporation",
   "license": "MIT",
   "homepage": "https://github.com/quadralay/epublisher-claude-code-skills",
@@ -19,7 +19,8 @@
     "html5",
     "pdf",
     "publishing",
-    "automation"
+    "automation",
+    "multi-skill"
   ],
   "categories": [
     "development-tools",
@@ -30,32 +31,65 @@
     "ePublisher": "2024.1+",
     "platforms": ["windows"]
   },
-  "skill": {
-    "path": "SKILL.md",
-    "triggers": [
-      "ePublisher",
-      "AutoMap",
-      "documentation",
-      "asp",
-      "scss",
-      "xsl",
-      "Reverb",
-      "WebWorks"
-    ]
-  },
-  "scripts": {
-    "detect-installation": "scripts/detect-installation.sh",
-    "automap-wrapper": "scripts/automap-wrapper.sh",
-    "parse-targets": "scripts/parse-targets.sh",
-    "manage-sources": "scripts/manage-sources.sh",
-    "copy-customization": "scripts/copy-customization.py"
-  },
+  "skills": [
+    {
+      "name": "epublisher-core",
+      "path": "skills/epublisher-core/SKILL.md",
+      "status": "production",
+      "description": "Build automation and project management"
+    },
+    {
+      "name": "epublisher-reverb-css",
+      "path": "skills/epublisher-reverb-css/SKILL.md",
+      "status": "placeholder",
+      "description": "Reverb CSS customization"
+    },
+    {
+      "name": "epublisher-pdf-page-layout",
+      "path": "skills/epublisher-pdf-page-layout/SKILL.md",
+      "status": "placeholder",
+      "description": "PDF XSL-FO page layout"
+    },
+    {
+      "name": "epublisher-reverb-toolbar",
+      "path": "skills/epublisher-reverb-toolbar/SKILL.md",
+      "status": "placeholder",
+      "description": "Reverb toolbar customization"
+    },
+    {
+      "name": "epublisher-reverb-header",
+      "path": "skills/epublisher-reverb-header/SKILL.md",
+      "status": "placeholder",
+      "description": "Reverb header customization"
+    },
+    {
+      "name": "epublisher-reverb-footer",
+      "path": "skills/epublisher-reverb-footer/SKILL.md",
+      "status": "placeholder",
+      "description": "Reverb footer customization"
+    },
+    {
+      "name": "epublisher-reverb-page",
+      "path": "skills/epublisher-reverb-page/SKILL.md",
+      "status": "placeholder",
+      "description": "Reverb page template customization"
+    }
+  ],
   "documentation": {
     "readme": "README.md",
+    "getting-started": "docs/GETTING_STARTED.md",
+    "skill-catalog": "docs/SKILL_CATALOG.md",
+    "contributing": "CONTRIBUTING.md",
     "references": [
-      "references/AUTOMAP_INSTALLATION_DETECTION.md",
-      "references/FILE_RESOLVER_GUIDE.md"
-    ],
-    "templates": "templates/"
+      "shared/references/FILE_RESOLVER_GUIDE.md"
+    ]
+  },
+  "architecture": {
+    "version": "2.0.0",
+    "type": "multi-skill",
+    "shared": {
+      "scripts": "shared/scripts/",
+      "references": "shared/references/"
+    }
   }
 }

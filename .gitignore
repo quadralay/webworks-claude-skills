@@ -56,3 +56,4 @@ test-results/
 
 # Claude Code specific
 .claude/local/
+.worktrees
