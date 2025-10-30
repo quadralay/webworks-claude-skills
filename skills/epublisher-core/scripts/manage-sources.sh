@@ -66,16 +66,16 @@ usage() {
     cat <<EOF
 Usage: $SCRIPT_NAME [OPTIONS] <project-file>
 
-Manage source documents in ePublisher project files (.wep, .wrp).
+Manage source documents and books in ePublisher project files (.wep, .wrp, .wxsp).
 
 REQUIRED:
-    <project-file>          Path to .wep or .wrp project file
+    <project-file>          Path to .wep, .wrp, or .wxsp project file
 
 ACTIONS:
-    -l, --list              List all source documents with status
+    -l, --list              List all source documents and books with status
     -a, --add PATH          Add document to project (requires --group)
     -r, --remove PATH       Remove document from project
-    -t, --toggle PATH       Toggle document inclusion status
+    -t, --toggle PATH       Toggle document/book inclusion status
     -v, --validate          Validate all source file paths exist
 
 OPTIONS:
@@ -127,9 +127,9 @@ validate_project_file() {
     fi
 
     # Check file extension
-    if [[ ! "$project_file" =~ \.(wep|wrp)$ ]]; then
+    if [[ ! "$project_file" =~ \.(wep|wrp|wxsp)$ ]]; then
         log_error "Invalid project file extension: $project_file"
-        log_error "Expected: .wep or .wrp"
+        log_error "Expected: .wep or .wrp or .wxsp"
         return 1
     fi
 
@@ -146,14 +146,14 @@ list_documents() {
     local project_file="$1"
     local json_output="${2:-false}"
 
-    log_verbose "Extracting document information from: $project_file"
+    log_verbose "Extracting document and book information from: $project_file"
 
-    # Extract all Document elements
+    # Extract all Document and Book elements
     local doc_lines
-    doc_lines=$(grep '<Document ' "$project_file" || true)
+    doc_lines=$(grep -E '<(Document|Book) ' "$project_file" || true)
 
     if [ -z "$doc_lines" ]; then
-        log_error "No Document elements found in project file"
+        log_error "No Document or Book elements found in project file"
         return 3
     fi
 
@@ -187,7 +187,7 @@ JSON_ENTRY
         echo ""
         echo "]"
     else
-        echo -e "${BLUE}Source Documents:${NC}"
+        echo -e "${BLUE}Source Documents and Books:${NC}"
         echo ""
         local count=1
         while IFS= read -r line; do
@@ -222,10 +222,10 @@ validate_sources() {
     log_info "Validating source file paths..."
 
     local doc_lines
-    doc_lines=$(grep '<Document ' "$project_file" || true)
+    doc_lines=$(grep -E '<(Document|Book) ' "$project_file" || true)
 
     if [ -z "$doc_lines" ]; then
-        log_error "No Document elements found in project file"
+        log_error "No Document or Book elements found in project file"
         return 3
     fi
 

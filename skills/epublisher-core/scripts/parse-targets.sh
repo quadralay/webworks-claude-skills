@@ -135,9 +135,9 @@ validate_project_file() {
     fi
 
     # Check file extension
-    if [[ ! "$project_file" =~ \.(wep|wrp)$ ]]; then
+    if [[ ! "$project_file" =~ \.(wep|wrp|wxsp)$ ]]; then
         log_error "Invalid project file extension: $project_file"
-        log_error "Expected: .wep or .wrp"
+        log_error "Expected: .wep or .wrp or .wxsp"
         return 1
     fi
 

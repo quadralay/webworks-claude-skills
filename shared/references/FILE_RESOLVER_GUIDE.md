@@ -153,7 +153,7 @@ The Base Format Version determines which version of format files to use when cre
 
 ### Determining Base Format Version
 
-Extract from the `<Project>` element in `.wep` or `.wrp` files:
+Extract from the `<Project>` element in `.wep` or `.wrp` or `.wxsp` files:
 
 ```xml
 <Project RuntimeVersion="2024.1" FormatVersion="{Current}" ...>
@@ -494,10 +494,8 @@ C:\Program Files\WebWorks\ePublisher\2024.1\Formats\Shared\common\pages\pagetemp
 
 Override at format level:
 ```
-C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Shared\common\pages\pagetemplate.xsl
+C:\Projects\MyDoc\Formats\Shared\common\pages\pagetemplate.xsl
 ```
-
-Note: Path still starts with format name, even for shared files.
 
 ### Version Upgrade Considerations
 

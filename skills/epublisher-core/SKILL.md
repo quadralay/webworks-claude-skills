@@ -66,6 +66,7 @@ Use `scripts/detect-installation.sh` for robust installation detection with vers
 
 **Common Command Options:**
 - `-c, --clean`: Clean build (remove cached files before generation)
+- `-n, --nodeploy`: Do not copy to deployment location
 - `-l, --cleandeploy`: Clean deployment location before copying output
 - `-t, --target "[TargetName]"`: Build specific target only (e.g., "WebWorks Reverb 2.0")
 - `--deployfolder "[Path]"`: Override deployment destination
@@ -74,12 +75,12 @@ Use `scripts/detect-installation.sh` for robust installation detection with vers
 
 Build all targets with clean:
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n "C:\Projects\MyDoc\MyDoc.wep"
 ```
 
 Build specific target:
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l -t "WebWorks Reverb 2.0" "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "WebWorks Reverb 2.0" "C:\Projects\MyDoc\MyDoc.wep"
 ```
 
 Build with custom deployment:
@@ -341,11 +342,23 @@ Project files contain source document references organized in: `<Groups>` → `<
 ```xml
 <Groups>
   <Group Name="Group1" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
-    <Document Path="Source\content-seed.md" Type="fm-maker" Included="true" DocumentID="abc123xyz" />
-    <Document Path="Source\getting-started.md" Type="fm-maker" Included="true" DocumentID="def456uvw" />
+    <Document Path="Source\content-seed.md" Type="normal" Included="true" DocumentID="abc123xyz" />
+    <Document Path="Source\getting-started.md" Type="normal" Included="true" DocumentID="def456uvw" />
   </Group>
   <Group Name="Reference" Type="normal" Included="true" GroupID="xYz987aBc">
-    <Document Path="Source\api-reference.md" Type="fm-maker" Included="true" DocumentID="ghi789rst" />
+    <Document Path="Source\api-reference.md" Type="normal" Included="true" DocumentID="ghi789rst" />
+  </Group>
+</Groups>
+```
+
+**FrameMaker Book Structure:**
+
+```xml
+<Groups>
+  <Group Name="Exploring ePublisher" Type="normal" Included="true" GroupID="dohcaj00OHA">
+    <Book Type="book" Included="true" DocumentID="9CK1vFTe-0A" Path="Source Docs\Adobe FrameMaker\Exploring ePublisher.book">
+      <Document Type="normal" Included="true" DocumentID="PNwbOCS_JSw" Path="Source Docs\Adobe FrameMaker\Understanding ePublisher.fm" />
+    </Book>
   </Group>
 </Groups>
 ```
@@ -360,8 +373,14 @@ Project files contain source document references organized in: `<Groups>` → `<
 
 **Document Element:**
 - `Path` - **Most Important** - Path to source file (relative or absolute)
-- `Type` - Document type (e.g., "fm-maker" for Markdown)
+- `Type` - Document type (typically "normal")
 - `Included` - Boolean ("true"/"false") to include/exclude document
+- `DocumentID` - Unique identifier (required, auto-generated)
+
+**Book Element:**
+- `Path` - **Most Important** - Path to source file (relative or absolute)
+- `Type` - Document type ("book" for FrameMaker book)
+- `Included` - Boolean ("true"/"false") to include/exclude book
 - `DocumentID` - Unique identifier (required, auto-generated)
 
 **Common Operations:**
@@ -399,6 +418,11 @@ grep 'Path="Source\\content-seed.md"' project.wep | grep -oP 'Included="\K[^"]+'
 - Create `<Group>` element with attributes
 - Add one or more `<Document>` child elements
 
+**6. Add New Book:**
+- Generate unique DocumentID
+- Add `<Book>` element with attributes, no child elements
+- Ensure proper XML structure and escaping
+
 **ID Generation Guidelines:**
 - **Format:** Alphanumeric string (typically 11 chars for GroupID)
 - **Example GroupID:** `w3KcSrHh-HI`, `xYz987aBc`
@@ -407,12 +431,12 @@ grep 'Path="Source\\content-seed.md"' project.wep | grep -oP 'Included="\K[^"]+'
 
 **Document Type Reference:**
 
-Common document types:
-- `fm-maker` - Markdown files (.md)
-- `fm-html` - HTML files (.html, .htm)
-- `fm-dita` - DITA XML files (.dita, .xml)
-- `fm-word` - Microsoft Word documents (.docx)
-- `fm-unstructured` - FrameMaker unstructured files (.fm)
+Common document/book types:
+- `normal` - Markdown files (.md)
+- `normal` - DITA XML files (.ditamap, .dita, .xml)
+- `normal` - Microsoft Word documents (.docx)
+- `normal` - FrameMaker documents (.fm)
+- `book` - FrameMaker books (.bk, .book)
 
 **Path Handling:**
 - Use backslashes (`\`) for Windows paths in XML

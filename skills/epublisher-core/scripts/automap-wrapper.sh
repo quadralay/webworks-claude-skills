@@ -84,10 +84,10 @@ REQUIRED:
 
 OPTIONS:
     -c, --clean            Clean build (remove cached files)
+    -n, --nodeploy         Do not copy files to deployment location
     -l, --cleandeploy      Clean deployment location before copying output
     -t, --target TARGET    Build specific target only
     --deployfolder PATH    Override deployment destination
-    --version VERSION      Use specific AutoMap version (e.g., 2024.1)
     --verbose              Enable verbose output
     --quiet                Suppress informational messages
     --help                 Show this help message
@@ -101,19 +101,16 @@ EXIT CODES:
 
 EXAMPLES:
     # Build all targets with clean
-    $SCRIPT_NAME -c -l project.wep
+    $SCRIPT_NAME -c -n project.wep
 
     # Build specific target
-    $SCRIPT_NAME -c -l -t "WebWorks Reverb 2.0" project.wep
+    $SCRIPT_NAME -c -n -t "WebWorks Reverb 2.0" project.wep
 
-    # Build with custom deployment
-    $SCRIPT_NAME --deployfolder "C:\\Output" project.wep
-
-    # Use specific AutoMap version
-    $SCRIPT_NAME --version 2024.1 -c -l project.wep
+    # Build with custom deployment and delete existing files at deployment location
+    $SCRIPT_NAME -l --deployfolder "C:\\Output" project.wep
 
     # Quiet mode (errors only)
-    $SCRIPT_NAME --quiet -c -l project.wep
+    $SCRIPT_NAME --quiet -c -n project.wep
 EOF
 }
 
@@ -149,9 +146,6 @@ detect_automap_executable() {
     fi
 
     local detect_args=()
-    if [ -n "$version" ]; then
-        detect_args+=(--version "$version")
-    fi
     if [ "$VERBOSE" = true ]; then
         detect_args+=(--verbose)
     fi
@@ -183,6 +177,11 @@ build_automap_command() {
 
     if [ "$CLEAN_DEPLOY" = true ]; then
         cmd="$cmd -l"
+    fi
+
+    # Add no deploy flags
+    if [ "$NO_DEPLOY" = true ]; then
+        cmd="$cmd -n"
     fi
 
     # Add target if specified
@@ -279,6 +278,10 @@ while [[ $# -gt 0 ]]; do
             CLEAN_BUILD=true
             shift
             ;;
+        -n)
+            NO_DEPLOY=true
+            shift
+            ;;
         -l|--cleandeploy)
             CLEAN_DEPLOY=true
             shift
@@ -299,15 +302,6 @@ while [[ $# -gt 0 ]]; do
                 exit 2
             fi
             DEPLOY_FOLDER="$2"
-            shift 2
-            ;;
-        --version)
-            if [ -z "${2:-}" ]; then
-                log_error "Missing VERSION argument"
-                usage
-                exit 2
-            fi
-            AUTOMAP_VERSION="$2"
             shift 2
             ;;
         --verbose)
