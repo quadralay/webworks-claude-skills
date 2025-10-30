@@ -1,5 +1,17 @@
 # feat: Develop Claude Code Skill for WebWorks ePublisher AutoMap Integration
 
+> **Historical Document Notice**
+>
+> This document describes the original v1.0.0 monolithic skill implementation (completed January 2025).
+> The project has since evolved to **v2.0.0 with a modular multi-skill architecture**.
+> This plan is preserved for historical context and technical reference.
+>
+> **For current architecture and documentation:**
+> - [SKILL_CATALOG.md](docs/SKILL_CATALOG.md) - Overview of all 7 modular skills
+> - [GETTING_STARTED.md](docs/GETTING_STARTED.md) - Installation and usage guide
+> - [epublisher-core SKILL.md](skills/epublisher-core/SKILL.md) - Production-ready core skill
+> - [README.md](README.md) - v2.0.0 project overview
+
 ## Overview
 
 Create a comprehensive Claude Code Skill that integrates WebWorks ePublisher AutoMap CLI with Claude Code, enabling AI-assisted documentation generation and format customization workflows. This skill will empower users to run AutoMap commands, modify ePublisher project files, and perform common customizations (`*.asp`, `*.scss`, `*.xsl` files) through an intelligent assistant that understands ePublisher's file resolver pattern and parallel construction architecture.
