@@ -1,0 +1,28 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "webworks-agent-skills",
+  "version": "2.0.0",
+  "description": "Claude Code skills marketplace for WebWorks documentation tools including ePublisher, FrameMaker, and WebWorks utilities",
+  "owner": {
+    "name": "Quadralay Corporation",
+    "email": "support@webworks.com"
+  },
+  "plugins": [
+    {
+      "name": "epublisher-automation",
+      "description": "Complete automation suite for WebWorks ePublisher including build automation, project management, and format customization",
+      "version": "2.0.0",
+      "author": {
+        "name": "Quadralay Corporation",
+        "url": "https://github.com/quadralay"
+      },
+      "source": "./plugins/epublisher-automation",
+      "category": "development-tools",
+      "tags": ["epublisher", "automation", "build", "automap", "reverb", "pdf"],
+      "strict": false,
+      "skills": [
+        "./plugins/epublisher-automation/skills/epublisher-core"
+      ]
+    }
+  ]
+}

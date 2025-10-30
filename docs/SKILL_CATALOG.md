@@ -1,16 +1,20 @@
-# ePublisher Skills Catalog
+# WebWorks Agent Skills Catalog
 
 This repository contains multiple specialized Claude Code skills for WebWorks ePublisher AutoMap development and customization workflows.
 
 ## Overview
 
-The ePublisher skill collection provides modular, focused AI assistance for different aspects of ePublisher project development. Skills are organized by functional area and designed to work together seamlessly.
+The WebWorks Agent Skills provide modular, focused AI assistance for different aspects of ePublisher project development. Skills are organized into plugins by functional area and designed to work together seamlessly.
+
+## Plugin Organization
+
+All ePublisher skills are currently organized in the `epublisher-automation` plugin located at `plugins/epublisher-automation/`.
 
 ## Production Skills
 
 ### epublisher-core
 **Status:** ✅ Production Ready
-**Location:** `skills/epublisher-core/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-core/`
 
 Core ePublisher AutoMap functionality including:
 - Installation detection and AutoMap CLI integration
@@ -27,7 +31,7 @@ The following skills are planned for future implementation. They currently provi
 
 ### epublisher-reverb-css
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-reverb-css/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-css/`
 
 General Reverb 2.0 CSS and SCSS customization.
 
@@ -35,7 +39,7 @@ General Reverb 2.0 CSS and SCSS customization.
 
 ### epublisher-pdf-page-layout
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-pdf-page-layout/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-pdf-page-layout/`
 
 PDF output page layout customization using XSL-FO.
 
@@ -43,7 +47,7 @@ PDF output page layout customization using XSL-FO.
 
 ### epublisher-reverb-toolbar
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-reverb-toolbar/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-toolbar/`
 
 Reverb 2.0 toolbar customization (Connect.asp).
 
@@ -51,7 +55,7 @@ Reverb 2.0 toolbar customization (Connect.asp).
 
 ### epublisher-reverb-header
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-reverb-header/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-header/`
 
 Reverb 2.0 page header customization (Header.asp).
 
@@ -59,7 +63,7 @@ Reverb 2.0 page header customization (Header.asp).
 
 ### epublisher-reverb-footer
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-reverb-footer/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-footer/`
 
 Reverb 2.0 page footer customization (Footer.asp).
 
@@ -67,7 +71,7 @@ Reverb 2.0 page footer customization (Footer.asp).
 
 ### epublisher-reverb-page
 **Status:** 🚧 Placeholder
-**Location:** `skills/epublisher-reverb-page/`
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-page/`
 
 Reverb 2.0 overall page template customization (Page.asp).
 

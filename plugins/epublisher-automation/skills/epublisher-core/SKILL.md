@@ -469,7 +469,7 @@ C:\Program Files\WebWorks\ePublisher\[version]\Formats\[FormatName]\[format-stru
 
 **Note:** Detailed file resolver documentation and customization workflows are provided by specialized customization skills (epublisher-reverb-css, epublisher-pdf-page-layout, etc.).
 
-See `shared/references/FILE_RESOLVER_GUIDE.md` for comprehensive file resolver documentation.
+See `{baseDir}/../../../shared/references/FILE_RESOLVER_GUIDE.md` for comprehensive file resolver documentation.
 
 ## Helper Scripts
 

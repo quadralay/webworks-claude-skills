@@ -1,6 +1,6 @@
-# ePublisher Claude Code Skills
+# WebWorks Agent Skills
 
-AI-powered automation for WebWorks ePublisher documentation generation and format customization.
+AI-powered automation for WebWorks documentation tools including ePublisher, FrameMaker, and WebWorks utilities.
 
 ## Overview
 
@@ -54,23 +54,39 @@ Future specialized skills will provide AI-guided customization for:
 - **Claude Code** installed and configured
 - **Git Bash** or similar Unix-like shell environment
 
-### Install as Claude Code Skills
+### Install from GitHub
 
-1. **Clone or download this repository:**
+1. **Install via Claude Code plugin marketplace:**
    ```bash
-   git clone https://github.com/quadralay/epublisher-claude-code-skills.git
-   cd epublisher-claude-code-skills
+   # After GitHub publication
+   /plugin marketplace add quadralay/webworks-agent-skills
+   /plugin install epublisher-automation@webworks-agent-skills
    ```
 
-2. **Copy to Claude Code skills directory:**
+2. **Or install manually (Claude Code):**
    ```bash
-   # Windows
-   mkdir -p "$APPDATA/Claude/skills"
-   cp -r . "$APPDATA/Claude/skills/epublisher"
+   git clone https://github.com/quadralay/webworks-agent-skills.git
+   cd webworks-agent-skills
+
+   # Copy to Claude Code plugins directory
+   mkdir -p "$APPDATA/Claude/plugins"
+   cp -r plugins/epublisher-automation "$APPDATA/Claude/plugins/"
    ```
 
-3. **Verify installation:**
-   - Open Claude Code
+3. **For Claude Desktop users:**
+   ```bash
+   git clone https://github.com/quadralay/webworks-agent-skills.git
+   cd webworks-agent-skills
+
+   # Copy to Claude Desktop skills directory
+   mkdir -p ~/.claude/skills
+   cp -r plugins/epublisher-automation ~/.claude/skills/
+   ```
+
+   **Note:** The plugin is self-contained with all shared resources included, making it portable across Claude Code and Claude Desktop.
+
+4. **Verify installation:**
+   - Open Claude Code or Claude Desktop
    - Skills automatically activate when working with ePublisher projects
    - Test with: "Build this ePublisher project"
 
@@ -113,30 +129,30 @@ Customize the Reverb header to add a company logo
 ## Project Structure
 
 ```
-epublisher-claude-code-skills/
+webworks-agent-skills/
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin metadata
-├── skills/
-│   ├── epublisher-core/         # ✅ Production: Build & project management
-│   │   ├── SKILL.md
-│   │   ├── scripts/
-│   │   └── references/
-│   ├── epublisher-reverb-css/   # 🚧 Placeholder
-│   │   └── SKILL.md
-│   ├── epublisher-pdf-page-layout/  # 🚧 Placeholder
-│   │   └── SKILL.md
-│   └── [other placeholder skills...]
-├── shared/
-│   ├── scripts/                 # Shared utilities
-│   │   └── copy-customization.py
-│   └── references/              # Shared documentation
-│       └── FILE_RESOLVER_GUIDE.md
+│   └── marketplace.json         # Marketplace manifest
+├── plugins/
+│   └── epublisher-automation/   # ePublisher automation plugin (self-contained)
+│       ├── skills/              # All 7 ePublisher skills
+│       │   ├── epublisher-core/         # ✅ Production
+│       │   │   ├── SKILL.md
+│       │   │   ├── scripts/
+│       │   │   └── references/
+│       │   ├── epublisher-reverb-css/   # 🚧 Placeholder
+│       │   ├── epublisher-pdf-page-layout/
+│       │   └── [5 more skills...]
+│       └── shared/              # Shared utilities (plugin-specific)
+│           ├── scripts/
+│           └── references/
 ├── docs/
-│   ├── SKILL_CATALOG.md         # Complete skill descriptions
-│   └── GETTING_STARTED.md       # Usage guide
-├── CONTRIBUTING.md              # Contribution guidelines
-├── SKILL.md.v1.deprecated       # Legacy monolithic skill
-└── README.md                    # This file
+│   ├── SKILL_CATALOG.md
+│   └── GETTING_STARTED.md
+├── archive/                     # Historical files
+│   ├── PROJECT_PLAN.md
+│   └── templates/
+├── CONTRIBUTING.md
+└── README.md
 ```
 
 ## Documentation
@@ -146,15 +162,15 @@ epublisher-claude-code-skills/
 - **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Installation and basic usage
 - **[SKILL_CATALOG.md](docs/SKILL_CATALOG.md)** - Complete skill reference
 
-### Core Skill (epublisher-core)
+### Core Skill
 
-- **[skills/epublisher-core/SKILL.md](skills/epublisher-core/SKILL.md)** - Skill definition (after Phase 2)
-- **[FILE_RESOLVER_GUIDE.md](shared/references/FILE_RESOLVER_GUIDE.md)** - Override hierarchy guide
+- **[epublisher-core/SKILL.md](plugins/epublisher-automation/skills/epublisher-core/SKILL.md)** - Skill definition
+- **[FILE_RESOLVER_GUIDE.md](plugins/epublisher-automation/shared/references/FILE_RESOLVER_GUIDE.md)** - Override hierarchy guide
 
 ### Development
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for implementing placeholder skills
-- **[PROJECT_PLAN.md](PROJECT_PLAN.md)** - Original v1.0.0 development plan
+- **[PROJECT_PLAN.md](archive/PROJECT_PLAN.md)** - Original v1.0.0 development plan (archived)
 
 ## Architecture
 
@@ -208,28 +224,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Version 2.0.0 (2025-01-29)
 
-**Multi-Skill Architecture Release**
+**Marketplace Plugin Architecture Release**
 
-- ✅ Modular multi-skill architecture
+- ✅ Marketplace plugin structure following Anthropic patterns
+- ✅ `epublisher-automation` plugin with 7 skills
 - ✅ epublisher-core skill (production ready)
 - ✅ 6 placeholder skills for future implementation
+- ✅ Foundation for future WebWorks product plugins
 - ✅ Improved context efficiency (30-70% reduction)
 - ✅ Comprehensive documentation structure
-- ✅ Contribution guidelines for extending skills
-
-### Version 1.0.0 (2025-01-27)
-
-**Initial Monolithic Release** (now deprecated)
-
-- Core AutoMap CLI integration
-- Registry-based installation detection
-- Project file parsing
-- File resolver hierarchy support
-- Customization copying with validation
-- Comprehensive documentation
 
 ---
 
-**Status:** v2.0.0 - Multi-skill architecture with 1 production skill + 6 placeholders
+**Status:** v2.0.0 - Marketplace architecture with epublisher-automation plugin
 
 **Generated with Claude Code**

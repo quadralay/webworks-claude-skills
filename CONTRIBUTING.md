@@ -1,6 +1,6 @@
-# Contributing to ePublisher Skills
+# Contributing to WebWorks Agent Skills
 
-Thank you for your interest in contributing to the ePublisher Claude Code Skills project!
+Thank you for your interest in contributing to the WebWorks Agent Skills project!
 
 ## Project Status
 
@@ -56,7 +56,7 @@ The following skills are defined but not yet implemented:
 Each skill should follow this structure:
 
 ```
-skills/your-skill-name/
+plugins/epublisher-automation/skills/your-skill-name/
 ├── SKILL.md              # Main skill definition
 ├── scripts/              # Helper scripts (optional)
 │   └── helper.sh

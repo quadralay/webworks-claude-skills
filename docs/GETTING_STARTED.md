@@ -1,6 +1,6 @@
-# Getting Started with ePublisher Skills
+# Getting Started with WebWorks Agent Skills
 
-This guide helps you start using the ePublisher Claude Code skills for AI-assisted ePublisher development.
+This guide helps you start using the WebWorks Agent Skills for AI-assisted ePublisher development.
 
 ## Installation
 
