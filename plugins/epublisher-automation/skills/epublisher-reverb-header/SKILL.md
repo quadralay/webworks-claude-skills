@@ -2,7 +2,7 @@
 name: epublisher-reverb-header
 description: Customize WebWorks Reverb 2.0 page header. Modify header content, layout, and styling. Use when customizing Reverb header or working with Header.asp.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---

@@ -2,15 +2,15 @@
 
 > **Historical Document Notice**
 >
-> This document describes the original v1.0.0 monolithic skill implementation (completed January 2025).
-> The project has since evolved to **v2.0.0 with marketplace plugin architecture**.
-> This plan is preserved for historical context and technical reference.
+> This document describes the original planning phase for a monolithic skill approach.
+> The project was released with a **modular multi-skill architecture** instead.
+> This plan is preserved for historical context and technical reference only.
 >
 > **For current architecture and documentation:**
-> - [SKILL_CATALOG.md](docs/SKILL_CATALOG.md) - Overview of all 7 modular skills
-> - [GETTING_STARTED.md](docs/GETTING_STARTED.md) - Installation and usage guide
-> - [epublisher-core SKILL.md](plugins/epublisher-automation/skills/epublisher-core/SKILL.md) - Production-ready core skill
-> - [README.md](README.md) - v2.0.0 project overview with marketplace structure
+> - [README.md](../README.md) - Project overview with marketplace plugin structure
+> - [SKILL_CATALOG.md](../docs/SKILL_CATALOG.md) - Overview of all 7 modular skills
+> - [GETTING_STARTED.md](../docs/GETTING_STARTED.md) - Installation and usage guide
+> - [epublisher-core SKILL.md](../plugins/epublisher-automation/skills/epublisher-core/SKILL.md) - Production-ready core skill
 
 ## Overview
 

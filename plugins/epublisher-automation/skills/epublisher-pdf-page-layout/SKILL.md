@@ -2,7 +2,7 @@
 name: epublisher-pdf-page-layout
 description: Customize WebWorks ePublisher PDF output page layout using XSL-FO. Modify page dimensions, margins, headers, footers, and page sequences. Use when customizing PDF page layout or working with XSL-FO templates.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---

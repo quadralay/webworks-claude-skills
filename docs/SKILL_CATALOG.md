@@ -27,7 +27,7 @@ Core ePublisher AutoMap functionality including:
 
 ## Placeholder Skills (Planned)
 
-The following skills are planned for future implementation. They currently provide minimal functionality and serve as placeholders for the v2.0.0 architecture.
+The following skills are planned for future implementation. They currently provide minimal functionality and serve as placeholders in the modular architecture.
 
 ### epublisher-reverb-css
 **Status:** 🚧 Placeholder
@@ -87,8 +87,7 @@ All customization skills depend on `epublisher-core` for:
 
 ## Version History
 
-- **v2.0.0** - Multi-skill architecture with epublisher-core production + 6 placeholders
-- **v1.0.0** - Monolithic epublisher-automap skill (deprecated)
+- **v1.0.0** - Initial release with modular multi-skill architecture
 
 ## Contributing
 

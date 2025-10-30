@@ -4,7 +4,7 @@ Thank you for your interest in contributing to the WebWorks Agent Skills project
 
 ## Project Status
 
-**Current Version:** 2.0.0
+**Current Version:** 1.0.0
 **Architecture:** Multi-skill modular system
 
 - **Production:** 1 skill (epublisher-core)
@@ -96,7 +96,7 @@ name: skill-kebab-case-name
 description: Brief description (max 1024 chars)
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "production|beta|placeholder"
   dependencies: ["epublisher-core"]
 ---

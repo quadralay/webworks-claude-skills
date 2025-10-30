@@ -53,7 +53,7 @@ Add a new source file: docs/new-chapter.fm
 Copy the Reverb header template to my project for customization
 ```
 
-(Note: Customization skills are placeholders in v2.0.0)
+(Note: Customization skills are placeholders and planned for future implementation)
 
 ## Skill Activation
 
@@ -74,7 +74,7 @@ your-project/
 ├── Source/                     # Source documents
 │   └── docs/
 ├── Format/                     # Format customizations
-│   └── Reverb2/
+│   └── WebWorks Reverb 2.0/
 └── Output/                     # Generated output
 ```
 
@@ -86,12 +86,10 @@ your-project/
 
 ## Version Information
 
-Current version: **2.0.0**
+Current version: **1.0.0**
 - Multi-skill modular architecture
 - epublisher-core production ready
 - 6 placeholder skills for future implementation
-
-Previous version: 1.0.0 (monolithic, deprecated)
 
 ## Next Steps
 

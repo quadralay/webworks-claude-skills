@@ -2,7 +2,7 @@
 name: epublisher-reverb-css
 description: Customize WebWorks Reverb 2.0 general CSS styles. Modify colors, fonts, spacing, and layout styles. Use when customizing Reverb appearance or working with Reverb.scss files.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---

@@ -2,7 +2,7 @@
 name: epublisher-reverb-page
 description: Customize WebWorks Reverb 2.0 page template and structure. Modify overall page layout, content areas, and navigation structure. Use when customizing Reverb page template or working with Page.asp.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---

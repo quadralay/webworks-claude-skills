@@ -3,7 +3,7 @@ name: epublisher-core
 description: WebWorks ePublisher AutoMap build automation and project management. Detects installations, executes builds, parses project files, and manages source documents. Use when building ePublisher projects, running AutoMap, parsing targets, or managing source files.
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   category: "build-automation"
   status: "production"
 ---

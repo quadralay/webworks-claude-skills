@@ -2,7 +2,7 @@
 name: epublisher-reverb-footer
 description: Customize WebWorks Reverb 2.0 page footer. Modify footer content, layout, and styling. Use when customizing Reverb footer or working with Footer.asp.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---

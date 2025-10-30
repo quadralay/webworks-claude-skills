@@ -6,7 +6,7 @@ AI-powered automation for WebWorks documentation tools including ePublisher, Fra
 
 This repository provides a collection of specialized Claude Code skills for WebWorks ePublisher development. The modular architecture allows Claude to provide focused, context-aware assistance for different aspects of ePublisher projects.
 
-**Current Version:** 2.0.0 (Multi-Skill Architecture)
+**Current Version:** 1.0.0
 
 ### Available Skills
 
@@ -124,7 +124,7 @@ List all source documents
 Customize the Reverb header to add a company logo
 ```
 
-(Customization skills are placeholders in v2.0.0)
+(Customization skills are placeholders and planned for future implementation)
 
 ## Project Structure
 
@@ -170,13 +170,13 @@ webworks-agent-skills/
 ### Development
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for implementing placeholder skills
-- **[PROJECT_PLAN.md](archive/PROJECT_PLAN.md)** - Original v1.0.0 development plan (archived)
+- **[PROJECT_PLAN.md](archive/PROJECT_PLAN.md)** - Historical development plan (archived)
 
 ## Architecture
 
-### v2.0.0 Multi-Skill Design
+### Multi-Skill Design
 
-The v2.0.0 architecture splits functionality into focused skills:
+The modular architecture splits functionality into focused skills:
 
 - **Single Responsibility:** Each skill handles one domain
 - **Progressive Disclosure:** Skills load only relevant context
@@ -189,13 +189,9 @@ The v2.0.0 architecture splits functionality into focused skills:
 - More focused assistance
 - Easier to extend and maintain
 
-### v1.0.0 Legacy (Deprecated)
-
-The original monolithic skill is preserved as `SKILL.md.v1.deprecated` for reference.
-
 ## Version Compatibility
 
-- **Skill Version:** 2.0.0
+- **Skill Version:** 1.0.0
 - **ePublisher:** 2024.1+ (primary), 2020.2+ (legacy support)
 - **AutoMap:** 2024.1+
 - **Platform:** Windows only
@@ -222,20 +218,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-### Version 2.0.0 (2025-01-29)
+### Version 1.0.0 (2025-01-29)
 
-**Marketplace Plugin Architecture Release**
+**Initial Release**
 
 - ✅ Marketplace plugin structure following Anthropic patterns
-- ✅ `epublisher-automation` plugin with 7 skills
+- ✅ `epublisher-automation` plugin with 7 modular skills
 - ✅ epublisher-core skill (production ready)
 - ✅ 6 placeholder skills for future implementation
-- ✅ Foundation for future WebWorks product plugins
-- ✅ Improved context efficiency (30-70% reduction)
-- ✅ Comprehensive documentation structure
+- ✅ Self-contained plugin for easy installation
+- ✅ Progressive skill loading for efficient context management
+- ✅ Comprehensive documentation and contribution guidelines
 
 ---
 
-**Status:** v2.0.0 - Marketplace architecture with epublisher-automation plugin
+**Status:** Production - epublisher-core skill ready, 6 additional skills planned
 
 **Generated with Claude Code**

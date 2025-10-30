@@ -2,7 +2,7 @@
 name: epublisher-reverb-toolbar
 description: Customize WebWorks Reverb 2.0 toolbar. Modify toolbar buttons, layout, and functionality. Use when customizing Reverb toolbar or working with Connect.asp.
 metadata:
-  version: "2.0.0"
+  version: "1.0.0"
   status: "placeholder"
   dependencies: ["epublisher-core"]
 ---
