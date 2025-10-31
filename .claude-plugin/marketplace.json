@@ -21,7 +21,7 @@
       "tags": ["epublisher", "automation", "build", "automap", "reverb", "pdf"],
       "strict": false,
       "skills": [
-        "./plugins/epublisher-automation/skills/epublisher-core"
+        "./skills/epublisher-core"
       ]
     }
   ]
