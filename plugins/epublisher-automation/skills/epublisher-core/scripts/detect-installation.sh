@@ -21,6 +21,7 @@ set -euo pipefail
 SCRIPT_NAME="$(basename "$0")"
 VERBOSE=false
 REQUESTED_VERSION=""
+SHOW_BUILD=false
 
 # Registry paths
 REG_PATH_64BIT="HKLM\\SOFTWARE\\WebWorks\\ePublisher AutoMap"
@@ -54,6 +55,7 @@ Detects WebWorks ePublisher AutoMap installation on Windows systems.
 
 OPTIONS:
     --version VERSION    Detect specific version (e.g., 2024.1)
+    --show-build        Display build number along with executable path
     --verbose           Enable verbose output
     --help              Show this help message
 
@@ -69,12 +71,19 @@ EXAMPLES:
     # Detect specific version
     $SCRIPT_NAME --version 2024.1
 
+    # Show build number
+    $SCRIPT_NAME --show-build
+
     # Verbose mode
     $SCRIPT_NAME --verbose
 
 OUTPUT:
     On success, prints full path to AutoMap executable:
     C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\ePublisher AutoMap\\WebWorks.Automap.exe
+
+    With --show-build, also displays build number:
+    C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\ePublisher AutoMap\\WebWorks.Automap.exe
+    Build: 4603
 EOF
 }
 
@@ -107,14 +116,42 @@ query_registry_exepath() {
     local full_path="$reg_path\\$version"
     log_verbose "Querying ExePath from: $full_path"
 
-    # Query ExePath value
+    # Query ExePath value (without /v flag for compatibility)
     local exe_path
-    exe_path=$(reg query "$full_path" /v ExePath 2>/dev/null | grep "ExePath" | awk '{for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' | sed 's/ $//' || true)
+    exe_path=$(reg query "$full_path" 2>/dev/null | grep "ExePath" | awk '{for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' | sed 's/ $//' || true)
 
     if [ -n "$exe_path" ]; then
         log_verbose "Found ExePath: $exe_path"
         echo "$exe_path"
         return 0
+    fi
+
+    return 1
+}
+
+query_registry_build_number() {
+    local reg_path="$1"
+    local version="$2"
+
+    local full_path="$reg_path\\$version"
+    log_verbose "Querying Version from: $full_path"
+
+    # Query Version value (e.g., "24.1.4603") - without /v flag for compatibility
+    local version_string
+    version_string=$(reg query "$full_path" 2>/dev/null | grep "Version" | grep "REG_SZ" | awk '{for(i=3;i<=NF;i++) printf "%s ", $i; print ""}' | sed 's/ $//' || true)
+
+    if [ -n "$version_string" ]; then
+        log_verbose "Found Version: $version_string"
+
+        # Extract build number (last fragment after final dot)
+        local build_number
+        build_number=$(echo "$version_string" | awk -F'.' '{print $NF}')
+
+        if [ -n "$build_number" ]; then
+            log_verbose "Extracted Build Number: $build_number"
+            echo "$build_number"
+            return 0
+        fi
     fi
 
     return 1
@@ -156,7 +193,17 @@ detect_via_registry() {
 
                 if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$requested_version"); then
                     if validate_executable "$exe_path"; then
-                        echo "$exe_path"
+                        # Query build number if requested
+                        if [ "$SHOW_BUILD" = true ]; then
+                            if build_number=$(query_registry_build_number "$REG_PATH_64BIT" "$requested_version"); then
+                                log_verbose "Build number: $build_number"
+                                echo "$exe_path|$build_number"
+                            else
+                                echo "$exe_path|"
+                            fi
+                        else
+                            echo "$exe_path"
+                        fi
                         return 0
                     fi
                 fi
@@ -169,7 +216,17 @@ detect_via_registry() {
 
             if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$latest_version"); then
                 if validate_executable "$exe_path"; then
-                    echo "$exe_path"
+                    # Query build number if requested
+                    if [ "$SHOW_BUILD" = true ]; then
+                        if build_number=$(query_registry_build_number "$REG_PATH_64BIT" "$latest_version"); then
+                            log_verbose "Build number: $build_number"
+                            echo "$exe_path|$build_number"
+                        else
+                            echo "$exe_path|"
+                        fi
+                    else
+                        echo "$exe_path"
+                    fi
                     return 0
                 fi
             fi
@@ -189,7 +246,17 @@ detect_via_registry() {
 
                 if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$requested_version"); then
                     if validate_executable "$exe_path"; then
-                        echo "$exe_path"
+                        # Query build number if requested
+                        if [ "$SHOW_BUILD" = true ]; then
+                            if build_number=$(query_registry_build_number "$REG_PATH_32BIT" "$requested_version"); then
+                                log_verbose "Build number: $build_number"
+                                echo "$exe_path|$build_number"
+                            else
+                                echo "$exe_path|"
+                            fi
+                        else
+                            echo "$exe_path"
+                        fi
                         return 0
                     fi
                 fi
@@ -202,7 +269,17 @@ detect_via_registry() {
 
             if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$latest_version"); then
                 if validate_executable "$exe_path"; then
-                    echo "$exe_path"
+                    # Query build number if requested
+                    if [ "$SHOW_BUILD" = true ]; then
+                        if build_number=$(query_registry_build_number "$REG_PATH_32BIT" "$latest_version"); then
+                            log_verbose "Build number: $build_number"
+                            echo "$exe_path|$build_number"
+                        else
+                            echo "$exe_path|"
+                        fi
+                    else
+                        echo "$exe_path"
+                    fi
                     return 0
                 fi
             fi
@@ -234,7 +311,12 @@ detect_via_filesystem() {
             local exe_path="$base_path\\$requested_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
 
             if validate_executable "$exe_path"; then
-                echo "$exe_path"
+                # Filesystem detection cannot provide build number
+                if [ "$SHOW_BUILD" = true ]; then
+                    echo "$exe_path|"
+                else
+                    echo "$exe_path"
+                fi
                 return 0
             fi
         else
@@ -250,7 +332,12 @@ detect_via_filesystem() {
                 local exe_path="$base_path\\$latest_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
 
                 if validate_executable "$exe_path"; then
-                    echo "$exe_path"
+                    # Filesystem detection cannot provide build number
+                    if [ "$SHOW_BUILD" = true ]; then
+                        echo "$exe_path|"
+                    else
+                        echo "$exe_path"
+                    fi
                     return 0
                 fi
             fi
@@ -302,6 +389,10 @@ while [[ $# -gt 0 ]]; do
             REQUESTED_VERSION="$2"
             shift 2
             ;;
+        --show-build)
+            SHOW_BUILD=true
+            shift
+            ;;
         --verbose)
             VERBOSE=true
             shift
@@ -327,8 +418,19 @@ if [ -n "$REQUESTED_VERSION" ]; then
     log_verbose "Requested version: $REQUESTED_VERSION"
 fi
 
-if automap_path=$(detect_automap "$REQUESTED_VERSION"); then
-    echo "$automap_path"
+if automap_result=$(detect_automap "$REQUESTED_VERSION"); then
+    if [ "$SHOW_BUILD" = true ]; then
+        # Parse output: path|build
+        automap_path=$(echo "$automap_result" | cut -d'|' -f1)
+        build_number=$(echo "$automap_result" | cut -d'|' -f2)
+
+        echo "$automap_path"
+        if [ -n "$build_number" ]; then
+            echo "Build: $build_number"
+        fi
+    else
+        echo "$automap_result"
+    fi
     exit 0
 else
     exit 1

@@ -30,32 +30,88 @@ HKEY_LOCAL_MACHINE\SOFTWARE\WebWorks\ePublisher AutoMap\[VERSION]
 HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WebWorks\ePublisher AutoMap\[VERSION]
 ```
 
-**Registry Key:** `ExePath` contains full path to the executable
+**Registry Structure:**
+
+The registry path contains child keys representing installed versions (e.g., "2024.1", "2020.2"). Each version key contains:
+
+| Value Name | Type | Description | Example |
+|------------|------|-------------|---------|
+| `ExePath` | REG_SZ | Full path to AutoMap executable | `C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe` |
+| `Version` | REG_SZ | Full version with build number | `24.1.4603` |
+
+**Build Number Extraction:**
+
+Note: `Major` assumes prefix of `20`.
+
+The `Version` value contains the full version string in format: `[MAJOR].[MINOR].[BUILD]`
+- Example: `24.1.4603`
+  - Major: 2024
+  - Minor: 1
+  - **Build Number: 4603** (last fragment after final dot)
 
 **Detection Steps:**
-1. Query registry for ePublisher AutoMap versions (both 64-bit and 32-bit paths)
-2. Enumerate available versions and select the latest
-3. Read `ExePath` value for the executable location
-4. Validate the file exists at the specified path
-5. Cache the path for session duration
+1. Query registry base path to enumerate child keys (versions)
+2. Select requested version or latest version from available children
+3. Query the version's child key for `ExePath` value (executable location)
+4. Optionally query `Version` value and extract build number
+5. Validate the executable file exists at the specified path
+6. Cache the path for session duration
 
 **Fallback Method (if registry unavailable):**
 - Check standard installation path: `C:\Program Files\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
 - Check 32-bit path: `C:\Program Files (x86)\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
 - Enumerate version directories and find the latest
 
-**PowerShell Registry Query Example:**
+**Registry Query Examples:**
+
+PowerShell - Query ExePath:
 ```powershell
 $path = (Get-ItemProperty -Path "HKLM:\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1").ExePath
 ```
 
-**Bash/reg Command Example:**
+PowerShell - Query Version and extract build number:
+```powershell
+$version = (Get-ItemProperty -Path "HKLM:\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1").Version
+$buildNumber = $version.Split('.')[-1]
+```
+
+Bash/reg - Query ExePath:
 ```bash
 reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1" /v ExePath
 ```
 
+Bash/reg - Query Version and extract build number:
+```bash
+# Get version string
+version=$(reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1" /v Version | grep "Version" | awk '{print $NF}')
+
+# Extract build number (last fragment)
+build_number=$(echo "$version" | awk -F'.' '{print $NF}')
+```
+
+Bash/reg - Enumerate installed versions:
+```bash
+# List all version child keys
+reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap" | grep "HKEY" | sed 's/.*\\//'
+```
+
 **Helper Script:**
-Use `scripts/detect-installation.sh` for robust installation detection with version selection and fallback logic.
+Use `scripts/detect-installation.sh` for robust installation detection with version selection, build number extraction, and fallback logic:
+
+```bash
+# Detect latest AutoMap installation
+./scripts/detect-installation.sh
+
+# Detect specific version
+./scripts/detect-installation.sh --version 2024.1
+
+# Show build number
+./scripts/detect-installation.sh --show-build
+
+# Output with build number:
+# C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
+# Build: 4603
+```
 
 ### Executing AutoMap Commands
 
@@ -479,6 +535,7 @@ This skill includes several helper scripts located in `scripts/`:
 
 Robust AutoMap installation detection with multiple strategies:
 - Registry-based detection (64-bit and 32-bit)
+- Build number extraction from registry Version value
 - Filesystem fallback search
 - Version selection and filtering
 - Verbose output for troubleshooting
@@ -487,7 +544,14 @@ Robust AutoMap installation detection with multiple strategies:
 ```bash
 ./scripts/detect-installation.sh                  # Detect latest version
 ./scripts/detect-installation.sh --version 2020.2 # Specific version
+./scripts/detect-installation.sh --show-build     # Show build number
 ./scripts/detect-installation.sh --verbose        # Detailed output
+```
+
+**Example output with --show-build:**
+```
+C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
+Build: 4603
 ```
 
 ### automap-wrapper.sh
@@ -538,6 +602,52 @@ Manage source documents in project files:
 ./scripts/manage-sources.sh --validate project.wep   # Check paths exist
 ./scripts/manage-sources.sh --toggle "Source\file.md" project.wep  # Toggle inclusion
 ```
+
+## Handling User Requests
+
+### Distinguishing Between Errors and Creation Requests
+
+When a user asks about something that doesn't exist in the project, clarify their intent before proceeding:
+
+**User Error Indicators (inform, don't create):**
+- "What is..." / "Show me..." / "Display..." / "List..."
+- "Can you generate..." (ambiguous - may mean "show" or "create")
+- "Where is..." / "Find..."
+- Asking about singular items in informational context
+
+**Creation Request Indicators (create new items):**
+- "Add..." / "Create..." / "Make..."
+- "I need a new..." / "Set up..."
+- "Generate a new..." (explicit creation intent)
+- Specific parameters provided (names, settings, etc.)
+
+**Best Practice - Acknowledge First, Then Clarify:**
+
+When something doesn't exist:
+1. **First:** Acknowledge that it doesn't exist
+2. **Then:** Ask if they want to create it (if creation is possible)
+3. **Never:** Assume creation intent without confirmation
+
+**Examples:**
+
+Request: "What targets are in this project?"
+Response: Parse and list existing targets only.
+
+Request: "Can you generate Target 2?"
+Response: "Target 2 doesn't exist in this project. The only target configured is 'Target 1'. Would you like me to create a new 'Target 2' target?"
+
+Request: "Add Target 2 with Reverb format"
+Response: Proceed with creation (clear intent with specifics).
+
+Request: "Show me the PDF target"
+Response: "There's no PDF target configured. The project only has 'Target 1' using WebWorks Reverb 2.0. Would you like to create a PDF target?"
+
+**Ambiguous Verbs:**
+- "generate" - Can mean "show/display" OR "create" - ALWAYS clarify
+- "get" - Usually means "retrieve/show" unless context suggests creation
+- "make" - Usually means "create"
+
+**Key Principle:** When in doubt about user intent, always acknowledge what doesn't exist and ask for clarification before creating something new.
 
 ## Common Workflows
 
