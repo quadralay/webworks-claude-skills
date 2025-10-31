@@ -3,11 +3,18 @@
 # automap-wrapper.sh
 # Wrapper script for WebWorks ePublisher AutoMap CLI
 #
+# This wrapper automatically detects the AutoMap CLI installation and executes
+# builds with proper argument handling, output parsing, and error detection.
+#
+# Note: The detection script finds the AutoMap Administrator executable via
+# registry or filesystem, then normalizes to the CLI executable for headless
+# automation.
+#
 # Usage:
 #   ./automap-wrapper.sh [OPTIONS] <project-file>
 #
 # Features:
-#   - Automatic AutoMap detection via registry or filesystem
+#   - Automatic AutoMap CLI detection (via registry or filesystem)
 #   - Proper argument handling and quoting
 #   - Output parsing and error detection
 #   - Exit code reporting

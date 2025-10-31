@@ -24,9 +24,14 @@ HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WebWorks\ePublisher AutoMap\[VERSION]
 
 - **Key Name:** `ExePath`
 - **Value Type:** REG_SZ (String)
-- **Value Content:** Full path to the AutoMap executable
+- **Value Content:** Full path to the AutoMap Administrator executable
 
 Example value:
+```
+C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.Administrator.exe
+```
+
+**Note:** The detection script automatically converts this to the CLI executable path:
 ```
 C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
 ```
@@ -57,6 +62,40 @@ C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.
 1. Store the detected path in memory for session duration
 2. Avoid repeated registry queries
 3. Re-query only if execution fails (handles uninstall scenarios)
+
+## Executable Path Normalization
+
+The AutoMap installation includes two executables:
+
+| Filename | Purpose | Returned by Detection |
+|----------|---------|----------------------|
+| `WebWorks.Automap.Administrator.exe` | UI for interactive job management | No (intermediate) |
+| `WebWorks.Automap.exe` | CLI for automation and scripting | **Yes** |
+
+### Normalization Process
+
+Both registry and filesystem detection methods initially locate the Administrator executable, then normalize the path to the CLI executable:
+
+1. Detect Administrator executable path
+2. Replace `.Administrator.exe` with `.exe` in the path
+3. Validate that CLI executable exists
+4. Return CLI executable path
+
+This ensures consistent behavior regardless of detection method.
+
+### Naming Convention Quirk
+
+Note the capitalization difference:
+- **Product name:** AutoMap (capital M)
+- **Directory name:** ePublisher AutoMap (capital M)
+- **Executable names:** Automap (lowercase m)
+
+Examples:
+```
+C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
+                                                ^^^^^^^^                 ^^^^^^^
+                                               capital M              lowercase m
+```
 
 ## PowerShell Implementation Example
 
@@ -149,16 +188,20 @@ If registry detection fails (rare cases: corrupted registry, portable installati
 
 ### Standard Installation Paths
 
-Check these common installation locations:
+Check these common installation locations (looking for Administrator executable, then normalize to CLI):
 
-1. `C:\Program Files\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
-2. `C:\Program Files (x86)\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
+1. `C:\Program Files\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.Administrator.exe`
+2. `C:\Program Files (x86)\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.Administrator.exe`
+
+**Note:** After finding the Administrator executable, the script normalizes to the CLI path:
+- `WebWorks.Automap.Administrator.exe` → `WebWorks.Automap.exe`
 
 ### Version Discovery
 
 1. List directories in `C:\Program Files\WebWorks\ePublisher\`
 2. Sort by version number (descending)
-3. Check for `ePublisher AutoMap\WebWorks.Automap.exe` in each version directory
+3. Check for `ePublisher AutoMap\WebWorks.Automap.Administrator.exe` in each version directory
+4. Normalize to CLI executable path
 
 ### User Prompt
 

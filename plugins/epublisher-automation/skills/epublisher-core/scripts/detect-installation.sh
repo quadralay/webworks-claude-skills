@@ -1,18 +1,26 @@
 #!/bin/bash
 #
 # detect-installation.sh
-# Detects WebWorks ePublisher AutoMap installation using Windows Registry
+# Detects WebWorks ePublisher AutoMap CLI installation using Windows Registry
+#
+# This script detects AutoMap installations via registry or filesystem search.
+# Both methods initially find the Administrator executable, then normalize
+# to the CLI executable path for automation purposes.
+#
+# Executable Types:
+#   - WebWorks.Automap.Administrator.exe (UI for job scheduling)
+#   - WebWorks.Automap.exe (CLI for automation) <- This is returned
 #
 # Usage:
 #   ./detect-installation.sh [--version VERSION] [--verbose]
 #
 # Exit Codes:
-#   0 - AutoMap found
+#   0 - AutoMap CLI found
 #   1 - AutoMap not found
 #   2 - Invalid arguments
 #
 # Output:
-#   Prints full path to AutoMap executable on success
+#   Prints full path to AutoMap CLI executable on success
 #
 
 set -euo pipefail
@@ -51,7 +59,8 @@ usage() {
     cat <<EOF
 Usage: $SCRIPT_NAME [OPTIONS]
 
-Detects WebWorks ePublisher AutoMap installation on Windows systems.
+Detects WebWorks ePublisher AutoMap CLI installation on Windows systems.
+Returns path to the CLI executable (WebWorks.Automap.exe) for automation.
 
 OPTIONS:
     --version VERSION    Detect specific version (e.g., 2024.1)
@@ -78,8 +87,10 @@ EXAMPLES:
     $SCRIPT_NAME --verbose
 
 OUTPUT:
-    On success, prints full path to AutoMap executable:
+    On success, prints full path to AutoMap CLI executable:
     C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\ePublisher AutoMap\\WebWorks.Automap.exe
+
+    Note: The script detects the Administrator executable but returns the CLI path.
 
     With --show-build, also displays build number:
     C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\ePublisher AutoMap\\WebWorks.Automap.exe
@@ -174,6 +185,53 @@ validate_executable() {
 }
 
 #
+# Normalizes AutoMap executable paths to CLI version
+#
+# Converts paths pointing to WebWorks.Automap.Administrator.exe to
+# the corresponding CLI executable WebWorks.Automap.exe
+#
+# Arguments:
+#   $1 - Full path to AutoMap executable (Administrator or CLI)
+#
+# Returns:
+#   0 - CLI executable path (on success)
+#   1 - Executable not found or validation failed
+#
+# Output:
+#   Prints full path to CLI executable
+#
+normalize_to_cli_path() {
+    local exe_path="$1"
+
+    log_verbose "Normalizing path to CLI executable: $exe_path"
+
+    # If path points to Administrator executable, convert to CLI executable
+    if [[ "$exe_path" == *"Automap.Administrator.exe"* ]]; then
+        # Remove ".Administrator" from filename
+        local cli_path="${exe_path/.Administrator.exe/.exe}"
+        log_verbose "Converted Administrator path to CLI path: $cli_path"
+
+        # Validate that CLI executable exists
+        if validate_executable "$cli_path"; then
+            echo "$cli_path"
+            return 0
+        else
+            log_error "CLI executable not found at: $cli_path"
+            log_error "Administrator executable exists but CLI does not"
+            return 1
+        fi
+    fi
+
+    # Path already points to CLI executable (or some other file)
+    if validate_executable "$exe_path"; then
+        echo "$exe_path"
+        return 0
+    fi
+
+    return 1
+}
+
+#
 # Detection Functions
 #
 
@@ -192,17 +250,17 @@ detect_via_registry() {
                 log_verbose "Found requested version: $requested_version"
 
                 if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$requested_version"); then
-                    if validate_executable "$exe_path"; then
+                    if cli_path=$(normalize_to_cli_path "$exe_path"); then
                         # Query build number if requested
                         if [ "$SHOW_BUILD" = true ]; then
                             if build_number=$(query_registry_build_number "$REG_PATH_64BIT" "$requested_version"); then
                                 log_verbose "Build number: $build_number"
-                                echo "$exe_path|$build_number"
+                                echo "$cli_path|$build_number"
                             else
-                                echo "$exe_path|"
+                                echo "$cli_path|"
                             fi
                         else
-                            echo "$exe_path"
+                            echo "$cli_path"
                         fi
                         return 0
                     fi
@@ -215,17 +273,17 @@ detect_via_registry() {
             log_verbose "Latest version: $latest_version"
 
             if exe_path=$(query_registry_exepath "$REG_PATH_64BIT" "$latest_version"); then
-                if validate_executable "$exe_path"; then
+                if cli_path=$(normalize_to_cli_path "$exe_path"); then
                     # Query build number if requested
                     if [ "$SHOW_BUILD" = true ]; then
                         if build_number=$(query_registry_build_number "$REG_PATH_64BIT" "$latest_version"); then
                             log_verbose "Build number: $build_number"
-                            echo "$exe_path|$build_number"
+                            echo "$cli_path|$build_number"
                         else
-                            echo "$exe_path|"
+                            echo "$cli_path|"
                         fi
                     else
-                        echo "$exe_path"
+                        echo "$cli_path"
                     fi
                     return 0
                 fi
@@ -245,17 +303,17 @@ detect_via_registry() {
                 log_verbose "Found requested version: $requested_version"
 
                 if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$requested_version"); then
-                    if validate_executable "$exe_path"; then
+                    if cli_path=$(normalize_to_cli_path "$exe_path"); then
                         # Query build number if requested
                         if [ "$SHOW_BUILD" = true ]; then
                             if build_number=$(query_registry_build_number "$REG_PATH_32BIT" "$requested_version"); then
                                 log_verbose "Build number: $build_number"
-                                echo "$exe_path|$build_number"
+                                echo "$cli_path|$build_number"
                             else
-                                echo "$exe_path|"
+                                echo "$cli_path|"
                             fi
                         else
-                            echo "$exe_path"
+                            echo "$cli_path"
                         fi
                         return 0
                     fi
@@ -268,17 +326,17 @@ detect_via_registry() {
             log_verbose "Latest version: $latest_version"
 
             if exe_path=$(query_registry_exepath "$REG_PATH_32BIT" "$latest_version"); then
-                if validate_executable "$exe_path"; then
+                if cli_path=$(normalize_to_cli_path "$exe_path"); then
                     # Query build number if requested
                     if [ "$SHOW_BUILD" = true ]; then
                         if build_number=$(query_registry_build_number "$REG_PATH_32BIT" "$latest_version"); then
                             log_verbose "Build number: $build_number"
-                            echo "$exe_path|$build_number"
+                            echo "$cli_path|$build_number"
                         else
-                            echo "$exe_path|"
+                            echo "$cli_path|"
                         fi
                     else
-                        echo "$exe_path"
+                        echo "$cli_path"
                     fi
                     return 0
                 fi
@@ -307,15 +365,15 @@ detect_via_filesystem() {
         fi
 
         if [ -n "$requested_version" ]; then
-            # Check specific version
-            local exe_path="$base_path\\$requested_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
+            # Check specific version (look for Administrator executable)
+            local exe_path="$base_path\\$requested_version\\ePublisher AutoMap\\WebWorks.Automap.Administrator.exe"
 
-            if validate_executable "$exe_path"; then
+            if cli_path=$(normalize_to_cli_path "$exe_path"); then
                 # Filesystem detection cannot provide build number
                 if [ "$SHOW_BUILD" = true ]; then
-                    echo "$exe_path|"
+                    echo "$cli_path|"
                 else
-                    echo "$exe_path"
+                    echo "$cli_path"
                 fi
                 return 0
             fi
@@ -329,14 +387,14 @@ detect_via_filesystem() {
                 latest_version=$(echo "$versions" | tail -1)
                 log_verbose "Found version via filesystem: $latest_version"
 
-                local exe_path="$base_path\\$latest_version\\ePublisher AutoMap\\WebWorks.Automap.exe"
+                local exe_path="$base_path\\$latest_version\\ePublisher AutoMap\\WebWorks.Automap.Administrator.exe"
 
-                if validate_executable "$exe_path"; then
+                if cli_path=$(normalize_to_cli_path "$exe_path"); then
                     # Filesystem detection cannot provide build number
                     if [ "$SHOW_BUILD" = true ]; then
-                        echo "$exe_path|"
+                        echo "$cli_path|"
                     else
-                        echo "$exe_path"
+                        echo "$cli_path"
                     fi
                     return 0
                 fi
