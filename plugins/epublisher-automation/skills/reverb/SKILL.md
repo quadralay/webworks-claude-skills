@@ -3,9 +3,14 @@ name: reverb
 description: Analysis, testing, and customization tools for WebWorks Reverb 2.0 output. Use when testing Reverb output in browser, analyzing CSH links, customizing SCSS themes, or generating test reports.
 ---
 
+<objective>
+
 # reverb
 
 Analysis, testing, and customization tools for WebWorks Reverb 2.0 output. Includes browser-based testing, CSH link analysis, and SCSS theming.
+</objective>
+
+<overview>
 
 ## Overview
 
@@ -15,6 +20,33 @@ Reverb 2.0 is a responsive HTML5 help system with:
 - Full-text search
 - Context Sensitive Help (CSH) support
 - SCSS-based theming
+</overview>
+
+<intake>
+
+## What would you like to do?
+
+1. Test Reverb output in browser
+2. Analyze CSH links
+3. Customize SCSS theme
+4. Generate test report
+
+**Wait for response before proceeding.**
+</intake>
+
+<routing>
+
+## Routing
+
+| Response | Workflow |
+|----------|----------|
+| 1, "test", "browser" | workflows/browser-testing.md |
+| 2, "csh", "links" | workflows/csh-analysis.md |
+| 3, "scss", "theme", "colors" | workflows/scss-theming.md |
+| 4, "report" | workflows/generate-report.md |
+</routing>
+
+<capabilities>
 
 ## Capabilities
 
@@ -26,6 +58,9 @@ Reverb 2.0 is a responsive HTML5 help system with:
 | Color Override | `generate-color-override.sh` | Generate brand color files |
 | Entry Detection | `detect-entry-point.sh` | Find output location from project |
 | Report Generation | `generate-report.sh` | Create formatted test reports |
+</capabilities>
+
+<browser_testing>
 
 ## Browser Testing
 
@@ -70,6 +105,9 @@ node scripts/browser-test.js <chrome-path> <entry-url> [format-settings-json]
   }
 }
 ```
+</browser_testing>
+
+<csh_analysis>
 
 ## Context Sensitive Help (CSH)
 
@@ -98,6 +136,9 @@ Format: `json` (default) or `table`
 | `@href` | Pretty URL (JavaScript-based) |
 | `@path` | Static URL (direct HTML path) |
 | `@title` | Display name |
+</csh_analysis>
+
+<scss_customization>
 
 ## SCSS Customization
 
@@ -140,6 +181,9 @@ Override priority (highest first):
 1. `[Project]/Targets/[Target]/Pages/sass/_colors.scss`
 2. `[Project]/Formats/WebWorks Reverb 2.0/Pages/sass/_colors.scss`
 3. `[Project]/Formats/WebWorks Reverb 2.0.base/Pages/sass/_colors.scss`
+</scss_customization>
+
+<dependencies>
 
 ## Dependencies
 
@@ -158,6 +202,9 @@ Browser testing requires Chrome. Detect with:
 ```bash
 ./scripts/detect-chrome.sh
 ```
+</dependencies>
+
+<common_workflows>
 
 ## Common Workflows
 
@@ -190,3 +237,14 @@ CSH_DATA=$(./scripts/parse-url-maps.sh output/url_maps.xml)
 
 # 3. Rebuild with automap skill
 ```
+</common_workflows>
+
+<success_criteria>
+
+## Success Criteria
+
+- Reverb output loads without JavaScript errors
+- All expected components present in DOM
+- CSH links validate against url_maps.xml
+- Theme changes compile without SCSS errors
+</success_criteria>

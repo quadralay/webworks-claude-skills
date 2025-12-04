@@ -3,13 +3,21 @@ name: automap
 description: Build automation for WebWorks ePublisher using AutoMap command-line interface. Use when executing builds, detecting installations, or automating publishing workflows.
 ---
 
+<objective>
+
 # automap
 
 Build automation for WebWorks ePublisher using AutoMap command-line interface. Execute builds, detect installations, and automate publishing workflows.
+</objective>
+
+<overview>
 
 ## Overview
 
 AutoMap is the command-line build tool for ePublisher. It processes source documents and generates output without requiring the GUI application.
+</overview>
+
+<quick_start>
 
 ## Quick Start
 
@@ -28,6 +36,9 @@ Returns the path to AutoMap CLI executable if found.
 ```
 
 Builds the specified target (or all targets if none specified).
+</quick_start>
+
+<cli_reference>
 
 ## AutoMap CLI
 
@@ -59,6 +70,11 @@ AutoMap.exe -target "WebWorks Reverb 2.0" project.wep
 # Build with logging
 AutoMap.exe -log build.log -verbose project.wep
 ```
+
+**For complete CLI reference, see:** references/cli-reference.md
+</cli_reference>
+
+<scripts>
 
 ## Scripts
 
@@ -93,18 +109,27 @@ Features:
 - Detects AutoMap installation
 - Captures build output
 - Returns structured exit codes
+</scripts>
+
+<references>
 
 ## Reference Files
 
 - `cli-reference.md` - Complete CLI options and syntax
 - `cli-vs-administrator.md` - When to use CLI vs GUI
 - `installation-detection.md` - Installation paths and detection logic
+</references>
+
+<requirements>
 
 ## Requirements
 
 - WebWorks ePublisher 2024.1+ with AutoMap component
 - Windows operating system
 - Git Bash or similar Unix-like shell
+</requirements>
+
+<exit_codes>
 
 ## Exit Codes
 
@@ -115,6 +140,9 @@ Features:
 | 2 | Project file not found |
 | 3 | AutoMap not installed |
 | 4 | Invalid target name |
+</exit_codes>
+
+<common_workflows>
 
 ## Common Workflows
 
@@ -139,3 +167,14 @@ for project in projects/*.wep; do
     ./automap-wrapper.sh "$project" || echo "Failed: $project"
 done
 ```
+</common_workflows>
+
+<success_criteria>
+
+## Success Criteria
+
+- AutoMap installation detected
+- Build executed without errors
+- Output generated at expected location
+- Exit code indicates success (0)
+</success_criteria>

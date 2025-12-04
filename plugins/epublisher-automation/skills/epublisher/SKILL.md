@@ -3,13 +3,21 @@ name: epublisher
 description: Core knowledge about WebWorks ePublisher projects, file structure, and conventions. Use when working with ePublisher project files, understanding file resolver hierarchy, or parsing targets and source documents.
 ---
 
+<objective>
+
 # epublisher
 
 Core knowledge about WebWorks ePublisher projects, file structure, and conventions. This skill provides foundational understanding without automation or format-specific details.
+</objective>
+
+<overview>
 
 ## Overview
 
 WebWorks ePublisher transforms source documents (Word, FrameMaker, DITA, Markdown) into multiple output formats (Reverb, PDF, CHM, etc.) using a project-based workflow.
+</overview>
+
+<key_concepts>
 
 ## Key Concepts
 
@@ -30,7 +38,7 @@ ePublisher resolves files through a 4-level hierarchy (highest to lowest priorit
 3. **Packaged Defaults**: `[Project]/Formats/[FormatName].base/`
 4. **Installation**: `C:\Program Files\WebWorks\ePublisher\[version]\Formats\`
 
-See `references/file-resolver-guide.md` for complete details.
+**For complete details, see:** references/file-resolver-guide.md
 
 ### Project File Format
 
@@ -58,6 +66,9 @@ Documents are organized into groups within projects:
   <Document Name="chapter2.docx" DocumentID="doc789"/>
 </Group>
 ```
+</key_concepts>
+
+<scripts>
 
 ## Scripts
 
@@ -88,12 +99,18 @@ Copy format files from installation to project with structure validation:
 ```
 
 Validates parallel folder structure and creates directories as needed.
+</scripts>
+
+<references>
 
 ## Reference Files
 
 - `file-resolver-guide.md` - Complete file resolution hierarchy
 - `project-parsing-guide.md` - Detailed project file structure
 - `user-interaction-patterns.md` - UX patterns for ePublisher workflows
+</references>
+
+<common_tasks>
 
 ## Common Tasks
 
@@ -115,3 +132,14 @@ Check the file resolver hierarchy:
 ```bash
 ./scripts/manage-sources.sh /path/to/project.wep list
 ```
+</common_tasks>
+
+<success_criteria>
+
+## Success Criteria
+
+- Project file parsed successfully
+- Targets and formats extracted
+- Source documents listed
+- File resolver paths identified correctly
+</success_criteria>
