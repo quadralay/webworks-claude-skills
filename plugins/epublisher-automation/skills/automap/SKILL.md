@@ -17,6 +17,17 @@ Build automation for WebWorks ePublisher using AutoMap command-line interface. E
 AutoMap is the command-line build tool for ePublisher. It processes source documents and generates output without requiring the GUI application.
 </overview>
 
+<related_skills>
+
+## Related Skills
+
+| Skill | Relationship |
+|-------|--------------|
+| **epublisher** | Use first to understand project structure and target names |
+| **reverb** | Use after building Reverb output to test and customize |
+
+</related_skills>
+
 <quick_start>
 
 ## Quick Start

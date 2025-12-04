@@ -22,6 +22,22 @@ Reverb 2.0 is a responsive HTML5 help system with:
 - SCSS-based theming
 </overview>
 
+<related_skills>
+
+## Related Skills
+
+| Skill | Relationship |
+|-------|--------------|
+| **epublisher** | Use to understand project structure before testing |
+| **automap** | Use to rebuild output after SCSS customizations |
+
+**After customizing themes:** Use the automap skill to rebuild:
+```bash
+./automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" project.wep
+```
+
+</related_skills>
+
 <intake>
 
 ## What would you like to do?

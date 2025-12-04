@@ -17,6 +17,24 @@ Core knowledge about WebWorks ePublisher projects, file structure, and conventio
 WebWorks ePublisher transforms source documents (Word, FrameMaker, DITA, Markdown) into multiple output formats (Reverb, PDF, CHM, etc.) using a project-based workflow.
 </overview>
 
+<related_skills>
+
+## Related Skills
+
+This skill provides foundational knowledge used by other skills in this plugin:
+
+| Skill | When to Use |
+|-------|-------------|
+| **automap** | After understanding project structure, use automap to execute builds |
+| **reverb** | After building Reverb output, use reverb skill to test and customize |
+
+**Typical workflow:**
+1. Use **epublisher** to understand project files and targets
+2. Use **automap** to build specific targets
+3. Use **reverb** to test and customize Reverb 2.0 output
+
+</related_skills>
+
 <key_concepts>
 
 ## Key Concepts
