@@ -84,12 +84,6 @@ This repository provides a collection of specialized Claude Code skills for WebW
    - Skills automatically activate when working with ePublisher projects
    - Test with: "Build this ePublisher project"
 
-### Make Scripts Executable
-
-```bash
-chmod +x plugins/epublisher-automation/skills/*/scripts/*.sh
-```
-
 ## Quick Start
 
 ### Example Usage
@@ -118,13 +112,12 @@ webworks-agent-skills/
 │           │   ├── SKILL.md
 │           │   ├── scripts/
 │           │   └── references/
-│           └── reverb/          # Reverb 2.0 testing
+│           └── reverb/          # Reverb 2.0 testing and design
 │               ├── SKILL.md
 │               ├── package.json
 │               └── scripts/
 ├── plans/                       # Development plans
 ├── archive/                     # Historical files
-│   └── templates/
 ├── CONTRIBUTING.md
 └── README.md
 ```
@@ -205,6 +198,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Status:** Production - 3 skills for ePublisher automation and testing
+**Status:** Production - 3 skills for ePublisher automation, design, and testing
 
 **Generated with Claude Code**
