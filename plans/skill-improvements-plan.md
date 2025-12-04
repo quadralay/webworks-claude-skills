@@ -13,7 +13,7 @@ Plan for improving the WebWorks Agent Skills plugin based on Claude Code skill b
 | Task 5.1: Fix broken reference | ✅ Complete (restored script) | `70be117` |
 | Phase 2: XML Structure | ✅ Complete | |
 | Phase 3: Router Pattern | ✅ Complete | |
-| Phase 4: Reduce Duplication | Pending | |
+| Phase 4: Reduce Duplication | ✅ Complete | |
 | Phase 6: Add Templates | Pending | |
 | Phase 7: Version Compatibility | Pending | |
 
@@ -391,9 +391,14 @@ Test Report Generation Workflow
 
 ---
 
-## Phase 4: Reduce Duplication (Medium Priority)
+## Phase 4: Reduce Duplication (Medium Priority) ✅ COMPLETE
 
 Remove duplicate content from SKILL.md files that already exists in references.
+
+> **Completed:** 2025-12-04
+> **Changes:**
+> - epublisher/SKILL.md: Already simplified in Phase 2 with brief hierarchy summary + reference pointer
+> - automap/SKILL.md: Removed duplicate Examples section, kept quick reference table with pointer to cli-reference.md
 
 ### Task 4.1: Simplify epublisher/SKILL.md
 

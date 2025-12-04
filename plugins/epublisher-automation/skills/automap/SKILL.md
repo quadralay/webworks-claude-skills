@@ -58,20 +58,7 @@ AutoMap.exe [options] <project-file>
 | `-verbose` | Enable verbose output |
 | `-clean` | Clean before build |
 
-### Examples
-
-```bash
-# Build all targets
-AutoMap.exe project.wep
-
-# Build specific target
-AutoMap.exe -target "WebWorks Reverb 2.0" project.wep
-
-# Build with logging
-AutoMap.exe -log build.log -verbose project.wep
-```
-
-**For complete CLI reference, see:** references/cli-reference.md
+**For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>
 
 <scripts>
