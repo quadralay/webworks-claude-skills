@@ -153,6 +153,39 @@ Check the file resolver hierarchy:
 ```
 </common_tasks>
 
+<troubleshooting>
+
+## Troubleshooting
+
+### "No targets found in project"
+
+**Cause:** Project file doesn't contain `<Format>` elements.
+
+**Solutions:**
+1. Verify file is a valid .wep/.wrp/.wxsp file
+2. Check if project was created in a compatible ePublisher version
+3. Open project in ePublisher Administrator to verify structure
+
+### "Project file not found"
+
+**Cause:** Path is incorrect or file doesn't exist.
+
+**Solutions:**
+1. Use absolute Windows paths (e.g., `C:\Projects\MyDoc.wep`)
+2. Check for spaces in path (quote the path)
+3. Verify file extension is .wep, .wrp, or .wxsp
+
+### "Invalid project file extension"
+
+**Cause:** File is not a recognized ePublisher project type.
+
+**Solutions:**
+1. Use .wep (WebWorks ePublisher Project)
+2. Use .wrp (WebWorks ePublisher Report Project)
+3. Use .wxsp (WebWorks ePublisher Stationery Project)
+
+</troubleshooting>
+
 <success_criteria>
 
 ## Success Criteria

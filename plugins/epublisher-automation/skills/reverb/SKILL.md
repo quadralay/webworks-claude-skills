@@ -289,6 +289,50 @@ CSH_DATA=$(./scripts/parse-url-maps.sh output/url_maps.xml)
 ```
 </common_workflows>
 
+<troubleshooting>
+
+## Troubleshooting
+
+### "Chrome not found"
+
+**Cause:** Chrome/Chromium not installed or not in expected location.
+
+**Solutions:**
+1. Install Chrome from https://www.google.com/chrome/
+2. Set `CHROME_PATH` environment variable
+3. Edge Chromium can be used as fallback
+
+### "Timeout waiting for Reverb to load"
+
+**Cause:** Reverb output failed to initialize within timeout.
+
+**Solutions:**
+1. Increase timeout: `TIMEOUT=60000 node browser-test.js ...`
+2. Check for JavaScript errors in output
+3. Verify output was built successfully
+4. Try loading output manually in browser
+
+### "url_maps.xml not found"
+
+**Cause:** CSH link file doesn't exist in output.
+
+**Solutions:**
+1. Verify build completed successfully
+2. Check that CSH is enabled in FormatSettings
+3. Look in `[Output]/wwhdata/common/` directory
+
+### "SCSS compilation failed"
+
+**Cause:** Invalid SCSS syntax in customization file.
+
+**Solutions:**
+1. Validate hex color format (#RRGGBB)
+2. Check for missing semicolons
+3. Verify variable names match Reverb schema
+4. Use `--validate-only` flag to check before copying
+
+</troubleshooting>
+
 <success_criteria>
 
 ## Success Criteria

@@ -167,6 +167,41 @@ done
 ```
 </common_workflows>
 
+<troubleshooting>
+
+## Troubleshooting
+
+### "AutoMap installation not found"
+
+**Cause:** AutoMap not installed or not in expected location.
+
+**Solutions:**
+1. Verify ePublisher AutoMap is installed
+2. Check registry: `HKLM\SOFTWARE\WebWorks\ePublisher AutoMap`
+3. Check filesystem: `C:\Program Files\WebWorks\ePublisher\[version]\`
+4. Use `--verbose` flag for detailed detection output
+
+### "Build failed with exit code 1"
+
+**Cause:** ePublisher build encountered errors.
+
+**Solutions:**
+1. Check AutoMap output for specific error messages
+2. Verify source documents exist and are accessible
+3. Open project in ePublisher Administrator to check for issues
+4. Try building with `-c` (clean) flag
+
+### "Target not found"
+
+**Cause:** Specified target name doesn't exist in project.
+
+**Solutions:**
+1. Use `parse-targets.sh` to list available targets
+2. Verify target name spelling (case-sensitive)
+3. Check project file for available `<Format>` elements
+
+</troubleshooting>
+
 <success_criteria>
 
 ## Success Criteria
