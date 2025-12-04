@@ -1,3 +1,8 @@
+---
+name: automap
+description: Build automation for WebWorks ePublisher using AutoMap command-line interface. Use when executing builds, detecting installations, or automating publishing workflows.
+---
+
 # automap
 
 Build automation for WebWorks ePublisher using AutoMap command-line interface. Execute builds, detect installations, and automate publishing workflows.

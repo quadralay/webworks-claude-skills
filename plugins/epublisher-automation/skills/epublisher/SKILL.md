@@ -1,3 +1,8 @@
+---
+name: epublisher
+description: Core knowledge about WebWorks ePublisher projects, file structure, and conventions. Use when working with ePublisher project files, understanding file resolver hierarchy, or parsing targets and source documents.
+---
+
 # epublisher
 
 Core knowledge about WebWorks ePublisher projects, file structure, and conventions. This skill provides foundational understanding without automation or format-specific details.
@@ -73,6 +78,16 @@ List and manage source document groups:
 ```bash
 ./manage-sources.sh <project-file> [list|add|remove]
 ```
+
+### copy-customization.py
+
+Copy format files from installation to project with structure validation:
+
+```bash
+./copy-customization.py --source <install-file> --destination <project-file>
+```
+
+Validates parallel folder structure and creates directories as needed.
 
 ## Reference Files
 

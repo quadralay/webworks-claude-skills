@@ -553,7 +553,7 @@ When upgrading ePublisher:
 
 ### copy-customization.py
 
-Use the provided Python script for validated file copying:
+Python script for validated file copying with parallel structure enforcement:
 
 ```bash
 ./scripts/copy-customization.py \
@@ -567,6 +567,25 @@ Use the provided Python script for validated file copying:
 - Checks source file exists
 - Verifies successful copy
 - Provides clear error messages
+
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `-s, --source` | Source file path in installation (required) |
+| `-d, --destination` | Destination file path in project (required) |
+| `-f, --force` | Overwrite existing destination file |
+| `--dry-run` | Simulate operation without making changes |
+| `--validate-only` | Only validate paths without copying |
+| `-v, --verbose` | Enable verbose output |
+
+**Exit Codes:**
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | Invalid arguments |
+| 2 | Source file not found |
+| 3 | Invalid destination path |
+| 4 | Copy operation failed |
 
 ### Manual Validation
 
@@ -595,7 +614,7 @@ Verify structure manually:
 7. **Document your changes:** Add comments explaining customizations
 
 **When in doubt:**
-- Use copy-customization.py script for validation
+- Use `copy-customization.py` script for validated copying
 - Compare paths character-by-character with installation
 - Rebuild with `-c` flag to clear cache
 - Check build log for file resolution details
