@@ -1,0 +1,12 @@
+{
+  "project": "",
+  "target": "",
+  "buildTime": "",
+  "status": "success|failure",
+  "errors": [],
+  "warnings": [],
+  "output": {
+    "location": "",
+    "fileCount": 0
+  }
+}

@@ -183,6 +183,18 @@ Override priority (highest first):
 3. `[Project]/Formats/WebWorks Reverb 2.0.base/Pages/sass/_colors.scss`
 </scss_customization>
 
+<templates>
+
+## Output Templates
+
+| Template | Purpose |
+|----------|---------|
+| `templates/build-report.json` | Structured build output with project, target, status, errors/warnings |
+| `templates/test-results.json` | Browser test results with component presence and CSH validation |
+
+Use these templates as the canonical structure for script output and report generation.
+</templates>
+
 <dependencies>
 
 ## Dependencies

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "reverbLoaded": true,
+  "loadTime": 0,
+  "errors": [],
+  "warnings": [],
+  "components": {
+    "toolbar": { "present": true },
+    "header": { "present": true },
+    "footer": { "present": true },
+    "toc": { "present": true, "itemCount": 0 },
+    "content": { "present": true }
+  },
+  "csh": {
+    "topicCount": 0,
+    "validLinks": 0,
+    "brokenLinks": 0
+  }
+}

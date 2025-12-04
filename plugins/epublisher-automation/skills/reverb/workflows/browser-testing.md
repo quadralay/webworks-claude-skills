@@ -1,7 +1,10 @@
 # Workflow: Browser Testing
 
 <required_reading>
-**No additional references needed** - all information is in this file and the SKILL.md capabilities section.
+**Templates:**
+- `../templates/test-results.json` - Canonical structure for browser test output
+
+All other information is in this file and the SKILL.md capabilities section.
 </required_reading>
 
 <process>

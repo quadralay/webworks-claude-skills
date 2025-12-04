@@ -1,7 +1,11 @@
 # Workflow: Test Report Generation
 
 <required_reading>
-**No additional references needed** - this workflow orchestrates the other workflows.
+**Templates:**
+- `../templates/test-results.json` - Canonical structure for browser test output
+- `../templates/build-report.json` - Canonical structure for build reports
+
+This workflow orchestrates the other workflows and produces output matching these templates.
 </required_reading>
 
 <process>
@@ -114,10 +118,14 @@ SUMMARY: {PASS/FAIL}
 If user requests, save report to file:
 
 ```bash
+# Text format
 ./scripts/generate-report.sh ... > reverb-test-report.txt
+
+# JSON format (follows templates/test-results.json structure)
+./scripts/generate-report.sh ... --json > reverb-test-report.json
 ```
 
-Or as JSON for programmatic use.
+JSON output conforms to `../templates/test-results.json` for programmatic use.
 </process>
 
 <success_criteria>
