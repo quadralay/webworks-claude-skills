@@ -48,7 +48,7 @@ check_node() {
     if ! command -v node &> /dev/null; then
         error_log "Node.js not found!"
         error_log ""
-        error_log "Please install Node.js 14+ from:"
+        error_log "Please install Node.js 18+ from:"
         error_log "  https://nodejs.org/"
         error_log ""
         return 1
@@ -58,12 +58,13 @@ check_node() {
     node_version=$(node --version)
     success_log "Found Node.js: $node_version"
 
-    # Check minimum version (14.0.0)
+    # Check minimum version (18.0.0) - matches package.json requirement
     local major_version
     major_version=$(echo "$node_version" | sed 's/v//' | cut -d. -f1)
 
-    if [[ "$major_version" -lt 14 ]]; then
-        error_log "Node.js version 14+ required, found: $node_version"
+    if [[ "$major_version" -lt 18 ]]; then
+        error_log "Node.js version 18+ required, found: $node_version"
+        error_log "See package.json engines requirement"
         return 1
     fi
 
