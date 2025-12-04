@@ -6,17 +6,12 @@ AI-powered automation for WebWorks documentation tools including ePublisher, Fra
 
 This repository provides a collection of specialized Claude Code skills for WebWorks ePublisher development. The modular architecture allows Claude to provide focused, context-aware assistance for different aspects of ePublisher projects.
 
-**Current Version:** 1.0.0
+**Current Version:** 1.1.0
 
 ### Available Skills
 
 - **epublisher-core** ✅ Production Ready - Build automation, project management, AutoMap CLI integration
-- **epublisher-reverb-css** 🚧 Placeholder - Reverb CSS customization
-- **epublisher-pdf-page-layout** 🚧 Placeholder - PDF XSL-FO page layout
-- **epublisher-reverb-toolbar** 🚧 Placeholder - Reverb toolbar customization
-- **epublisher-reverb-header** 🚧 Placeholder - Reverb header customization
-- **epublisher-reverb-footer** 🚧 Placeholder - Reverb footer customization
-- **epublisher-reverb-page** 🚧 Placeholder - Reverb page template customization
+- **epublisher-reverb-analyzer** ✅ Production Ready - Automated Reverb 2.0 output testing and validation
 
 See [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md) for detailed skill descriptions.
 
@@ -35,15 +30,17 @@ See [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md) for detailed skill descriptio
 - Detect Base Format Version for correct customization sources
 - List and manage source documents
 - Validate source file paths
-- Understand ePublisher's three-level override hierarchy
+- Understand ePublisher's four-level override hierarchy
 
-### 🎨 Customization Support (Planned)
+### 🧪 Output Testing & Validation (epublisher-reverb-analyzer)
 
-Future specialized skills will provide AI-guided customization for:
-- Reverb 2.0 CSS and styling
-- PDF page layout and formatting
-- Reverb component-specific templates (toolbar, header, footer, page)
-- Other ePublisher output formats
+- Automated browser testing of Reverb 2.0 output with Puppeteer
+- JavaScript runtime validation and error detection
+- Console monitoring for errors and warnings
+- Context Sensitive Help (CSH) link analysis
+- Component inspection (toolbar, header, footer, TOC, content area)
+- FormatSettings validation against actual DOM structure
+- Comprehensive test reports with actionable findings
 
 ## Installation
 
@@ -100,31 +97,14 @@ chmod +x skills/*/scripts/*.sh shared/scripts/*.py
 
 See [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) for detailed usage instructions.
 
-### Build a Project
+### Example Usage
 
 ```
 Build the project with all targets
-```
-
-### List Targets
-
-```
 What targets are configured in this project?
-```
-
-### Manage Sources
-
-```
 List all source documents
+Analyze the Reverb output for this project
 ```
-
-### Customization (Coming Soon)
-
-```
-Customize the Reverb header to add a company logo
-```
-
-(Customization skills are placeholders and planned for future implementation)
 
 ## Project Structure
 
@@ -134,14 +114,16 @@ webworks-agent-skills/
 │   └── marketplace.json         # Marketplace manifest
 ├── plugins/
 │   └── epublisher-automation/   # ePublisher automation plugin (self-contained)
-│       ├── skills/              # All 7 ePublisher skills
-│       │   ├── epublisher-core/         # ✅ Production
+│       ├── skills/              # Production skills
+│       │   ├── epublisher-core/         # ✅ Build automation
 │       │   │   ├── SKILL.md
 │       │   │   ├── scripts/
 │       │   │   └── references/
-│       │   ├── epublisher-reverb-css/   # 🚧 Placeholder
-│       │   ├── epublisher-pdf-page-layout/
-│       │   └── [5 more skills...]
+│       │   └── epublisher-reverb-analyzer/  # ✅ Output testing
+│       │       ├── SKILL.md
+│       │       ├── package.json
+│       │       ├── scripts/
+│       │       └── references/
 │       └── shared/              # Shared utilities (plugin-specific)
 │           ├── scripts/
 │           └── references/
@@ -162,14 +144,15 @@ webworks-agent-skills/
 - **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Installation and basic usage
 - **[SKILL_CATALOG.md](docs/SKILL_CATALOG.md)** - Complete skill reference
 
-### Core Skill
+### Skills
 
-- **[epublisher-core/SKILL.md](plugins/epublisher-automation/skills/epublisher-core/SKILL.md)** - Skill definition
+- **[epublisher-core/SKILL.md](plugins/epublisher-automation/skills/epublisher-core/SKILL.md)** - Core skill definition
+- **[epublisher-reverb-analyzer/SKILL.md](plugins/epublisher-automation/skills/epublisher-reverb-analyzer/SKILL.md)** - Analyzer skill definition
 - **[FILE_RESOLVER_GUIDE.md](plugins/epublisher-automation/shared/references/FILE_RESOLVER_GUIDE.md)** - Override hierarchy guide
 
 ### Development
 
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for implementing placeholder skills
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 - **[PROJECT_PLAN.md](archive/PROJECT_PLAN.md)** - Historical development plan (archived)
 
 ## Architecture
@@ -191,9 +174,10 @@ The modular architecture splits functionality into focused skills:
 
 ## Version Compatibility
 
-- **Skill Version:** 1.0.0
+- **Skill Version:** 1.1.0
 - **ePublisher:** 2024.1+ (primary), 2020.2+ (legacy support)
 - **AutoMap:** 2024.1+
+- **Reverb Format:** WebWorks Reverb 2.0 only (analyzer skill)
 - **Platform:** Windows only
 - **Claude Code:** Latest version recommended
 
@@ -201,14 +185,13 @@ The modular architecture splits functionality into focused skills:
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
-- How to implement placeholder skills
 - Development guidelines
 - Testing requirements
 - Pull request process
 
 Priority areas:
-- Implementing placeholder skills
-- Enhancing epublisher-core
+- Enhancing existing skills
+- Adding new testing capabilities
 - Adding shared utilities
 - Improving documentation
 
@@ -218,20 +201,32 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
+### Version 1.1.0 (2025-11-03)
+
+**Reverb Output Analyzer Release**
+
+- ✅ Added epublisher-reverb-analyzer skill (production ready)
+- ✅ Automated browser testing with Puppeteer
+- ✅ Console error monitoring and validation
+- ✅ Context Sensitive Help (CSH) link analysis
+- ✅ Component inspection and FormatSettings validation
+- ✅ Comprehensive test report generation
+- ✅ Removed placeholder skills for simplified architecture
+- ✅ Updated to four-level file resolver hierarchy documentation
+
 ### Version 1.0.0 (2025-01-29)
 
 **Initial Release**
 
 - ✅ Marketplace plugin structure following Anthropic patterns
-- ✅ `epublisher-automation` plugin with 7 modular skills
+- ✅ `epublisher-automation` plugin with modular skills
 - ✅ epublisher-core skill (production ready)
-- ✅ 6 placeholder skills for future implementation
 - ✅ Self-contained plugin for easy installation
 - ✅ Progressive skill loading for efficient context management
 - ✅ Comprehensive documentation and contribution guidelines
 
 ---
 
-**Status:** Production - epublisher-core skill ready, 6 additional skills planned
+**Status:** Production - 2 production-ready skills for ePublisher automation and testing
 
 **Generated with Claude Code**

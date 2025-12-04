@@ -4,7 +4,7 @@
 
 WebWorks ePublisher uses a sophisticated file resolver system that allows customization of format files (templates, stylesheets, transforms) without modifying the installation files. Understanding this hierarchy is critical for successful customizations.
 
-## The Three-Level Override Hierarchy
+## The Four-Level Override Hierarchy
 
 ePublisher resolves files using a priority-based hierarchy, from highest to lowest priority:
 
@@ -44,7 +44,7 @@ C:\Projects\UserGuide\Targets\WebHelp-Internal\Pages\sass\skin.scss
 **Example:**
 ```
 C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
-C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_overrides.scss
+C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss
 ```
 
 **When to Use:**
@@ -52,7 +52,24 @@ C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_overrides.scss
 - Shared branding or styling across multiple outputs
 - Common functionality needed by all targets
 
-### Level 3: Installation Defaults (Lowest Priority / Fallback)
+### Level 3: Packaged Installation Defaults (Isolates Project from installation changes when using ePublisher Express)
+
+**Location:** `[Project]\Formats\[FormatName].base\[format-structure]\`
+
+**Purpose:** Default files packaged with project to isolate from installation changes 
+
+**Use Cases:**
+- Lock down all installation files to protect from ePublisher installation changes
+- Reference for original file structure
+- Source for copying files to project
+
+**Example:**
+```
+C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0.base\Pages\Connect.asp
+C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0.base\Pages\sass\_colors.scss
+```
+
+### Level 4: Installation Defaults (Lowest Priority / Fallback)
 
 **Location:** `C:\Program Files\WebWorks\ePublisher\[version]\Formats\[FormatName]\[format-structure]\`
 
@@ -65,8 +82,8 @@ C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_overrides.scss
 
 **Example:**
 ```
-C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
-C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\skin.scss
+C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Page.asp
+C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\_sizes.scss
 ```
 
 **Important Rules:**
@@ -80,7 +97,8 @@ When ePublisher needs a file (e.g., `Pages\Connect.asp`), it searches in this or
 
 1. Check target-specific location: `Targets\[TargetName]\Pages\Connect.asp`
 2. If not found, check format-level: `Formats\[FormatName]\Pages\Connect.asp`
-3. If still not found, use installation default: `[Install]\Formats\[FormatName]\Pages\Connect.asp`
+3. If not found, check format-base-level (Express project): `Formats\[FormatName].base\Pages\Connect.asp`
+4. If still not found, use installation default: `[Install]\Formats\[FormatName]\Pages\Connect.asp`
 
 **The first file found wins** - ePublisher stops searching once a match is found.
 
@@ -251,7 +269,7 @@ Mixing versions can cause build errors or unexpected output.
 
 ### Workflow 2: Copy File to Target-Specific Location
 
-**Scenario:** Customize `skin.scss` for only the "Internal WebHelp" target
+**Scenario:** Customize `_colors.scss` for only the "Internal WebHelp" target
 
 **Steps:**
 
@@ -269,26 +287,38 @@ Mixing versions can cause build errors or unexpected output.
 
 3. **Locate source:**
    ```
-   C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\skin.scss
+   C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss
    ```
 
 4. **Construct destination (target-specific):**
    ```
-   C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\skin.scss
+   C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\_colors.scss
    ```
 
 5. **Create structure and copy:**
    ```bash
    mkdir -p "C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass"
-   cp "C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\skin.scss" \
-      "C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\skin.scss"
+   cp "C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss" \
+      "C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\_colors.scss"
    ```
 
-### Workflow 3: SCSS Override Pattern (Best Practice)
+### Workflow 3: SCSS Override Pattern (For Structural CSS Changes)
 
-**Scenario:** Customize colors without modifying `skin.scss` directly
+**Scenario:** Modify CSS structure when SASS variables are insufficient
 
-**Why:** Easier to upgrade and maintain; clear separation of custom vs. default styles
+**When to Use This Approach:**
+
+Reverb uses SASS variables to make customization easier. **Always try modifying SASS variables first:**
+- **First choice:** Customize `_colors.scss`, `_sizes.scss`, `_borders.scss` (copy to project, modify variables)
+- **Second choice:** Use `_overrides.scss` pattern (when variables aren't enough)
+
+**Use the override pattern when:**
+- No SASS variable exists for the desired customization
+- CSS structure itself needs modification (selectors, layout, positioning)
+- Adding entirely new CSS rules not covered by existing variables
+- Overriding third-party styles (Font Awesome, etc.)
+
+**Why this pattern:** Easier to upgrade and maintain; clear separation of custom vs. default styles
 
 **Steps:**
 
@@ -296,23 +326,15 @@ Mixing versions can cause build errors or unexpected output.
 
 2. **Create `_overrides.scss` in same directory:**
    ```scss
-   // Custom color overrides
-   // Modified: 2025-01-27 - Updated brand colors
+   // Custom Toolbar layout
+   // Modified: 2025-01-27 - Change search input box width to fixed size
 
-   $primary-color: #007ACC;
-   $secondary-color: #005A9C;
-
-   // Override toolbar styling
-   .toolbar {
-       background-color: $primary-color;
+   .ww_skin_search_input_container {
+     width: unset;
    }
 
-   // Override link colors
-   a {
-       color: $primary-color;
-       &:hover {
-           color: $secondary-color;
-       }
+   .ww_skin_search_input {
+     width: 300px;  // Set a fixed width for the search input
    }
    ```
 
@@ -334,7 +356,7 @@ Mixing versions can cause build errors or unexpected output.
 
 ### ASP Templates (`.asp`)
 
-**Purpose:** Define HTML page structure and dynamic content
+**Purpose:** Define HTML (XSL-FO for PDF) page structure and dynamic content
 
 **Common Files:**
 - `Connect.asp` - Main page template (Reverb)
@@ -359,11 +381,11 @@ Mixing versions can cause build errors or unexpected output.
 **Purpose:** Control visual styling and layout
 
 **Common Files:**
-- `skin.scss` - Main stylesheet (imports all others)
-- `_overrides.scss` - Custom overrides (create this)
-- `_variables.scss` - SCSS variables
-- `_mixins.scss` - SCSS mixins
-- `_layout.scss` - Layout definitions
+- `skin.scss` - Reverb toolbar main stylesheet (imports all others)
+- `_overrides.scss` - Reverb custom overrides (create this)
+- `_colors.scss` - Reverb color variables
+- `_sizes.scss` - Reverb size variables
+- `_borders.scss` - Reverb border variables
 
 **Location:** `Formats\[FormatName]\Pages\sass\`
 
@@ -374,7 +396,9 @@ Mixing versions can cause build errors or unexpected output.
 - Customize toolbar styling
 - Override default styles
 
-**Best Practice:** Always use `_overrides.scss` pattern
+**Best Practice:**
+1. **First:** Modify SASS variables (_colors.scss, _sizes.scss, _borders.scss)
+2. **Second:** Use `_overrides.scss` pattern when variables aren't sufficient
 
 ### XSL Transforms (`.xsl`)
 
@@ -389,7 +413,7 @@ Mixing versions can cause build errors or unexpected output.
 **Locations:**
 - `Formats\[FormatName]\Transforms\`
 - `Formats\Shared\common\pages\`
-- `Formats\Shared\common\transforms\`
+- `Formats\Shared\common\locale\`
 
 **Customization Use Cases:**
 - Modify content processing
@@ -544,7 +568,7 @@ Verify structure manually:
 
 **Key Takeaways:**
 
-1. **Three-level hierarchy:** Target → Format → Installation (highest to lowest priority)
+1. **Four-level hierarchy:** Target → Format → Installation (highest to lowest priority)
 2. **Parallel structure is mandatory:** File and folder names must match exactly
 3. **Never modify installation files:** Always copy to project for customizations
 4. **Use Base Format Version:** Match installation version with project version

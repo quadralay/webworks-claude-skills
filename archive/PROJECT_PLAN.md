@@ -196,7 +196,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 - [ ] Skill copies customization files (asp/scss/xsl) preserving structure
 - [ ] Skill modifies copied files based on user requirements
 - [ ] Skill documents customizations with comments and change tracking
-- [ ] Skill handles all three file types: `*.asp`, `*.scss`, `*.xsl`
+- [ ] Skill handles all four file types: `*.asp`, `*.scss`, `*.xsl`
 
 ### Skill Discovery & Triggering
 

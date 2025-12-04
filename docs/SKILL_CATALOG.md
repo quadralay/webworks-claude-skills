@@ -1,16 +1,16 @@
 # WebWorks Agent Skills Catalog
 
-This repository contains multiple specialized Claude Code skills for WebWorks ePublisher AutoMap development and customization workflows.
+This repository contains specialized Claude Code skills for WebWorks ePublisher AutoMap development, testing, and quality assurance workflows.
 
 ## Overview
 
-The WebWorks Agent Skills provide modular, focused AI assistance for different aspects of ePublisher project development. Skills are organized into plugins by functional area and designed to work together seamlessly.
+The WebWorks Agent Skills provide modular, focused AI assistance for different aspects of ePublisher project development. Skills are organized into plugins by functional area and designed to work together.
 
 ## Plugin Organization
 
 All ePublisher skills are currently organized in the `epublisher-automation` plugin located at `plugins/epublisher-automation/`.
 
-## Production Skills
+## Available Skills
 
 ### epublisher-core
 **Status:** ✅ Production Ready
@@ -21,74 +21,38 @@ Core ePublisher AutoMap functionality including:
 - Build automation and output generation
 - Project file parsing (targets, formats, sources)
 - Source document management
-- File resolver pattern understanding
+- Four-level file resolver pattern understanding
 
 **Use when:** Building projects, running AutoMap, parsing project files, managing sources
 
-## Placeholder Skills (Planned)
+### epublisher-reverb-analyzer
+**Status:** ✅ Production Ready
+**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-analyzer/`
 
-The following skills are planned for future implementation. They currently provide minimal functionality and serve as placeholders in the modular architecture.
+Automated testing and analysis of WebWorks Reverb 2.0 output including:
+- Headless browser testing with Puppeteer
+- JavaScript runtime validation
+- Console error monitoring
+- Context Sensitive Help (CSH) link analysis
+- Component inspection (toolbar, header, footer, TOC, content)
+- FormatSettings validation
 
-### epublisher-reverb-css
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-css/`
+**Use when:** Testing Reverb output, validating component configuration, catching issues before deployment
 
-General Reverb 2.0 CSS and SCSS customization.
-
-**Planned features:** Color schemes, typography, spacing, SCSS variables
-
-### epublisher-pdf-page-layout
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-pdf-page-layout/`
-
-PDF output page layout customization using XSL-FO.
-
-**Planned features:** Page dimensions, margins, headers/footers, page sequences
-
-### epublisher-reverb-toolbar
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-toolbar/`
-
-Reverb 2.0 toolbar customization (Connect.asp).
-
-**Planned features:** Button configuration, toolbar layout, event handling
-
-### epublisher-reverb-header
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-header/`
-
-Reverb 2.0 page header customization (Header.asp).
-
-**Planned features:** Header content, branding, layout, styling
-
-### epublisher-reverb-footer
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-footer/`
-
-Reverb 2.0 page footer customization (Footer.asp).
-
-**Planned features:** Footer content, copyright notices, layout, styling
-
-### epublisher-reverb-page
-**Status:** 🚧 Placeholder
-**Location:** `plugins/epublisher-automation/skills/epublisher-reverb-page/`
-
-Reverb 2.0 overall page template customization (Page.asp).
-
-**Planned features:** Page structure, content areas, navigation, responsive design
+**Format Support:** WebWorks Reverb 2.0 only (does not support legacy Reverb 1.x)
 
 ## Skill Dependencies
 
-All customization skills depend on `epublisher-core` for:
-- Project detection and validation
-- File resolver pattern understanding
-- Installation path detection
-- Base Format Version detection
+- **epublisher-reverb-analyzer** depends on **epublisher-core** for:
+  - Project file parsing
+  - File resolver pattern understanding
+  - Installation path detection
 
 ## Version History
 
-- **v1.0.0** - Initial release with modular multi-skill architecture
+- **v1.1.0** - Added Reverb Output Analyzer skill
+- **v1.0.0** - Initial release with epublisher-core
 
 ## Contributing
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on implementing placeholder skills.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on contributing to this project.

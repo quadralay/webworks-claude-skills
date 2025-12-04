@@ -3,9 +3,18 @@ name: epublisher-core
 description: WebWorks ePublisher AutoMap build automation and project management. Detects installations, executes builds, parses project files, and manages source documents. Use when building ePublisher projects, running AutoMap, parsing targets, or managing source files.
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   category: "build-automation"
   status: "production"
+  related-skills:
+    - epublisher-reverb-browser-test
+    - epublisher-reverb-scss-customizer
+  documentation:
+    installation: "./INSTALLATION.md"
+    references:
+      - "./references/AUTOMAP_CLI_REFERENCE.md"
+      - "./references/PROJECT_PARSING_GUIDE.md"
+      - "../../../shared/references/USER_INTERACTION_PATTERNS.md"
 ---
 
 # ePublisher Core - Build Automation & Project Management
@@ -14,103 +23,85 @@ metadata:
 
 Automate WebWorks ePublisher AutoMap operations for building documentation projects, managing source files, and understanding project structure. This skill provides the foundation for all ePublisher development workflows.
 
+**Core Capabilities:**
+- Detect and validate ePublisher installations
+- Execute AutoMap builds with comprehensive error handling
+- Parse project files (.wep, .wrp, .wxsp) to extract configuration
+- Manage source documents (add, remove, toggle inclusion)
+- Determine Base Format Version for customization workflows
+- Monitor build output and report results
+
 ## AutoMap CLI Operations
 
 ### Detecting AutoMap Installation
 
 Locate AutoMap executable using Windows Registry (preferred method):
 
-**64-bit Installation Registry Path:**
+**Registry Paths:**
+
+64-bit installation:
 ```
 HKEY_LOCAL_MACHINE\SOFTWARE\WebWorks\ePublisher AutoMap\[VERSION]
 ```
 
-**32-bit Installation Registry Path:**
+32-bit installation:
 ```
 HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WebWorks\ePublisher AutoMap\[VERSION]
 ```
 
-**Registry Structure:**
-
-The registry path contains child keys representing installed versions (e.g., "2024.1", "2020.2"). Each version key contains:
+**Registry Values:**
 
 | Value Name | Type | Description | Example |
 |------------|------|-------------|---------|
 | `ExePath` | REG_SZ | Full path to AutoMap executable | `C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe` |
 | `Version` | REG_SZ | Full version with build number | `24.1.4603` |
 
-**Build Number Extraction:**
+**Detection Workflow:**
 
-Note: `Major` assumes prefix of `20`.
-
-The `Version` value contains the full version string in format: `[MAJOR].[MINOR].[BUILD]`
-- Example: `24.1.4603`
-  - Major: 2024
-  - Minor: 1
-  - **Build Number: 4603** (last fragment after final dot)
-
-**Detection Steps:**
-1. Query registry base path to enumerate child keys (versions)
-2. Select requested version or latest version from available children
-3. Query the version's child key for `ExePath` value (executable location)
-4. Optionally query `Version` value and extract build number
-5. Validate the executable file exists at the specified path
-6. Cache the path for session duration
-
-**Fallback Method (if registry unavailable):**
-- Check standard installation path: `C:\Program Files\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
-- Check 32-bit path: `C:\Program Files (x86)\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
-- Enumerate version directories and find the latest
+1. Query registry to enumerate installed versions
+2. Select requested version or latest available
+3. Extract `ExePath` value from version key
+4. Optionally extract build number from `Version` value (last fragment after dot)
+5. Validate executable file exists at path
+6. Cache path for session duration
 
 **Registry Query Examples:**
 
-PowerShell - Query ExePath:
-```powershell
-$path = (Get-ItemProperty -Path "HKLM:\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1").ExePath
-```
-
-PowerShell - Query Version and extract build number:
-```powershell
-$version = (Get-ItemProperty -Path "HKLM:\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1").Version
-$buildNumber = $version.Split('.')[-1]
-```
-
-Bash/reg - Query ExePath:
+Bash/reg - Get AutoMap path:
 ```bash
 reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1" /v ExePath
 ```
 
-Bash/reg - Query Version and extract build number:
+Bash/reg - Get version and build number:
 ```bash
 # Get version string
 version=$(reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap\2024.1" /v Version | grep "Version" | awk '{print $NF}')
 
-# Extract build number (last fragment)
+# Extract build number (last fragment after final dot)
 build_number=$(echo "$version" | awk -F'.' '{print $NF}')
 ```
 
-Bash/reg - Enumerate installed versions:
+Bash/reg - List all installed versions:
 ```bash
-# List all version child keys
 reg query "HKLM\SOFTWARE\WebWorks\ePublisher AutoMap" | grep "HKEY" | sed 's/.*\\//'
 ```
 
+**Fallback Method:**
+
+If registry unavailable, check standard installation paths:
+- `C:\Program Files\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
+- `C:\Program Files (x86)\WebWorks\ePublisher\[version]\ePublisher AutoMap\WebWorks.Automap.exe`
+
+Enumerate version directories to find latest installation.
+
 **Helper Script:**
-Use `scripts/detect-installation.sh` for robust installation detection with version selection, build number extraction, and fallback logic:
+
+Use `scripts/detect-installation.sh` for robust detection with version selection and build number extraction:
 
 ```bash
-# Detect latest AutoMap installation
-./scripts/detect-installation.sh
-
-# Detect specific version
-./scripts/detect-installation.sh --version 2024.1
-
-# Show build number
-./scripts/detect-installation.sh --show-build
-
-# Output with build number:
-# C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
-# Build: 4603
+./scripts/detect-installation.sh                  # Latest version
+./scripts/detect-installation.sh --version 2024.1 # Specific version
+./scripts/detect-installation.sh --show-build     # With build number
 ```
 
 ### Executing AutoMap Commands
@@ -120,78 +111,50 @@ Use `scripts/detect-installation.sh` for robust installation detection with vers
 "[AutoMap-Path]" "[Project-File]" [Options]
 ```
 
-**Common Command Options:**
-- `-c, --clean`: Clean build (remove cached files before generation)
-- `-n, --nodeploy`: Do not copy to deployment location
-- `-l, --cleandeploy`: Clean deployment location before copying output
-- `-t, --target "[TargetName]"`: Build specific target only (e.g., "WebWorks Reverb 2.0")
-- `--deployfolder "[Path]"`: Override deployment destination
+**Common Options:**
+- `-c, --clean` - Clean build (remove cached files)
+- `-n, --nodeploy` - Skip deployment (output stays in project folder)
+- `-l, --cleandeploy` - Clean deployment location before copying
+- `-t, --target "[TargetName]"` - Build specific target only
+- `--deployfolder "[Path]"` - Override deployment destination
 
-**Example Commands:**
+**Quick Examples:**
 
-Build all targets with clean:
+Clean build all targets (no deploy):
 ```bash
 "C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n "C:\Projects\MyDoc\MyDoc.wep"
 ```
 
 Build specific target:
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "WebWorks Reverb 2.0" "C:\Projects\MyDoc\MyDoc.wep"
+"[AutoMap-Path]" -c -n -t "WebWorks Reverb 2.0" "[Project-File]"
 ```
 
-Build with custom deployment:
-```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l --deployfolder "C:\Output" "C:\Projects\MyDoc\MyDoc.wep"
-```
-
-**Execution Guidelines:**
-1. Always use absolute paths for both executable and project files
-2. Quote paths containing spaces
+**Execution Best Practices:**
+1. Always use absolute paths (both executable and project file)
+2. Quote all paths containing spaces
 3. Set Bash tool timeout to 600000ms (10 minutes) for large projects
-4. Capture both stdout and stderr for diagnostics
+4. Capture both stdout and stderr
 5. Check exit code: 0=success, non-zero=failure
-6. Parse output for error messages and warnings
 
-**Helper Script:**
-Use `scripts/automap-wrapper.sh` for enhanced AutoMap execution with comprehensive error reporting and progress monitoring.
+**Output Monitoring:**
 
-### Parsing AutoMap Output
+Watch for these patterns:
+- **Success:** "Generation completed successfully", "Output deployed to"
+- **Errors:** "Error:", "Failed to", "Unable to", "Exception"
+- **Warnings:** "Warning:", "Could not find"
 
-Monitor console output for:
-- **Success indicators:** "Generation completed successfully", "Output deployed to"
-- **Error patterns:** "Error:", "Failed to", "Unable to", "Exception"
-- **Warning patterns:** "Warning:", "Could not find"
-- **Progress indicators:** "Processing", "Generating", "Transforming"
+**Common Errors:**
 
-Report to user:
-- Clear success/failure status
-- Error messages with context
-- Deployment location for successful builds
-- Build duration and statistics
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Project file not found | Invalid path | Verify project file path |
+| Source document missing | Broken reference | Check source file locations |
+| Invalid target configuration | Corrupted settings | Review target XML in project file |
+| Insufficient disk space | Output drive full | Check available space |
+| Permission denied | Restricted folder | Verify write permissions |
 
-### Error Handling
-
-**Common AutoMap Errors:**
-
-**Error 1: Project file not found**
-- Symptom: "Could not load project file"
-- Solution: Verify project file path and existence
-
-**Error 2: Source documents missing**
-- Symptom: "Source document not found"
-- Solution: Check project file references and source file locations
-
-**Error 3: Target configuration invalid**
-- Symptom: "Invalid target configuration"
-- Solution: Review target settings in project file
-
-**Error 4: Insufficient disk space**
-- Symptom: "Unable to write output", "Disk full"
-- Solution: Check available disk space in deployment location
-
-**Error 5: Permission denied**
-- Symptom: "Access denied", "Permission error"
-- Solution: Verify write permissions on deployment folder
+**See Also:** [`references/AUTOMAP_CLI_REFERENCE.md`](./references/AUTOMAP_CLI_REFERENCE.md) for comprehensive AutoMap CLI documentation, timeout guidelines, and troubleshooting.
 
 ## ePublisher Project Structure
 
@@ -204,7 +167,7 @@ Report to user:
 
 **`.wxsp` (Stationery Project):**
 - Stationery project with no source documents
-- Deep copy of all applicable installation XSL files
+- Deep copy of all installation XSL files
 - Self-contained format definitions
 
 **`.wrp` (Project):**
@@ -215,31 +178,24 @@ Report to user:
 ### Project Recognition
 
 Identify ePublisher projects by:
-1. Presence of `.wep`, `.wrp`, or `.wxsp` files in directory
-2. `Formats/` directory containing format-specific customizations
+1. Presence of `.wep`, `.wrp`, or `.wxsp` files
+2. `Formats/` directory with format-specific customizations
 3. `Targets/` directory with target-specific overrides
-4. `Source/` directory with input documents
 
-**Project Detection:**
+**Quick Detection:**
 ```bash
 # Find project files
 find . -maxdepth 1 -name "*.wep" -o -name "*.wrp" -o -name "*.wxsp"
-
-# Verify project structure
-ls -la Formats/ Targets/ Source/
 ```
 
 ### Determining Base Format Version
 
-The Base Format Version determines which version of format files (templates, stylesheets, transforms) to use when creating customizations. This is critical because different format versions may have incompatible file structures.
+The Base Format Version determines which installation format files to use for customizations. This is **critical** for customization skills.
 
-**Project Root Element Structure:**
+**Project Root Element:**
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
 <Project Version="1.1.2.0"
-         ProjectID="W8CC-Starter-001"
-         ChangeID="CC-Initial-Setup"
          RuntimeVersion="2024.1"
          FormatVersion="{Current}"
          xmlns="urn:WebWorks-Publish-Project">
@@ -248,12 +204,8 @@ The Base Format Version determines which version of format files (templates, sty
 ```
 
 **Key Attributes:**
-
-- `Version` - Project file schema version (e.g., "1.1.2.0")
-- `ProjectID` - Unique identifier for the project
-- `RuntimeVersion` - ePublisher version used to last save project (e.g., "2024.1")
-- `FormatVersion` - Format version override (typically "{Current}" or specific version)
-- `ChangeID` - Incremental build tracking (can be ignored)
+- `RuntimeVersion` - ePublisher version that last saved project (e.g., "2024.1")
+- `FormatVersion` - Format version override (typically "{Current}" or specific version like "2020.2")
 
 **Base Format Version Logic:**
 
@@ -267,244 +219,119 @@ END IF
 
 **Examples:**
 
-Example 1 - Current format (most common):
+Most common (current format):
 ```xml
 <Project RuntimeVersion="2024.1" FormatVersion="{Current}" ...>
 ```
-Base Format Version = `2024.1` (uses current runtime version)
+→ Base Format Version = `2024.1`
 
-Example 2 - Locked to older format:
+Locked to older format for compatibility:
 ```xml
 <Project RuntimeVersion="2024.1" FormatVersion="2020.2" ...>
 ```
-Base Format Version = `2020.2` (uses older format for compatibility)
-
-**Extracting Version Information:**
-
-```bash
-# Get RuntimeVersion
-grep -oP '<Project[^>]*RuntimeVersion="\K[^"]+' project.wep
-
-# Get FormatVersion
-grep -oP '<Project[^>]*FormatVersion="\K[^"]+' project.wep
-
-# Determine Base Format Version (bash logic)
-runtime=$(grep -oP '<Project[^>]*RuntimeVersion="\K[^"]+' project.wep)
-format=$(grep -oP '<Project[^>]*FormatVersion="\K[^"]+' project.wep)
-if [ "$format" = "{Current}" ]; then
-    base_format_version="$runtime"
-else
-    base_format_version="$format"
-fi
-echo "Base Format Version: $base_format_version"
-```
-
-**Helper Script:**
-Use `scripts/parse-targets.sh --version` to automatically detect Base Format Version.
+→ Base Format Version = `2020.2`
 
 **Why This Matters:**
 
-When customization skills copy format files from the installation directory, they must use files from the correct format version:
+Customization skills must copy format files from the correct installation version:
 
-**Correct approach:**
 ```bash
-# For project with Base Format Version = 2020.2
-source_path="C:\Program Files\WebWorks\ePublisher\2020.2\Formats\..."
+# For Base Format Version = 2024.1
+source="C:\Program Files\WebWorks\ePublisher\2024.1\Formats\..."
 
-# For project with Base Format Version = 2024.1
-source_path="C:\Program Files\WebWorks\ePublisher\2024.1\Formats\..."
+# For Base Format Version = 2020.2
+source="C:\Program Files\WebWorks\ePublisher\2020.2\Formats\..."
 ```
 
-**Important Notes:**
-- Always check Base Format Version before creating customizations
-- Mixing format versions can cause build errors or unexpected output
-- Older projects may intentionally use older formats for stability
+Mixing format versions causes build errors or unexpected output.
+
+**Helper Script:**
+```bash
+./scripts/parse-targets.sh --version project.wep  # Shows Base Format Version
+```
 
 ### Parsing Project Files for Targets
 
-Project files (`.wep`, `.wrp`) are XML files containing target and format configuration.
+Project files are XML containing target/format configuration.
 
-**Target/Format Element Structure:**
+**Target/Format Element:**
 
 ```xml
 <Format TargetName="WebWorks Reverb 2.0"
         Name="WebWorks Reverb 2.0"
         Type="Application"
-        TargetID="CC-Reverb-Target">
-  <!-- Target configuration -->
+        TargetID="RrzaU8EqDdU">
+  <OutputDirectory>Output\WebWorks Reverb 2.0</OutputDirectory>
 </Format>
 ```
 
 **Key Attributes:**
-- `TargetName` - The target name used in AutoMap `-t` parameter
-- `Name` - The format name used for customization paths (e.g., "WebWorks Reverb 2.0")
-- `Type` - Format type (typically "Application")
-- `TargetID` - Unique identifier for this target in the project
-
-**Extracting Target Information:**
-
-```bash
-# List all target names in a project
-grep -oP 'TargetName="\K[^"]+' project.wep
-
-# List all format names
-grep -oP '<Format[^>]*Name="\K[^"]+' project.wep
-
-# Get full Format elements
-grep '<Format ' project.wep
-```
-
-**Example Targets with Output Directory:**
-
-```xml
-<!-- HTML5 (Reverb) Output with Default Output Location -->
-<Format TargetName="WebWorks Reverb 2.0"
-        Name="WebWorks Reverb 2.0"
-        Type="Application"
-        TargetID="Reverb-Target">
-</Format>
-
-<!-- PDF Output with Custom Output Directory -->
-<Format TargetName="PDF - XSL-FO"
-        Name="PDF - XSL-FO"
-        Type="Application"
-        TargetID="PDF-Target">
-  <OutputDirectory>C:\CustomOutput\PDF</OutputDirectory>
-</Format>
-```
-
-**OutputDirectory Element:**
-- If present: Output generated to this directory
-- If absent: Output defaults to `Output\[TargetName]\`
-- Can be absolute path or relative to project
-
-**Use Cases:**
-
-1. **List Available Targets:** Parse project file to show user all configured targets
-2. **Validate Target Name:** Before executing AutoMap, confirm target exists
-3. **Determine Format for Customization:** Use `Name` attribute to construct customization paths
-4. **Find Generated Output:** Check for `<OutputDirectory>` to locate build output
-5. **Batch Processing:** Extract all target names for sequential builds
-
-**Helper Script:**
-Use `scripts/parse-targets.sh` for comprehensive target parsing with JSON output support.
-
-### Managing Source Files in Projects
-
-Project files contain source document references organized in: `<Groups>` → `<Group>` → `<Document>`.
-
-**Source File Structure:**
-
-```xml
-<Groups>
-  <Group Name="Group1" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
-    <Document Path="Source\content-seed.md" Type="normal" Included="true" DocumentID="abc123xyz" />
-    <Document Path="Source\getting-started.md" Type="normal" Included="true" DocumentID="def456uvw" />
-  </Group>
-  <Group Name="Reference" Type="normal" Included="true" GroupID="xYz987aBc">
-    <Document Path="Source\api-reference.md" Type="normal" Included="true" DocumentID="ghi789rst" />
-  </Group>
-</Groups>
-```
-
-**FrameMaker Book Structure:**
-
-```xml
-<Groups>
-  <Group Name="Exploring ePublisher" Type="normal" Included="true" GroupID="dohcaj00OHA">
-    <Book Type="book" Included="true" DocumentID="9CK1vFTe-0A" Path="Source Docs\Adobe FrameMaker\Exploring ePublisher.book">
-      <Document Type="normal" Included="true" DocumentID="PNwbOCS_JSw" Path="Source Docs\Adobe FrameMaker\Understanding ePublisher.fm" />
-    </Book>
-  </Group>
-</Groups>
-```
-
-**Key Attributes:**
-
-**Group Element:**
-- `Name` - Display name for the group
-- `Type` - Group type (typically "normal")
-- `Included` - Boolean ("true"/"false") to include/exclude group
-- `GroupID` - Unique identifier (required, auto-generated)
-
-**Document Element:**
-- `Path` - **Most Important** - Path to source file (relative or absolute)
-- `Type` - Document type (typically "normal")
-- `Included` - Boolean ("true"/"false") to include/exclude document
-- `DocumentID` - Unique identifier (required, auto-generated)
-
-**Book Element:**
-- `Path` - **Most Important** - Path to source file (relative or absolute)
-- `Type` - Document type ("book" for FrameMaker book)
-- `Included` - Boolean ("true"/"false") to include/exclude book
-- `DocumentID` - Unique identifier (required, auto-generated)
+- `TargetName` - Used in AutoMap `-t` parameter (MOST IMPORTANT for builds)
+- `Name` - Format name for customization paths (e.g., "WebWorks Reverb 2.0")
+- `TargetID` - Unique identifier for this target
+- `<OutputDirectory>` - Output location (optional, defaults to `Output\[TargetName]\`)
 
 **Common Operations:**
 
-**1. List All Source Files:**
+List all targets:
 ```bash
-# Extract all document paths
-grep -oP 'Document Path="\K[^"]+' project.wep
-
-# Show paths with inclusion status
-grep '<Document ' project.wep | grep -oP 'Path="\K[^"]+|Included="\K[^"]+'
+grep -oP 'TargetName="\K[^"]+' project.wep
 ```
 
-**2. Check If Document Included:**
+Validate target exists before building:
 ```bash
-# Find specific document and check status
+grep 'TargetName="WebWorks Reverb 2.0"' project.wep
+```
+
+**Use Cases:**
+1. List available targets for user
+2. Validate target name before AutoMap execution
+3. Determine format name for customization paths
+4. Find generated output location
+
+**See Also:** [`references/PROJECT_PARSING_GUIDE.md`](./references/PROJECT_PARSING_GUIDE.md) for comprehensive project file parsing documentation and source document management.
+
+### Managing Source Files
+
+Project files contain source document references in XML structure:
+
+```xml
+<Groups>
+  <Group Name="Getting Started" Type="normal" Included="true" GroupID="w3KcSrHh-HI">
+    <Document Path="Source\content-seed.md" Type="normal" Included="true" DocumentID="abc123xyz" />
+    <Document Path="Source\getting-started.md" Type="normal" Included="true" DocumentID="def456uvw" />
+  </Group>
+</Groups>
+```
+
+**Key Attributes:**
+- `Path` - **Most Important** - Path to source file (relative or absolute)
+- `Included` - Boolean ("true"/"false") to include/exclude
+- `DocumentID` - Unique identifier (required, auto-generated)
+- `GroupID` - Unique group identifier
+
+**Common Operations:**
+
+List all source files:
+```bash
+grep -oP 'Document Path="\K[^"]+' project.wep
+```
+
+Check if document is included:
+```bash
 grep 'Path="Source\\content-seed.md"' project.wep | grep -oP 'Included="\K[^"]+'
 ```
 
-**3. Add New Document:**
-- Generate unique DocumentID (alphanumeric string)
-- Add `<Document>` element inside existing `<Group>`
-- Ensure proper XML structure and escaping
-
-**4. Remove Document:**
-- Use Edit tool to remove entire `<Document>` element
-- Ensure no orphaned formatting
-
-**5. Toggle Document Inclusion:**
-- Change `Included="true"` to `Included="false"` (or vice versa)
-- Allows temporary exclusion without removing reference
-
-**6. Add New Group:**
-- Generate unique GroupID
-- Create `<Group>` element with attributes
-- Add one or more `<Document>` child elements
-
-**6. Add New Book:**
-- Generate unique DocumentID
-- Add `<Book>` element with attributes, no child elements
-- Ensure proper XML structure and escaping
-
 **ID Generation Guidelines:**
-- **Format:** Alphanumeric string (typically 11 chars for GroupID)
-- **Example GroupID:** `w3KcSrHh-HI`, `xYz987aBc`
-- **Example DocumentID:** `abc123xyz`, `def456uvw`
-- **Generation:** Use random alphanumeric characters
+- Use random alphanumeric characters
+- GroupID: typically 11 chars (e.g., `w3KcSrHh-HI`)
+- DocumentID: typically 8-11 chars (e.g., `abc123xyz`)
 
-**Document Type Reference:**
-
-Common document/book types:
-- `normal` - Markdown files (.md)
-- `normal` - DITA XML files (.ditamap, .dita, .xml)
-- `normal` - Microsoft Word documents (.docx)
-- `normal` - FrameMaker documents (.fm)
-- `book` - FrameMaker books (.bk, .book)
-
-**Path Handling:**
-- Use backslashes (`\`) for Windows paths in XML
-- Relative paths are relative to project file directory
-- Always verify source file exists before adding
-
-**Helper Script:**
-Use `scripts/manage-sources.sh` for listing, validating, and managing source documents.
+**See Also:** [`references/PROJECT_PARSING_GUIDE.md`](./references/PROJECT_PARSING_GUIDE.md) for detailed source management operations (add, remove, toggle inclusion).
 
 ## File Resolver Pattern Overview
 
-ePublisher uses a three-level file resolver hierarchy for customizations:
+ePublisher uses a four-level file resolver hierarchy for customizations:
 
 **Level 1: Target-Specific** (highest priority)
 ```
@@ -516,165 +343,125 @@ ePublisher uses a three-level file resolver hierarchy for customizations:
 [Project]\Formats\[FormatName]\[format-structure]\
 ```
 
-**Level 3: Installation** (fallback)
+**Level 3: Packaged Installation Defaults** (Isolates Project from installation changes when using ePublisher Express)
+```
+[Project]\Formats\[FormatName].base\[format-structure]\
+```
+
+**Level 4: Installation** (fallback)
 ```
 C:\Program Files\WebWorks\ePublisher\[version]\Formats\[FormatName]\[format-structure]\
 ```
 
-**Critical Requirement:** File and folder names MUST exactly match installation hierarchy (case-sensitive).
+**Critical:** File and folder names MUST exactly match installation hierarchy (case-sensitive).
 
-**Note:** Detailed file resolver documentation and customization workflows are provided by specialized customization skills (epublisher-reverb-css, epublisher-pdf-page-layout, etc.).
+**Note:** Detailed file resolver documentation and customization workflows are provided by specialized customization skills (epublisher-reverb-scss-customizer, epublisher-pdf-page-layout, etc.).
 
-See `{baseDir}/../../../shared/references/FILE_RESOLVER_GUIDE.md` for comprehensive file resolver documentation.
+**See Also:** `shared/references/FILE_RESOLVER_GUIDE.md` for comprehensive file resolver documentation.
 
 ## Helper Scripts
 
-This skill includes several helper scripts located in `scripts/`:
+Helper scripts located in `scripts/` directory:
 
-### detect-installation.sh
+| Script | Purpose |
+|--------|---------|
+| `detect-installation.sh` | Robust AutoMap installation detection with registry queries, build number extraction, and version selection |
+| `automap-wrapper.sh` | Enhanced AutoMap CLI wrapper with error reporting and progress monitoring |
+| `parse-targets.sh` | Parse project files to extract targets, formats, and Base Format Version |
+| `manage-sources.sh` | Manage source documents (list, validate, toggle inclusion) |
 
-Robust AutoMap installation detection with multiple strategies:
-- Registry-based detection (64-bit and 32-bit)
-- Build number extraction from registry Version value
-- Filesystem fallback search
-- Version selection and filtering
-- Verbose output for troubleshooting
+**Usage Examples:**
 
-**Usage:**
 ```bash
-./scripts/detect-installation.sh                  # Detect latest version
-./scripts/detect-installation.sh --version 2020.2 # Specific version
-./scripts/detect-installation.sh --show-build     # Show build number
-./scripts/detect-installation.sh --verbose        # Detailed output
+# Detect AutoMap
+./scripts/detect-installation.sh --version 2024.1
+
+# Build project
+./scripts/automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" project.wep
+
+# List targets
+./scripts/parse-targets.sh --list project.wep
+
+# Validate sources
+./scripts/manage-sources.sh --validate project.wep
 ```
 
-**Example output with --show-build:**
-```
-C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe
-Build: 4603
-```
-
-### automap-wrapper.sh
-
-Enhanced AutoMap CLI wrapper with error reporting:
-- Clean builds with cache clearing
-- Target-specific generation
-- Custom deployment folders
-- Progress monitoring
-- Comprehensive error messages
-
-**Usage:**
-```bash
-./scripts/automap-wrapper.sh -c -l project.wep              # Clean build all
-./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep  # Specific target
-./scripts/automap-wrapper.sh --deployfolder "C:\Output" project.wep  # Custom output
-```
-
-### parse-targets.sh
-
-Parse project files to extract target and format information:
-- List all targets
-- Extract format names
-- Detect Base Format Version
-- JSON output support
-- Detailed target configuration
-
-**Usage:**
-```bash
-./scripts/parse-targets.sh project.wep            # List targets
-./scripts/parse-targets.sh --list project.wep     # Detailed info
-./scripts/parse-targets.sh --json project.wep     # JSON output
-./scripts/parse-targets.sh --version project.wep  # Base Format Version
-```
-
-### manage-sources.sh
-
-Manage source documents in project files:
-- List all source documents
-- Validate source file paths exist
-- Toggle document inclusion
-- Display group hierarchy
-- Check document status
-
-**Usage:**
-```bash
-./scripts/manage-sources.sh --list project.wep       # List all sources
-./scripts/manage-sources.sh --validate project.wep   # Check paths exist
-./scripts/manage-sources.sh --toggle "Source\file.md" project.wep  # Toggle inclusion
-```
+**See Also:**
+- [`references/AUTOMAP_CLI_REFERENCE.md`](./references/AUTOMAP_CLI_REFERENCE.md) - Detailed script documentation
+- [`INSTALLATION.md`](./INSTALLATION.md) - Installation and setup guide (for humans)
 
 ## Handling User Requests
 
-### Distinguishing Between Errors and Creation Requests
+### Distinguishing Between Queries and Creation Requests
 
-When a user asks about something that doesn't exist in the project, clarify their intent before proceeding:
+When a user asks about something that doesn't exist, clarify their intent before proceeding.
 
-**User Error Indicators (inform, don't create):**
-- "What is..." / "Show me..." / "Display..." / "List..."
-- "Can you generate..." (ambiguous - may mean "show" or "create")
-- "Where is..." / "Find..."
-- Asking about singular items in informational context
+**User Query Indicators (inform only):**
+- "What is...", "Show me...", "List...", "Where is..."
+- Asking about items in informational context
+- **Response:** Provide information, acknowledge non-existence
 
 **Creation Request Indicators (create new items):**
-- "Add..." / "Create..." / "Make..."
-- "I need a new..." / "Set up..."
-- "Generate a new..." (explicit creation intent)
-- Specific parameters provided (names, settings, etc.)
+- "Add...", "Create...", "Make...", "Set up..."
+- "I need a new..."
+- Specific parameters provided
+- **Response:** Proceed with creation
 
-**Best Practice - Acknowledge First, Then Clarify:**
+**Ambiguous Verbs:**
+- **"generate"** - Can mean "show" OR "create" - **ALWAYS clarify**
+- **"get"** - Usually "retrieve/show" unless context suggests creation
+- **"provide"** - Usually "show" unless "provide me with a new..."
+
+**Best Practice:**
 
 When something doesn't exist:
-1. **First:** Acknowledge that it doesn't exist
-2. **Then:** Ask if they want to create it (if creation is possible)
-3. **Never:** Assume creation intent without confirmation
+1. **Acknowledge** non-existence clearly
+2. **Provide context** - show what DOES exist
+3. **Offer creation** if applicable
+4. **Never assume** creation intent without confirmation
 
 **Examples:**
 
 Request: "What targets are in this project?"
-Response: Parse and list existing targets only.
+→ Parse and list existing targets only.
 
 Request: "Can you generate Target 2?"
-Response: "Target 2 doesn't exist in this project. The only target configured is 'Target 1'. Would you like me to create a new 'Target 2' target?"
+→ "Target 2 doesn't exist. Only 'Target 1' is configured. Would you like me to create 'Target 2'?"
 
 Request: "Add Target 2 with Reverb format"
-Response: Proceed with creation (clear intent with specifics).
+→ Proceed with creation (clear intent).
 
 Request: "Show me the PDF target"
-Response: "There's no PDF target configured. The project only has 'Target 1' using WebWorks Reverb 2.0. Would you like to create a PDF target?"
+→ "No PDF target configured. Only 'Target 1' (Reverb) exists. Would you like to create a PDF target?"
 
-**Ambiguous Verbs:**
-- "generate" - Can mean "show/display" OR "create" - ALWAYS clarify
-- "get" - Usually means "retrieve/show" unless context suggests creation
-- "make" - Usually means "create"
-
-**Key Principle:** When in doubt about user intent, always acknowledge what doesn't exist and ask for clarification before creating something new.
+**See Also:** [`shared/references/USER_INTERACTION_PATTERNS.md`](../../../shared/references/USER_INTERACTION_PATTERNS.md) for comprehensive user intent disambiguation patterns and examples.
 
 ## Common Workflows
 
 ### Build Project
 
-1. Detect AutoMap installation using detect-installation.sh
+1. Detect AutoMap installation using `detect-installation.sh`
 2. Parse project file to identify targets
-3. Execute build using automap-wrapper.sh
-4. Monitor output for errors
+3. Execute build using `automap-wrapper.sh` or AutoMap directly
+4. Monitor output for errors/warnings
 5. Report deployment location on success
 
 ### List Project Targets
 
-1. Find project file (.wep/.wrp) in current directory
-2. Parse targets using parse-targets.sh
-3. Display target names, format names, and output locations
+1. Find project file (.wep/.wrp/.wxsp) in directory
+2. Parse targets using `parse-targets.sh`
+3. Display target names, format names, output locations
 
 ### Manage Source Documents
 
-1. Parse source documents using manage-sources.sh
+1. Parse source documents using `manage-sources.sh --list`
 2. List all documents with inclusion status
 3. Validate source file paths exist
 4. Toggle inclusion status as needed
 
 ### Check Project Configuration
 
-1. Detect Base Format Version using parse-targets.sh --version
+1. Detect Base Format Version using `parse-targets.sh --version`
 2. List targets and formats
 3. Validate source documents
 4. Report project summary to user
@@ -683,8 +470,31 @@ Response: "There's no PDF target configured. The project only has 'Target 1' usi
 
 This core skill provides foundation services for customization skills:
 
-- **Installation Detection:** Customization skills use Base Format Version to locate source files
-- **File Resolver Understanding:** Customization skills use hierarchy knowledge to place files correctly
-- **Project Structure:** Customization skills navigate project directories using core patterns
+**Services Provided:**
+- **Installation Detection** - Customization skills use Base Format Version to locate source files
+- **File Resolver Understanding** - Customization skills use hierarchy knowledge to place files correctly
+- **Project Structure Navigation** - Customization skills navigate project directories using core patterns
+- **Build Execution** - Customization skills trigger rebuilds after making changes
 
-Customization skills (epublisher-reverb-css, epublisher-pdf-page-layout, etc.) build on this foundation to provide specialized format customization assistance.
+**Related Customization Skills:**
+- `epublisher-reverb-scss-customizer` - Modify Reverb SCSS variables (_colors.scss, _sizes.scss, etc.)
+- `epublisher-reverb-browser-test` - Test Reverb output in browsers
+- `epublisher-pdf-page-layout` - Customize PDF page layouts (future)
+
+## Version History
+
+**v1.1.0** (2025-11-04)
+- Extracted detailed content to reference files (progressive disclosure)
+- Created AUTOMAP_CLI_REFERENCE.md for comprehensive CLI documentation
+- Created PROJECT_PARSING_GUIDE.md for project file parsing
+- Moved USER_INTERACTION_PATTERNS.md to shared references
+- Added INSTALLATION.md for human developers
+- Reduced SKILL.md from 691 to ~400 lines (42% reduction)
+- Enhanced metadata with related-skills and documentation links
+
+**v1.0.0** (2025-11-01)
+- Initial release
+- Core AutoMap automation
+- Project file parsing
+- Source document management
+- Base Format Version detection

@@ -1,0 +1,15 @@
+{
+  "name": "epublisher-reverb-browser-test",
+  "version": "1.0.0",
+  "description": "Browser-based testing for WebWorks Reverb 2.0 output",
+  "main": "scripts/browser-test.js",
+  "scripts": {
+    "test": "node scripts/browser-test.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
