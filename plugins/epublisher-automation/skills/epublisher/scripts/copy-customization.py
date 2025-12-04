@@ -338,11 +338,11 @@ def main():
 Examples:
     # Copy Connect.asp to project (format-level)
     %(prog)s --source "C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\Formats\\WebWorks Reverb 2.0\\Pages\\Connect.asp" \\
-             --destination "C:\\Projects\\MyDoc\\Formats\\WebWorks Reverb 2.0\\Pages\\Connect.asp"
+             --destination "C:\\projects\\my-proj\\Formats\\WebWorks Reverb 2.0\\Pages\\Connect.asp"
 
     # Copy skin.scss to target-specific location
     %(prog)s --source "C:\\Program Files\\WebWorks\\ePublisher\\2024.1\\Formats\\WebWorks Reverb 2.0\\Pages\\sass\\skin.scss" \\
-             --destination "C:\\Projects\\MyDoc\\Targets\\MyTarget\\Pages\\sass\\skin.scss"
+             --destination "C:\\projects\\my-proj\\Targets\\MyTarget\\Pages\\sass\\skin.scss"
 
     # Validate structure without copying
     %(prog)s --source "..." --destination "..." --validate-only

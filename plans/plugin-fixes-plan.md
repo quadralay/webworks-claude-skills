@@ -251,7 +251,7 @@ Add common error scenarios and solutions to each skill.
 **Cause:** Path is incorrect or file doesn't exist.
 
 **Solutions:**
-1. Use absolute Windows paths (e.g., `C:\Projects\MyDoc.wep`)
+1. Use absolute Windows paths (e.g., `C:\projects\my-proj\my-proj.wep`)
 2. Check for spaces in path (quote the path)
 3. Verify file extension is .wep, .wrp, or .wxsp
 

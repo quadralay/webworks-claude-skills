@@ -570,7 +570,7 @@ new_doc_id=$(generate_id_with_prefix "doc")     # docK4Rt8Wq
 
 **Absolute (less common):**
 ```xml
-<Document Path="C:\Projects\MyDoc\Source\content.md" ... />
+<Document Path="C:\projects\my-proj\Source\content.md" ... />
 ```
 - Full path from drive root
 - Not portable

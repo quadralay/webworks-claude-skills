@@ -212,7 +212,7 @@ echo "All projects built successfully"
 # Windows Task Scheduler PowerShell script
 
 $AutoMapCLI = "C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe"
-$ProjectFile = "C:\Projects\Documentation\project.wep"
+$ProjectFile = "C:\projects\my-proj\my-proj.wep"
 
 # Execute build
 & $AutoMapCLI -c -l -t "WebWorks Reverb 2.0" $ProjectFile

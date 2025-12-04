@@ -68,36 +68,36 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 **Clean build all targets (no deploy):**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n "C:\projects\my-proj\my-proj.wep"
 ```
 
 **Clean build with deployment:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l "C:\projects\my-proj\my-proj.wep"
 ```
 
 ### Target-Specific Builds
 
 **Build only Reverb target:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "WebWorks Reverb 2.0" "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "WebWorks Reverb 2.0" "C:\projects\my-proj\my-proj.wep"
 ```
 
 **Build only PDF target:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "PDF - XSL-FO" "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "PDF - XSL-FO" "C:\projects\my-proj\my-proj.wep"
 ```
 
 ### Custom Deployment
 
 **Deploy to web server:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l --deployfolder "\\WebServer\wwwroot\docs" "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l --deployfolder "\\WebServer\wwwroot\docs" "C:\projects\my-proj\my-proj.wep"
 ```
 
 **Deploy to local test folder:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c --deployfolder "C:\TestOutput" "C:\Projects\MyDoc\MyDoc.wep"
+"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c --deployfolder "C:\TestOutput" "C:\projects\my-proj\my-proj.wep"
 ```
 
 ## Execution Guidelines
@@ -196,7 +196,7 @@ Track build progress:
 
 **Symptom:**
 ```
-Error: Could not load project file 'C:\Projects\MyDoc.wep'
+Error: Could not load project file 'C:\projects\my-proj\my-proj.wep'
 ```
 
 **Causes:**
@@ -205,7 +205,7 @@ Error: Could not load project file 'C:\Projects\MyDoc.wep'
 - Permission denied
 
 **Solutions:**
-1. Verify file exists: `test -f "C:\Projects\MyDoc.wep"`
+1. Verify file exists: `test -f "C:\projects\my-proj\my-proj.wep"`
 2. Check file permissions
 3. Use absolute path
 4. Check for typos in filename

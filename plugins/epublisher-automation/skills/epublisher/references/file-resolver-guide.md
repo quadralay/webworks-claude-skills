@@ -10,14 +10,14 @@ An ePublisher project follows this standard organization:
 
 ```
 your-project/
-├── YourProject.wep           # Project file (or .wrp for stationery)
-├── Source/                   # Source documents
+├── your-project.wep          # Project file (.wep=Designer, .wrp=Express, .wxsp=Stationery)
+├── Source/                   # Source documents (optional, can reside anywhere)
 │   └── docs/
 ├── Targets/                  # Target-specific overrides
 │   └── [TargetName]/
 ├── Formats/                  # Format-level overrides
 │   ├── WebWorks Reverb 2.0/
-│   └── WebWorks Reverb 2.0.base/
+│   └── WebWorks Reverb 2.0.base/  # .wrp and .wxsp projects only
 └── Output/                   # Generated output
     └── [TargetName]/
 ```
@@ -39,8 +39,8 @@ ePublisher resolves files using a priority-based hierarchy, from highest to lowe
 
 **Example:**
 ```
-C:\Projects\UserGuide\Targets\WebHelp-Internal\Pages\Connect.asp
-C:\Projects\UserGuide\Targets\WebHelp-Internal\Pages\sass\skin.scss
+C:\projects\my-proj\Targets\WebHelp-Internal\Pages\Connect.asp
+C:\projects\my-proj\Targets\WebHelp-Internal\Pages\sass\skin.scss
 ```
 
 **When to Use:**
@@ -61,8 +61,8 @@ C:\Projects\UserGuide\Targets\WebHelp-Internal\Pages\sass\skin.scss
 
 **Example:**
 ```
-C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
-C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss
 ```
 
 **When to Use:**
@@ -83,8 +83,8 @@ C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss
 
 **Example:**
 ```
-C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0.base\Pages\Connect.asp
-C:\Projects\UserGuide\Formats\WebWorks Reverb 2.0.base\Pages\sass\_colors.scss
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0.base\Pages\Connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0.base\Pages\sass\_colors.scss
 ```
 
 ### Level 4: Installation Defaults (Lowest Priority / Fallback)
@@ -141,7 +141,7 @@ C:\Program Files\WebWorks\ePublisher\2024.1\
 
 **Valid Target-Specific Override:**
 ```
-C:\Projects\MyDoc\
+C:\projects\my-proj\
   └─ Targets\
       └─ MyWebHelp\
           └─ Pages\              ← Exact folder name match
@@ -150,7 +150,7 @@ C:\Projects\MyDoc\
 
 **Valid Format-Level Override:**
 ```
-C:\Projects\MyDoc\
+C:\projects\my-proj\
   └─ Formats\
       └─ WebWorks Reverb 2.0\    ← Exact format name match
           └─ Pages\              ← Exact folder name match
@@ -161,16 +161,16 @@ C:\Projects\MyDoc\
 
 ```
 # Wrong folder name (Pages vs pages)
-C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\pages\Connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0\pages\Connect.asp
 
 # Wrong file name (connect.asp vs Connect.asp)
-C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\connect.asp
 
 # Missing intermediate folder (no Pages directory)
-C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Connect.asp
 
 # Wrong format name (missing "2.0")
-C:\Projects\MyDoc\Formats\WebWorks Reverb\Pages\Connect.asp
+C:\projects\my-proj\Formats\WebWorks Reverb\Pages\Connect.asp
 ```
 
 ### Why This Matters
@@ -226,14 +226,14 @@ When copying files from installation to project, always use the Base Format Vers
 ```bash
 # For project with Base Format Version = 2020.2
 source="C:\Program Files\WebWorks\ePublisher\2020.2\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
-destination="C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
+destination="C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
 ```
 
 **Incorrect:**
 ```bash
 # Using wrong version (2024.1 when project uses 2020.2)
 source="C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
-destination="C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
+destination="C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
 ```
 
 ### Why Version Matters
@@ -266,18 +266,18 @@ Mixing versions can cause build errors or unexpected output.
 
 3. **Construct destination path (format-level):**
    ```
-   C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
+   C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
    ```
 
 4. **Create directory structure:**
    ```bash
-   mkdir -p "C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages"
+   mkdir -p "C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages"
    ```
 
 5. **Copy file:**
    ```bash
    cp "C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Connect.asp" \
-      "C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
+      "C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
    ```
 
 6. **Verify structure:**
@@ -310,14 +310,14 @@ Mixing versions can cause build errors or unexpected output.
 
 4. **Construct destination (target-specific):**
    ```
-   C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\_colors.scss
+   C:\projects\my-proj\Targets\Internal WebHelp\Pages\sass\_colors.scss
    ```
 
 5. **Create structure and copy:**
    ```bash
-   mkdir -p "C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass"
+   mkdir -p "C:\projects\my-proj\Targets\Internal WebHelp\Pages\sass"
    cp "C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\sass\_colors.scss" \
-      "C:\Projects\MyDoc\Targets\Internal WebHelp\Pages\sass\_colors.scss"
+      "C:\projects\my-proj\Targets\Internal WebHelp\Pages\sass\_colors.scss"
    ```
 
 ### Workflow 3: SCSS Override Pattern (For Structural CSS Changes)
@@ -519,8 +519,8 @@ Files can exist at multiple override levels simultaneously. ePublisher uses the 
 **Example:**
 ```
 Installation: C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
-Format-level: C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
-Target-level: C:\Projects\MyDoc\Targets\Internal\Pages\Connect.asp
+Format-level: C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
+Target-level: C:\projects\my-proj\Targets\Internal\Pages\Connect.asp
 ```
 
 For "Internal" target, ePublisher uses: Target-level (highest priority)
@@ -536,7 +536,7 @@ C:\Program Files\WebWorks\ePublisher\2024.1\Formats\Shared\common\pages\pagetemp
 
 Override at format level:
 ```
-C:\Projects\MyDoc\Formats\Shared\common\pages\pagetemplate.xsl
+C:\projects\my-proj\Formats\Shared\common\pages\pagetemplate.xsl
 ```
 
 ### Version Upgrade Considerations
@@ -558,7 +558,7 @@ Python script for validated file copying with parallel structure enforcement:
 ```bash
 ./scripts/copy-customization.py \
     --source "C:\Program Files\WebWorks\ePublisher\2024.1\Formats\WebWorks Reverb 2.0\Pages\Connect.asp" \
-    --destination "C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
+    --destination "C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp"
 ```
 
 **Features:**
@@ -597,7 +597,7 @@ Verify structure manually:
 # Relative: WebWorks Reverb 2.0\Pages\Connect.asp
 
 # Verify destination ends with exact relative path
-# Destination: C:\Projects\MyDoc\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
+# Destination: C:\projects\my-proj\Formats\WebWorks Reverb 2.0\Pages\Connect.asp
 # Suffix: WebWorks Reverb 2.0\Pages\Connect.asp ← Match!
 ```
 
