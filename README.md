@@ -1,53 +1,50 @@
 # WebWorks Agent Skills
 
-AI-powered automation for WebWorks documentation tools including ePublisher, FrameMaker, and WebWorks utilities.
+AI-powered automation for WebWorks documentation tools including support for ePublisher project manipulation and AutoMap CLI automation.
 
 ## Overview
 
-This repository provides a collection of specialized Claude Code skills for WebWorks ePublisher development. The modular architecture allows Claude to provide focused, context-aware assistance for different aspects of ePublisher projects.
+This repository provides a collection of specialized Claude Code skills for WebWorks ePublisher design, automation, and analysis. The modular architecture allows Claude to provide focused, context-aware assistance for different aspects of ePublisher projects.
 
-**Current Version:** 1.1.0
+**Current Version:** 1.0.0
 
 ### Available Skills
 
-- **epublisher-core** ✅ Production Ready - Build automation, project management, AutoMap CLI integration
-- **epublisher-reverb-analyzer** ✅ Production Ready - Automated Reverb 2.0 output testing and validation
-
-See [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md) for detailed skill descriptions.
+- **epublisher** - Core ePublisher knowledge, project structure, file resolver hierarchy
+- **automap** - Build automation with AutoMap CLI
+- **reverb** - Reverb 2.0 testing, CSH analysis, SCSS theming
 
 ## Features
 
-### 🚀 Build Automation (epublisher-core)
+### 📚 Core Knowledge (epublisher)
 
-- Automatic AutoMap installation detection via Windows Registry
+- Understand ePublisher's four-level file resolver hierarchy
+- Parse project files (`.wep`, `.wrp`) to extract targets and formats
+- Detect Base Format Version for correct customization sources
+- List and manage source documents
+
+### 🚀 Build Automation (automap)
+
+- Automatic AutoMap installation detection
 - Smart command construction with proper parameter handling
 - Build progress monitoring and error reporting
 - Support for clean builds, targeted generation, and custom deployments
 
-### 📁 Project Management (epublisher-core)
-
-- Parse project files (`.wep`, `.wrp`) to extract targets and formats
-- Detect Base Format Version for correct customization sources
-- List and manage source documents
-- Validate source file paths
-- Understand ePublisher's four-level override hierarchy
-
-### 🧪 Output Testing & Validation (epublisher-reverb-analyzer)
+### 🧪 Output Testing & Validation (reverb)
 
 - Automated browser testing of Reverb 2.0 output with Puppeteer
 - JavaScript runtime validation and error detection
 - Console monitoring for errors and warnings
 - Context Sensitive Help (CSH) link analysis
 - Component inspection (toolbar, header, footer, TOC, content area)
-- FormatSettings validation against actual DOM structure
-- Comprehensive test reports with actionable findings
+- SCSS theme variable extraction and color override generation
 
 ## Installation
 
 ### Prerequisites
 
 - **Windows operating system** (ePublisher is Windows-only)
-- **WebWorks ePublisher 2024.1+** installed with AutoMap component
+- **WebWorks ePublisher 2024.1+** (Express or Designer required; AutoMap optional for automated publishing)
 - **Claude Code** installed and configured
 - **Git Bash** or similar Unix-like shell environment
 
@@ -90,12 +87,10 @@ See [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md) for detailed skill descriptio
 ### Make Scripts Executable
 
 ```bash
-chmod +x skills/*/scripts/*.sh shared/scripts/*.py
+chmod +x plugins/epublisher-automation/skills/*/scripts/*.sh
 ```
 
 ## Quick Start
-
-See [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) for detailed usage instructions.
 
 ### Example Usage
 
@@ -113,25 +108,22 @@ webworks-agent-skills/
 ├── .claude-plugin/
 │   └── marketplace.json         # Marketplace manifest
 ├── plugins/
-│   └── epublisher-automation/   # ePublisher automation plugin (self-contained)
-│       ├── skills/              # Production skills
-│       │   ├── epublisher-core/         # ✅ Build automation
-│       │   │   ├── SKILL.md
-│       │   │   ├── scripts/
-│       │   │   └── references/
-│       │   └── epublisher-reverb-analyzer/  # ✅ Output testing
-│       │       ├── SKILL.md
-│       │       ├── package.json
-│       │       ├── scripts/
-│       │       └── references/
-│       └── shared/              # Shared utilities (plugin-specific)
-│           ├── scripts/
-│           └── references/
-├── docs/
-│   ├── SKILL_CATALOG.md
-│   └── GETTING_STARTED.md
+│   └── epublisher-automation/   # ePublisher automation plugin
+│       └── skills/
+│           ├── epublisher/      # Core knowledge
+│           │   ├── SKILL.md
+│           │   ├── scripts/
+│           │   └── references/
+│           ├── automap/         # Build automation
+│           │   ├── SKILL.md
+│           │   ├── scripts/
+│           │   └── references/
+│           └── reverb/          # Reverb 2.0 testing
+│               ├── SKILL.md
+│               ├── package.json
+│               └── scripts/
+├── plans/                       # Development plans
 ├── archive/                     # Historical files
-│   ├── PROJECT_PLAN.md
 │   └── templates/
 ├── CONTRIBUTING.md
 └── README.md
@@ -139,21 +131,20 @@ webworks-agent-skills/
 
 ## Documentation
 
-### Getting Started
-
-- **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Installation and basic usage
-- **[SKILL_CATALOG.md](docs/SKILL_CATALOG.md)** - Complete skill reference
-
 ### Skills
 
-- **[epublisher-core/SKILL.md](plugins/epublisher-automation/skills/epublisher-core/SKILL.md)** - Core skill definition
-- **[epublisher-reverb-analyzer/SKILL.md](plugins/epublisher-automation/skills/epublisher-reverb-analyzer/SKILL.md)** - Analyzer skill definition
-- **[FILE_RESOLVER_GUIDE.md](plugins/epublisher-automation/shared/references/FILE_RESOLVER_GUIDE.md)** - Override hierarchy guide
+- **[epublisher/SKILL.md](plugins/epublisher-automation/skills/epublisher/SKILL.md)** - Core ePublisher knowledge
+- **[automap/SKILL.md](plugins/epublisher-automation/skills/automap/SKILL.md)** - Build automation
+- **[reverb/SKILL.md](plugins/epublisher-automation/skills/reverb/SKILL.md)** - Reverb 2.0 testing
+
+### References
+
+- **[file-resolver-guide.md](plugins/epublisher-automation/skills/epublisher/references/file-resolver-guide.md)** - Override hierarchy guide
 
 ### Development
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
-- **[PROJECT_PLAN.md](archive/PROJECT_PLAN.md)** - Historical development plan (archived)
+- **[plans/](plans/)** - Development plans (historical)
 
 ## Architecture
 
@@ -174,10 +165,10 @@ The modular architecture splits functionality into focused skills:
 
 ## Version Compatibility
 
-- **Skill Version:** 1.1.0
+- **Skill Version:** 1.0.0
 - **ePublisher:** 2024.1+ (primary), 2020.2+ (legacy support)
 - **AutoMap:** 2024.1+
-- **Reverb Format:** WebWorks Reverb 2.0 only (analyzer skill)
+- **Reverb Format:** WebWorks Reverb 2.0 only (reverb skill)
 - **Platform:** Windows only
 - **Claude Code:** Latest version recommended
 
@@ -201,32 +192,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-### Version 1.1.0 (2025-11-03)
-
-**Reverb Output Analyzer Release**
-
-- ✅ Added epublisher-reverb-analyzer skill (production ready)
-- ✅ Automated browser testing with Puppeteer
-- ✅ Console error monitoring and validation
-- ✅ Context Sensitive Help (CSH) link analysis
-- ✅ Component inspection and FormatSettings validation
-- ✅ Comprehensive test report generation
-- ✅ Removed placeholder skills for simplified architecture
-- ✅ Updated to four-level file resolver hierarchy documentation
-
-### Version 1.0.0 (2025-01-29)
+### Version 1.0.0 (2025-12-03)
 
 **Initial Release**
 
-- ✅ Marketplace plugin structure following Anthropic patterns
-- ✅ `epublisher-automation` plugin with modular skills
-- ✅ epublisher-core skill (production ready)
-- ✅ Self-contained plugin for easy installation
-- ✅ Progressive skill loading for efficient context management
-- ✅ Comprehensive documentation and contribution guidelines
+- 3 layered skills: `epublisher`, `automap`, `reverb`
+- Core ePublisher knowledge and file resolver hierarchy
+- AutoMap CLI build automation
+- Reverb 2.0 browser testing with Puppeteer
+- CSH link analysis
+- SCSS theme extraction and color override generation
 
 ---
 
-**Status:** Production - 2 production-ready skills for ePublisher automation and testing
+**Status:** Production - 3 skills for ePublisher automation and testing
 
 **Generated with Claude Code**

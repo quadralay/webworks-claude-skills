@@ -4,6 +4,24 @@
 
 WebWorks ePublisher uses a sophisticated file resolver system that allows customization of format files (templates, stylesheets, transforms) without modifying the installation files. Understanding this hierarchy is critical for successful customizations.
 
+## Project Structure
+
+An ePublisher project follows this standard organization:
+
+```
+your-project/
+├── YourProject.wep           # Project file (or .wrp for stationery)
+├── Source/                   # Source documents
+│   └── docs/
+├── Targets/                  # Target-specific overrides
+│   └── [TargetName]/
+├── Formats/                  # Format-level overrides
+│   ├── WebWorks Reverb 2.0/
+│   └── WebWorks Reverb 2.0.base/
+└── Output/                   # Generated output
+    └── [TargetName]/
+```
+
 ## The Four-Level Override Hierarchy
 
 ePublisher resolves files using a priority-based hierarchy, from highest to lowest priority:

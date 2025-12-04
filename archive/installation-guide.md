@@ -195,7 +195,7 @@ If you see errors, check your MSYS2 environment configuration.
 1. Verify source documents exist (check project file paths)
 2. Ensure output directories are writable
 3. Check AutoMap CLI reference for common errors:
-   - See `references/AUTOMAP_CLI_REFERENCE.md`
+   - See `references/cli-reference.md`
 
 ## Next Steps
 

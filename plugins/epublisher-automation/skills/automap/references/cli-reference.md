@@ -402,8 +402,7 @@ Use this reference when:
 
 ## Related Documentation
 
-- [AUTOMAP_INSTALLATION_DETECTION.md](./AUTOMAP_INSTALLATION_DETECTION.md) - Finding AutoMap executable
-- [PROJECT_PARSING_GUIDE.md](./PROJECT_PARSING_GUIDE.md) - Understanding project file structure
+- [installation-detection.md](./installation-detection.md) - Finding AutoMap executable
 - [../SKILL.md](../SKILL.md) - Main skill documentation
 
 ---

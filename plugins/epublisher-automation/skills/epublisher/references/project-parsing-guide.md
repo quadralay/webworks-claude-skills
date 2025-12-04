@@ -661,8 +661,7 @@ $ ./manage-sources.sh --validate project.wep
 ## Related Documentation
 
 - [../SKILL.md](../SKILL.md) - Main skill documentation
-- [AUTOMAP_CLI_REFERENCE.md](./AUTOMAP_CLI_REFERENCE.md) - AutoMap command options
-- [AUTOMAP_INSTALLATION_DETECTION.md](./AUTOMAP_INSTALLATION_DETECTION.md) - Finding AutoMap
+- [file-resolver-guide.md](./file-resolver-guide.md) - File override hierarchy
 
 ---
 

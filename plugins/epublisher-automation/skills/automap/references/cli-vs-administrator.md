@@ -281,7 +281,7 @@ if ($LASTEXITCODE -eq 0) {
 
 ## Related Documentation
 
-- [AutoMap Installation Detection](AUTOMAP_INSTALLATION_DETECTION.md) - How detection works
+- [installation-detection.md](./installation-detection.md) - How detection works
 - AutoMap Wrapper Script - Usage and examples
 - WebWorks ePublisher User Guide - Official documentation
 
