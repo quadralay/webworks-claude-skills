@@ -108,6 +108,7 @@ Validates parallel folder structure and creates directories as needed.
 - `file-resolver-guide.md` - Complete file resolution hierarchy
 - `project-parsing-guide.md` - Detailed project file structure
 - `user-interaction-patterns.md` - UX patterns for ePublisher workflows
+- `version-compatibility.md` - Supported versions and breaking changes
 </references>
 
 <common_tasks>
