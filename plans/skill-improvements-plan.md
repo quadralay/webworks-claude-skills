@@ -3,7 +3,19 @@
 Plan for improving the WebWorks Agent Skills plugin based on Claude Code skill best practices.
 
 **Created:** 2025-12-03
-**Status:** Ready for Implementation
+**Status:** In Progress
+
+### Progress
+
+| Phase | Status | Commit |
+|-------|--------|--------|
+| Phase 1: YAML Frontmatter | ✅ Complete | `70be117` |
+| Task 5.1: Fix broken reference | ✅ Complete (restored script) | `70be117` |
+| Phase 2: XML Structure | Pending | |
+| Phase 3: Router Pattern | Pending | |
+| Phase 4: Reduce Duplication | Pending | |
+| Phase 6: Add Templates | Pending | |
+| Phase 7: Version Compatibility | Pending | |
 
 ---
 
@@ -28,9 +40,12 @@ This plan addresses improvements identified during a comprehensive review of the
 
 ---
 
-## Phase 1: YAML Frontmatter (High Priority)
+## Phase 1: YAML Frontmatter (High Priority) ✅ COMPLETE
 
 Add required YAML frontmatter to all SKILL.md files.
+
+> **Completed:** 2025-12-03 in commit `70be117`
+> **Note:** YAML `name` field must match directory name (corrected from initial implementation)
 
 ### Task 1.1: Update epublisher/SKILL.md
 
@@ -411,13 +426,14 @@ ePublisher resolves files through a 4-level hierarchy (highest to lowest priorit
 
 ## Phase 5: Fix Broken References (Medium Priority)
 
-### Task 5.1: Remove non-existent script reference
+### Task 5.1: ~~Remove non-existent script reference~~ Restore copy-customization.py ✅ COMPLETE
 
-**File:** `plugins/epublisher-automation/skills/epublisher/references/file-resolver-guide.md`
+> **Completed:** 2025-12-03 in commit `70be117`
+> **Resolution:** Restored script from revision `54f0dbe` (v1.0.0) instead of removing reference
 
-**Line:** ~558-570
+**File:** `plugins/epublisher-automation/skills/epublisher/scripts/copy-customization.py`
 
-**Action:** Remove or update the `copy-customization.py` reference since the script doesn't exist:
+**Action:** ~~Remove or update the `copy-customization.py` reference since the script doesn't exist~~ Restored script and enhanced documentation:
 
 **Current:**
 ```markdown
@@ -545,8 +561,8 @@ Use `parse-targets.sh --version` to detect Base Format Version from project file
 ## Implementation Order
 
 ### Quick Wins (Do First)
-1. Phase 1: Add YAML frontmatter (15 minutes)
-2. Task 5.1: Remove broken script reference (5 minutes)
+1. ~~Phase 1: Add YAML frontmatter (15 minutes)~~ ✅ Complete
+2. ~~Task 5.1: Remove broken script reference (5 minutes)~~ ✅ Complete (restored script instead)
 
 ### Core Improvements
 3. Phase 2: Convert to XML structure (1-2 hours)
