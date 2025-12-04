@@ -195,6 +195,28 @@ Override priority (highest first):
 Use these templates as the canonical structure for script output and report generation.
 </templates>
 
+<scripts>
+
+## Scripts
+
+### setup-dependencies.sh
+
+Installs Node.js dependencies for browser testing.
+
+```bash
+# Install dependencies (run once)
+./scripts/setup-dependencies.sh
+```
+
+**Prerequisites:**
+- Node.js 18+ installed
+- npm available in PATH
+
+**Exit codes:**
+- 0: Dependencies installed successfully
+- 1: Node.js not found or npm install failed
+</scripts>
+
 <dependencies>
 
 ## Dependencies
