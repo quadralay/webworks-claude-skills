@@ -88,11 +88,9 @@ Claude: Handles everything, reports results
 **Required:**
 - **Windows** (ePublisher is Windows-only)
 - **[Git for Windows](https://git-scm.com/download/win)** (provides Git Bash for automation scripts)
-- **[WebWorks ePublisher 2024.1+](https://webworks.com/products/epublisher/download#download-links)** (Express or Designer)
+- **[WebWorks ePublisher 2024.1+](https://webworks.com/products/epublisher/download#download-links)** (Express required; Designer optional)
+- **[WebWorks AutoMap](https://webworks.com/products/epublisher/download#download-links)** (highly recommended for full automation)
 - **Claude Code** installed and configured
-
-**Optional:**
-- **AutoMap** for automated publishing
 
 > **Note:** Legacy ePublisher 2020.2+ is supported but 2024.1+ is recommended. WSL is not supported.
 
