@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="urn:WebWorks-Publish-Project" Version="1.0">
+  <Formats>
+    <Format Name="WebWorks Reverb 2.0" Type="Application">
+      <FormatSettings>
+        <Setting Name="locale" Value="en" />
+        <Setting Name="show-first-document" Value="true" />
+        <Setting Name="header-generate" Value="true" />
+      </FormatSettings>
+    </Format>
+    <Format Name="PDF - XSL-FO" Type="Document">
+      <FormatSettings>
+        <Setting Name="paper-size" Value="letter" />
+        <Setting Name="margins" Value="1in" />
+      </FormatSettings>
+    </Format>
+  </Formats>
+  <FileTypeMappings>
+    <Mapping Extension=".md" Adapter="Markdown" />
+    <Mapping Extension=".docx" Adapter="Word" />
+  </FileTypeMappings>
+</Project>
