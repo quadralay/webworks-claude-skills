@@ -90,7 +90,7 @@ Claude: Handles everything, reports results
 - **[Git for Windows](https://git-scm.com/download/win)** (provides Git Bash for automation scripts)
 - **[WebWorks ePublisher 2024.1+](https://webworks.com/products/epublisher/download#download-links)** (Express required; Designer optional)
 - **[WebWorks AutoMap](https://webworks.com/products/epublisher/download#download-links)** (highly recommended for full automation)
-- **Claude Code** installed and configured
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** installed and configured
 
 > **Note:** Legacy ePublisher 2020.2+ is supported but 2024.1+ is recommended. WSL is not supported.
 
