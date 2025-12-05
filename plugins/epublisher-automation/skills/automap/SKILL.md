@@ -198,6 +198,21 @@ Supports both project files (.wep) and job files (.waj).
 - WebWorks ePublisher 2024.1+ with AutoMap component
 - Windows operating system
 - Git Bash or similar Unix-like shell
+- Python 3.10+ (for job file scripts)
+
+### Python Dependencies
+
+Install required packages before using job file scripts:
+
+```bash
+pip install -r scripts/requirements.txt
+```
+
+Or install directly:
+
+```bash
+pip install defusedxml
+```
 </requirements>
 
 <exit_codes>
