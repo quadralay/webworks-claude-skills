@@ -1,7 +1,7 @@
 {
   "name": "epublisher-automation",
   "version": "1.0.0",
-  "description": "Claude Code skills for WebWorks ePublisher automation including project management, build automation, and Reverb output testing",
+  "description": "Claude Code skills for WebWorks ePublisher automation including project management, publishing automation, and Reverb output testing",
   "author": "WebWorks",
   "skills": [
     {

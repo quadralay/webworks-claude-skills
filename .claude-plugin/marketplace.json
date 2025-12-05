@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "epublisher-automation",
-      "description": "Complete automation suite for WebWorks ePublisher including build automation, project management, and format customization",
+      "description": "Complete automation suite for WebWorks ePublisher including publishing automation, project management, and format customization",
       "version": "1.0.0",
       "author": {
         "name": "Quadralay Corporation",
@@ -18,7 +18,7 @@
       },
       "source": "./plugins/epublisher-automation",
       "category": "development-tools",
-      "tags": ["epublisher", "automation", "build", "automap", "reverb", "pdf"],
+      "tags": ["epublisher", "automation", "publish", "automap", "reverb", "pdf"],
       "strict": false,
       "skills": [
         "./skills/epublisher",
