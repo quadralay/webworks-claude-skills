@@ -46,43 +46,17 @@ This repository provides a collection of specialized Claude Code skills for WebW
 - **Windows operating system** (ePublisher is Windows-only)
 - **WebWorks ePublisher 2024.1+** (Express or Designer required; AutoMap optional for automated publishing)
 - **Claude Code** installed and configured
-- **Git Bash** or similar Unix-like shell environment
 
-### Install from GitHub
+### Install from Claude Code
 
-1. **Install via Claude Code plugin marketplace:**
-   ```bash
-   # After GitHub publication
-   /plugin marketplace add quadralay/webworks-agent-skills
-   /plugin install epublisher-automation@webworks-agent-skills
-   ```
+```
+/plugin marketplace add quadralay/webworks-agent-skills
+/plugin install epublisher-automation@webworks-agent-skills
+```
 
-2. **Or install manually (Claude Code):**
-   ```bash
-   git clone https://github.com/quadralay/webworks-agent-skills.git
-   cd webworks-agent-skills
+That's it! Skills activate automatically when working with ePublisher projects.
 
-   # Copy to Claude Code plugins directory
-   mkdir -p "$APPDATA/Claude/plugins"
-   cp -r plugins/epublisher-automation "$APPDATA/Claude/plugins/"
-   ```
-
-3. **For Claude Desktop users:**
-   ```bash
-   git clone https://github.com/quadralay/webworks-agent-skills.git
-   cd webworks-agent-skills
-
-   # Copy to Claude Desktop skills directory
-   mkdir -p ~/.claude/skills
-   cp -r plugins/epublisher-automation ~/.claude/skills/
-   ```
-
-   **Note:** The plugin is self-contained with all shared resources included, making it portable across Claude Code and Claude Desktop.
-
-4. **Verify installation:**
-   - Open Claude Code or Claude Desktop
-   - Skills automatically activate when working with ePublisher projects
-   - Test with: "Build this ePublisher project"
+**Note:** Claude Desktop is not yet supported.
 
 ## Quick Start
 
@@ -130,37 +104,16 @@ webworks-agent-skills/
 - **[automap/SKILL.md](plugins/epublisher-automation/skills/automap/SKILL.md)** - Build automation
 - **[reverb/SKILL.md](plugins/epublisher-automation/skills/reverb/SKILL.md)** - Reverb 2.0 testing
 
-### References
-
-- **[file-resolver-guide.md](plugins/epublisher-automation/skills/epublisher/references/file-resolver-guide.md)** - Override hierarchy guide
-
 ### Development
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 - **[plans/](plans/)** - Development plans (historical)
 
-## Architecture
-
-### Multi-Skill Design
-
-The modular architecture splits functionality into focused skills:
-
-- **Single Responsibility:** Each skill handles one domain
-- **Progressive Disclosure:** Skills load only relevant context
-- **Skill Composition:** Multiple skills work together automatically
-- **Model-Driven:** Claude chooses appropriate skills based on task
-
-**Benefits:**
-- Reduced context window usage (30-70% improvement)
-- Faster activation times
-- More focused assistance
-- Easier to extend and maintain
-
 ## Version Compatibility
 
 - **Skill Version:** 1.0.0
 - **ePublisher:** 2024.1+ (primary), 2020.2+ (legacy support)
-- **AutoMap:** 2024.1+
+- **AutoMap:** 2024.1+ (primary), 2020.2+ (legacy support)
 - **Reverb Format:** WebWorks Reverb 2.0 only (reverb skill)
 - **Platform:** Windows only
 - **Claude Code:** Latest version recommended
@@ -175,9 +128,9 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
 Priority areas:
 - Enhancing existing skills
-- Adding new testing capabilities
-- Adding shared utilities
-- Improving documentation
+- Adding new design skills for reverb
+- Adding design skills for other output formats
+- Adding content generation skills
 
 ## License
 
