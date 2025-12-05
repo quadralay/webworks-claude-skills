@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "webworks-agent-skills",
+  "name": "webworks-claude-skills",
   "version": "1.0.0",
   "description": "Claude Code skills marketplace for WebWorks documentation tools including ePublisher, FrameMaker, and WebWorks utilities",
   "owner": {

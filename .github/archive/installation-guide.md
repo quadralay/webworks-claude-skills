@@ -77,8 +77,8 @@ https://docs.claude.com/en/docs/claude-code
 ### 4. Clone or Set Up Project
 
 ```bash
-git clone [repository-url] webworks-agent-skills
-cd webworks-agent-skills
+git clone [repository-url] webworks-claude-skills
+cd webworks-claude-skills
 ```
 
 ### 5. Configure Permissions (Optional)

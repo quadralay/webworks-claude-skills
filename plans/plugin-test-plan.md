@@ -1,4 +1,4 @@
-# WebWorks Agent Skills Plugin Test Plan
+# WebWorks Claude Skills Plugin Test Plan
 
 ## Overview
 

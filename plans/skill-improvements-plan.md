@@ -1,6 +1,6 @@
 # Skill Improvements Plan
 
-Plan for improving the WebWorks Agent Skills plugin based on Claude Code skill best practices.
+Plan for improving the WebWorks Claude Skills plugin based on Claude Code skill best practices.
 
 **Created:** 2025-12-03
 **Completed:** 2025-12-04

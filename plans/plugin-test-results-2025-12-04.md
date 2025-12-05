@@ -1,4 +1,4 @@
-# WebWorks Agent Skills Plugin Test Results
+# WebWorks Claude Skills Plugin Test Results
 
 **Test Date:** 2025-12-04
 **Test Plan:** plugin-test-plan.md

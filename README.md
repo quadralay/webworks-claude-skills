@@ -1,4 +1,4 @@
-# WebWorks Agent Skills
+# WebWorks Claude Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)](https://www.microsoft.com/windows)
@@ -11,15 +11,15 @@ AI-powered automation for WebWorks ePublisher—publish, test, and customize you
 
 ## 🎯 What is This?
 
-WebWorks Agent Skills is a collection of Claude Code skills that bring AI assistance to WebWorks ePublisher workflows. Ask Claude to publish your projects, analyze output, customize themes, and more—all through natural conversation.
+WebWorks Claude Skills is a collection of Claude Code skills that bring AI assistance to WebWorks ePublisher workflows. Ask Claude to publish your projects, analyze output, customize themes, and more—all through natural conversation.
 
 ## ✨ Quick Start (2 Minutes)
 
 In Claude Code:
 
 ```
-/plugin marketplace add quadralay/webworks-agent-skills
-/plugin install epublisher-automation@webworks-agent-skills
+/plugin marketplace add quadralay/webworks-claude-skills
+/plugin install epublisher-automation@webworks-claude-skills
 ```
 
 That's it! Skills activate automatically when working with ePublisher projects.
@@ -60,7 +60,7 @@ You: "Check if the CSH links are working"
 Claude: Analyzes all context-sensitive help links, reports broken ones
 ```
 
-## 💡 Why WebWorks Agent Skills?
+## 💡 Why WebWorks Claude Skills?
 
 ### Traditional Approach
 ```
@@ -71,13 +71,13 @@ Claude: Analyzes all context-sensitive help links, reports broken ones
 5. Open browser DevTools to debug issues
 ```
 
-### With WebWorks Agent Skills
+### With WebWorks Claude Skills
 ```
 You: "Publish the project and check for errors"
 Claude: Handles everything, reports results
 ```
 
-**WebWorks Agent Skills provides:**
+**WebWorks Claude Skills provides:**
 - ✅ Natural language control of ePublisher workflows
 - ✅ Automatic tool detection and configuration
 - ✅ Intelligent error detection and reporting
@@ -98,7 +98,7 @@ Claude: Handles everything, reports results
 ## 📂 Repository Structure
 
 ```
-webworks-agent-skills/
+webworks-claude-skills/
 ├── .claude-plugin/
 │   └── marketplace.json         # Marketplace manifest
 ├── plugins/

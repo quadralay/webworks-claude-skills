@@ -1,4 +1,4 @@
-# Contributing to WebWorks Agent Skills
+# Contributing to WebWorks Claude Skills
 
 ## How to Contribute
 
