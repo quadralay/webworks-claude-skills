@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Job name="test-job" version="1.0">
+  <Project path="sample.wxsp" />
+  <Files>
+    <Group name="Getting Started">
+      <Document path="docs\intro.md" />
+      <Document path="docs\installation.md" />
+    </Group>
+    <Group name="Reference">
+      <Document path="docs\api.md" />
+    </Group>
+  </Files>
+  <Targets>
+    <Target name="WebWorks Reverb 2.0"
+            format="WebWorks Reverb 2.0"
+            formatType="Application"
+            build="True"
+            deployTarget=""
+            cleanOutput="False">
+      <Conditions Expression="" UseClassicConditions="False" UseDocumentExpression="True">
+        <Condition name="OnlineOnly" value="True" Passthrough="False" UseDocumentValue="False" />
+      </Conditions>
+      <Variables>
+        <Variable name="ProductVersion" value="1.0" UseDocumentValue="False" />
+      </Variables>
+      <Settings>
+        <Setting name="locale" value="en-US" />
+      </Settings>
+    </Target>
+    <Target name="PDF - XSL-FO"
+            format="PDF - XSL-FO"
+            formatType="Document"
+            build="False"
+            deployTarget=""
+            cleanOutput="False" />
+  </Targets>
+</Job>

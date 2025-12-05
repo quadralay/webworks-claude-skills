@@ -15,6 +15,20 @@ Build automation for WebWorks ePublisher using AutoMap command-line interface. E
 ## Overview
 
 AutoMap is the command-line build tool for ePublisher. It processes source documents and generates output without requiring the GUI application.
+
+### Supported File Types
+
+- **Project files (.wep, .wrp)**: Complete self-contained projects
+- **Job files (.waj)**: Lean automation files that reference Stationery
+
+### Job Files and Stationery
+
+Job files inherit format configuration from Stationery projects (.wxsp), enabling:
+- Separation of format design from build automation
+- Lean, portable job definitions
+- Pre/post build script execution (hook-like capability)
+
+**For job file details, see:** references/job-file-guide.md
 </overview>
 
 <related_skills>
@@ -49,6 +63,72 @@ Returns the path to AutoMap CLI executable if found.
 Builds the specified target (or all targets if none specified).
 </quick_start>
 
+<job_files>
+
+## Job Files
+
+Job files (.waj) are lean automation files that reference a Stationery project for format configuration.
+
+### Creating Job Files
+
+To create a job file from scratch:
+
+1. Identify your Stationery file (.wxsp)
+2. Gather your source documents
+3. Decide which formats to build
+
+The skill will guide you through:
+- Parsing Stationery to show available formats
+- Organizing documents into groups
+- Configuring targets with overrides
+- Generating valid XML
+
+### Job File Scripts
+
+```bash
+# Parse Stationery to see available formats and settings
+python scripts/parse-stationery.py stationery.wxsp
+
+# Create job file interactively
+python scripts/create-job.py --stationery stationery.wxsp
+
+# Create job from config file
+python scripts/create-job.py --config config.json --output job.waj
+
+# Generate a config template from Stationery
+python scripts/create-job.py --template --stationery stationery.wxsp > template.json
+```
+
+### Working with Existing Job Files
+
+```bash
+# Parse job file to view configuration
+python scripts/parse-job.py job.waj
+
+# Export to editable config format
+python scripts/parse-job.py --config job.waj > job-config.json
+
+# Validate job file before building
+python scripts/validate-job.py job.waj
+
+# Validate with full checks
+python scripts/validate-job.py --check-documents --check-stationery job.waj
+
+# List targets with build status
+python scripts/list-job-targets.py job.waj
+
+# Show only enabled targets
+python scripts/list-job-targets.py --enabled job.waj
+```
+
+### Stationery Relationship
+
+Job files reference Stationery via `<Project path="..."/>`:
+- Paths are relative to job file location
+- All format settings inherited from Stationery
+- Targets can override conditions, variables, settings
+</job_files>
+
 <cli_reference>
 
 ## AutoMap CLI
@@ -76,37 +156,29 @@ AutoMap.exe [options] <project-file>
 
 ## Scripts
 
-### detect-installation.sh
+| Script | Purpose |
+|--------|---------|
+| `detect-installation.sh` | Find AutoMap installation |
+| `automap-wrapper.sh` | Execute builds with error handling |
+| `parse-stationery.py` | Extract formats/settings from Stationery |
+| `create-job.py` | Create job files interactively or from config |
+| `parse-job.py` | Parse existing job files |
+| `validate-job.py` | Validate job files before building |
+| `list-job-targets.py` | List targets with build status |
 
-Locate ePublisher and AutoMap installation:
+### Installation Detection
 
 ```bash
 ./detect-installation.sh
 ```
 
-Output (JSON):
-```json
-{
-  "installed": true,
-  "version": "2024.1",
-  "automap_path": "C:/Program Files/WebWorks/ePublisher/2024.1/AutoMap.exe",
-  "formats_path": "C:/Program Files/WebWorks/ePublisher/2024.1/Formats"
-}
-```
-
-### automap-wrapper.sh
-
-Wrapper script with error handling and logging:
+### Build Wrapper
 
 ```bash
-./automap-wrapper.sh <project-file> [target-name] [options]
+./automap-wrapper.sh <project-or-job-file> [target-name] [options]
 ```
 
-Features:
-- Validates project file exists
-- Detects AutoMap installation
-- Captures build output
-- Returns structured exit codes
+Supports both project files (.wep) and job files (.waj).
 </scripts>
 
 <references>
@@ -116,6 +188,7 @@ Features:
 - `cli-reference.md` - Complete CLI options and syntax
 - `cli-vs-administrator.md` - When to use CLI vs GUI
 - `installation-detection.md` - Installation paths and detection logic
+- `job-file-guide.md` - Job file structure and Stationery inheritance
 </references>
 
 <requirements>
@@ -199,6 +272,32 @@ done
 1. Use `parse-targets.sh` to list available targets
 2. Verify target name spelling (case-sensitive)
 3. Check project file for available `<Format>` elements
+
+### Job File Errors
+
+**Stationery not found**
+```
+Error: Stationery file not found: ..\stationery\main.wxsp
+```
+- Check `<Project path="..."/>` in job file
+- Verify path is relative to job file location
+- Run: `python validate-job.py job.waj`
+
+**Invalid target format**
+```
+Error: Format "Unknown Format" not found in Stationery
+```
+- Target `format` attribute must match format name in Stationery
+- Format names are case-sensitive
+- Run: `python parse-stationery.py stationery.wxsp` to list available formats
+
+**Document path errors**
+```
+Warning: Document not found: Source\missing.md
+```
+- Document paths are relative to job file location
+- Check for typos in path
+- Run: `python validate-job.py --check-documents job.waj`
 
 </troubleshooting>
 
