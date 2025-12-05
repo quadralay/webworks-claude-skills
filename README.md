@@ -88,7 +88,7 @@ Claude: Handles everything, reports results
 **Required:**
 - **Windows** (ePublisher is Windows-only)
 - **[Git for Windows](https://git-scm.com/download/win)** (provides Git Bash for automation scripts)
-- **WebWorks ePublisher 2024.1+** (Express or Designer)
+- **[WebWorks ePublisher 2024.1+](https://webworks.com/products/epublisher/download#download-links)** (Express or Designer)
 - **Claude Code** installed and configured
 
 **Optional:**
