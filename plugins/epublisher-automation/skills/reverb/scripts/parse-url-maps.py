@@ -78,15 +78,23 @@ def parse_url_maps(url_maps_file: str) -> list[dict]:
         error_log(f"Failed to read file: {e}")
         return []
 
-    # Find TopicMap element
-    topic_map = root.find('.//TopicMap')
+    # Handle namespace - Reverb uses this namespace in url_maps.xml
+    ns = {'ww': 'urn:WebWorks-Reports-Schema'}
+
+    # Find TopicMap element (with and without namespace)
+    topic_map = root.find('.//ww:TopicMap', ns)
+    if topic_map is None:
+        topic_map = root.find('.//TopicMap')
     if topic_map is None:
         debug_log("No TopicMap section found in url_maps.xml")
         return []
 
-    # Extract Topic elements
+    # Extract Topic elements (with and without namespace)
     topics = []
-    for topic_elem in topic_map.findall('Topic'):
+    topic_elements = topic_map.findall('ww:Topic', ns)
+    if not topic_elements:
+        topic_elements = topic_map.findall('Topic')
+    for topic_elem in topic_elements:
         topic_id = topic_elem.get('topic', '')
         url = topic_elem.get('href', '')
         path = topic_elem.get('path', '')

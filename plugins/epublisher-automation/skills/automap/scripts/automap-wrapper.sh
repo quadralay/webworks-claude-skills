@@ -38,6 +38,7 @@ DETECT_SCRIPT="$SCRIPT_DIR/detect-installation.sh"
 # Default options
 CLEAN_BUILD=false
 CLEAN_DEPLOY=false
+NO_DEPLOY=false
 TARGET=""
 DEPLOY_FOLDER=""
 AUTOMAP_VERSION=""

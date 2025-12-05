@@ -16,12 +16,17 @@ Arguments:
 """
 
 import argparse
+import io
 import json
 import os
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
+
+# Ensure stdout uses UTF-8 encoding for box-drawing characters on Windows
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ANSI color codes
 RED = '\033[0;31m'

@@ -88,8 +88,15 @@ def extract_targets(root: ET.Element) -> list[dict]:
     """Extract all target information from Format elements."""
     targets = []
 
-    # Find all Format elements
-    for format_elem in root.iter('Format'):
+    # Handle namespace - ePublisher project files use this namespace
+    ns = {'ep': 'urn:WebWorks-Publish-Project'}
+
+    # Try with namespace first, then without (for older project files)
+    format_elements = root.findall('.//ep:Format', ns)
+    if not format_elements:
+        format_elements = list(root.iter('Format'))
+
+    for format_elem in format_elements:
         target = {
             'targetName': format_elem.get('TargetName', 'Unknown'),
             'formatName': format_elem.get('Name', 'Unknown'),
@@ -98,8 +105,10 @@ def extract_targets(root: ET.Element) -> list[dict]:
             'outputDirectory': ''
         }
 
-        # Look for OutputDirectory child element
-        output_dir_elem = format_elem.find('OutputDirectory')
+        # Look for OutputDirectory child element (with and without namespace)
+        output_dir_elem = format_elem.find('ep:OutputDirectory', ns)
+        if output_dir_elem is None:
+            output_dir_elem = format_elem.find('OutputDirectory')
         if output_dir_elem is not None and output_dir_elem.text:
             target['outputDirectory'] = output_dir_elem.text
         else:

@@ -112,7 +112,7 @@ def parse_scss_variables(content: str, pattern: str) -> dict:
 
     Args:
         content: SCSS file content
-        pattern: Regex pattern for variable names (e.g., r'^\$neo_')
+        pattern: Regex pattern for variable names (e.g., r'^\\$neo_')
 
     Returns:
         Dictionary of variable names (without $) to values
