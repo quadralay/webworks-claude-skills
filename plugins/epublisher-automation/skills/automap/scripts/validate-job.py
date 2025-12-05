@@ -26,6 +26,7 @@ import argparse
 import sys
 # Use defusedxml to prevent XXE attacks (CWE-611)
 import defusedxml.ElementTree as ET
+from xml.etree.ElementTree import Element  # For type hints only
 from pathlib import Path
 from typing import Optional
 
@@ -100,7 +101,7 @@ def validate_file_exists(job_file: str) -> ValidationResult:
     return result.pass_check(path.name)
 
 
-def validate_xml_wellformed(job_file: str) -> tuple[ValidationResult, Optional[ET.Element]]:
+def validate_xml_wellformed(job_file: str) -> tuple[ValidationResult, Optional[Element]]:
     """Check that the XML is well-formed."""
     result = ValidationResult("XML well-formed")
 
@@ -114,7 +115,7 @@ def validate_xml_wellformed(job_file: str) -> tuple[ValidationResult, Optional[E
         return result.fail_check(f"Failed to read: {e}"), None
 
 
-def validate_root_element(root: ET.Element) -> ValidationResult:
+def validate_root_element(root: Element) -> ValidationResult:
     """Check that the root element is Job with required attributes."""
     result = ValidationResult("Job element valid")
 
@@ -133,7 +134,7 @@ def validate_root_element(root: ET.Element) -> ValidationResult:
     return result.pass_check(f"name=\"{name}\" version=\"{version or '1.0'}\"")
 
 
-def validate_project_element(root: ET.Element, job_dir: Path) -> ValidationResult:
+def validate_project_element(root: Element, job_dir: Path) -> ValidationResult:
     """Check that the Project element exists and references a valid Stationery."""
     result = ValidationResult("Stationery reference")
 
@@ -153,7 +154,7 @@ def validate_project_element(root: ET.Element, job_dir: Path) -> ValidationResul
         return result.fail_check(f"Not found: {stationery_path}")
 
 
-def validate_files_element(root: ET.Element) -> ValidationResult:
+def validate_files_element(root: Element) -> ValidationResult:
     """Check that the Files element exists with at least one group."""
     result = ValidationResult("Source documents")
 
@@ -183,7 +184,7 @@ def validate_files_element(root: ET.Element) -> ValidationResult:
     return result.pass_check(f"{len(groups)} groups, {total_docs} documents")
 
 
-def validate_documents_exist(root: ET.Element, job_dir: Path) -> ValidationResult:
+def validate_documents_exist(root: Element, job_dir: Path) -> ValidationResult:
     """Check that all referenced documents exist on disk."""
     result = ValidationResult("Document paths")
 
@@ -220,7 +221,7 @@ def validate_documents_exist(root: ET.Element, job_dir: Path) -> ValidationResul
         return result.pass_check("(no documents)")
 
 
-def validate_targets_element(root: ET.Element) -> ValidationResult:
+def validate_targets_element(root: Element) -> ValidationResult:
     """Check that the Targets element exists with at least one target."""
     result = ValidationResult("Build targets")
 
@@ -243,7 +244,7 @@ def validate_targets_element(root: ET.Element) -> ValidationResult:
     return result.pass_check(f"{len(target_list)} targets ({enabled} enabled)")
 
 
-def validate_target_formats(root: ET.Element, stationery_path: Path) -> ValidationResult:
+def validate_target_formats(root: Element, stationery_path: Path) -> ValidationResult:
     """Validate that target format names exist in the Stationery."""
     result = ValidationResult("Format names")
 

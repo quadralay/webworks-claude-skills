@@ -34,6 +34,7 @@ import json
 import sys
 # Use defusedxml to prevent XXE attacks (CWE-611)
 import defusedxml.ElementTree as ET
+from xml.etree.ElementTree import Element, SubElement, tostring  # For creating XML
 from pathlib import Path
 from typing import Optional
 from xml.dom import minidom
@@ -236,28 +237,28 @@ def parse_stationery(stationery_path: str) -> Optional[dict]:
 
 def generate_job_xml(config: dict) -> str:
     """Generate job file XML from configuration."""
-    # Create root element
-    job = ET.Element('Job')
+    # Create root element (using xml.etree.ElementTree for creation)
+    job = Element('Job')
     job.set('name', config.get('name', 'untitled'))
     job.set('version', '1.0')
 
     # Add Project reference
-    project = ET.SubElement(job, 'Project')
+    project = SubElement(job, 'Project')
     project.set('path', config.get('stationery', ''))
 
     # Add Files section
-    files = ET.SubElement(job, 'Files')
+    files = SubElement(job, 'Files')
     for group_config in config.get('groups', []):
-        group = ET.SubElement(files, 'Group')
+        group = SubElement(files, 'Group')
         group.set('name', group_config.get('name', ''))
         for doc_path in group_config.get('documents', []):
-            doc = ET.SubElement(group, 'Document')
+            doc = SubElement(group, 'Document')
             doc.set('path', doc_path)
 
     # Add Targets section
-    targets = ET.SubElement(job, 'Targets')
+    targets = SubElement(job, 'Targets')
     for target_config in config.get('targets', []):
-        target = ET.SubElement(targets, 'Target')
+        target = SubElement(targets, 'Target')
         target.set('name', target_config.get('name', ''))
         target.set('format', target_config.get('format', ''))
         target.set('formatType', target_config.get('formatType', 'Application'))
@@ -268,12 +269,12 @@ def generate_job_xml(config: dict) -> str:
         # Add Conditions if present
         conditions = target_config.get('conditions', [])
         if conditions:
-            conditions_elem = ET.SubElement(target, 'Conditions')
+            conditions_elem = SubElement(target, 'Conditions')
             conditions_elem.set('Expression', '')
             conditions_elem.set('UseClassicConditions', 'False')
             conditions_elem.set('UseDocumentExpression', 'True')
             for cond in conditions:
-                cond_elem = ET.SubElement(conditions_elem, 'Condition')
+                cond_elem = SubElement(conditions_elem, 'Condition')
                 cond_elem.set('name', cond.get('name', ''))
                 cond_elem.set('value', cond.get('value', 'True'))
                 cond_elem.set('Passthrough', 'False')
@@ -282,9 +283,9 @@ def generate_job_xml(config: dict) -> str:
         # Add Variables if present
         variables = target_config.get('variables', [])
         if variables:
-            variables_elem = ET.SubElement(target, 'Variables')
+            variables_elem = SubElement(target, 'Variables')
             for var in variables:
-                var_elem = ET.SubElement(variables_elem, 'Variable')
+                var_elem = SubElement(variables_elem, 'Variable')
                 var_elem.set('name', var.get('name', ''))
                 var_elem.set('value', var.get('value', ''))
                 var_elem.set('UseDocumentValue', 'False')
@@ -292,14 +293,14 @@ def generate_job_xml(config: dict) -> str:
         # Add Settings if present
         settings = target_config.get('settings', [])
         if settings:
-            settings_elem = ET.SubElement(target, 'Settings')
+            settings_elem = SubElement(target, 'Settings')
             for setting in settings:
-                setting_elem = ET.SubElement(settings_elem, 'Setting')
+                setting_elem = SubElement(settings_elem, 'Setting')
                 setting_elem.set('name', setting.get('name', ''))
                 setting_elem.set('value', setting.get('value', ''))
 
     # Convert to string with pretty printing
-    xml_str = ET.tostring(job, encoding='unicode')
+    xml_str = tostring(job, encoding='unicode')
     dom = minidom.parseString(xml_str)
     pretty_xml = dom.toprettyxml(indent='  ', encoding=None)
 

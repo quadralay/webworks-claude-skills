@@ -27,6 +27,7 @@ import json
 import sys
 # Use defusedxml to prevent XXE attacks (CWE-611)
 import defusedxml.ElementTree as ET
+from xml.etree.ElementTree import Element  # For type hints only
 from pathlib import Path
 from typing import Optional
 
@@ -71,7 +72,7 @@ def validate_job_file(job_file: str) -> bool:
     return True
 
 
-def parse_job_xml(job_file: str) -> Optional[ET.Element]:
+def parse_job_xml(job_file: str) -> Optional[Element]:
     """Parse the job XML file and return the root element."""
     try:
         tree = ET.parse(job_file)
@@ -84,7 +85,7 @@ def parse_job_xml(job_file: str) -> Optional[ET.Element]:
         return None
 
 
-def extract_job_info(root: ET.Element, job_path: str) -> dict:
+def extract_job_info(root: Element, job_path: str) -> dict:
     """Extract all job information from the XML."""
     job_dir = Path(job_path).parent
 

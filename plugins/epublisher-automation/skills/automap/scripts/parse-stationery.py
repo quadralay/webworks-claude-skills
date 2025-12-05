@@ -27,6 +27,7 @@ import json
 import sys
 # Use defusedxml to prevent XXE attacks (CWE-611)
 import defusedxml.ElementTree as ET
+from xml.etree.ElementTree import Element  # For type hints only
 from pathlib import Path
 from typing import Optional
 
@@ -71,7 +72,7 @@ def validate_stationery_file(stationery_file: str) -> bool:
     return True
 
 
-def parse_stationery_xml(stationery_file: str) -> Optional[ET.Element]:
+def parse_stationery_xml(stationery_file: str) -> Optional[Element]:
     """Parse the stationery XML file and return the root element."""
     try:
         tree = ET.parse(stationery_file)
@@ -84,7 +85,7 @@ def parse_stationery_xml(stationery_file: str) -> Optional[ET.Element]:
         return None
 
 
-def extract_runtime_version(root: ET.Element) -> str:
+def extract_runtime_version(root: Element) -> str:
     """Extract the runtime version from the Project element."""
     runtime_version = root.get('RuntimeVersion', '')
     format_version = root.get('FormatVersion', '')
@@ -94,7 +95,7 @@ def extract_runtime_version(root: ET.Element) -> str:
     return format_version
 
 
-def extract_formats(root: ET.Element, verbose: bool = False) -> list[dict]:
+def extract_formats(root: Element, verbose: bool = False) -> list[dict]:
     """Extract all format information from the stationery."""
     formats = []
 
@@ -164,7 +165,7 @@ def extract_formats(root: ET.Element, verbose: bool = False) -> list[dict]:
     return formats
 
 
-def extract_file_mappings(root: ET.Element) -> list[dict]:
+def extract_file_mappings(root: Element) -> list[dict]:
     """Extract file type mappings from the stationery."""
     mappings = []
 

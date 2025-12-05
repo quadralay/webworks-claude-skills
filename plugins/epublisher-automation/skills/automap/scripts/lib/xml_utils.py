@@ -2,10 +2,11 @@
 from typing import Optional
 # Use defusedxml to prevent XXE attacks (CWE-611)
 import defusedxml.ElementTree as ET
+from xml.etree.ElementTree import Element  # For type hints only
 from .constants import EPUBLISHER_NS
 from .logging import log_error
 
-def parse_xml_file(file_path: str) -> Optional[ET.Element]:
+def parse_xml_file(file_path: str) -> Optional[Element]:
     """Parse XML file and return root element."""
     try:
         tree = ET.parse(file_path)
@@ -17,7 +18,7 @@ def parse_xml_file(file_path: str) -> Optional[ET.Element]:
         log_error(f"Failed to read file: {e}")
         return None
 
-def find_elements_any_ns(root: ET.Element, tag: str) -> list:
+def find_elements_any_ns(root: Element, tag: str) -> list:
     """Find elements with or without namespace."""
     # Try with namespace first
     found = root.findall(f'.//ep:{tag}', EPUBLISHER_NS)
