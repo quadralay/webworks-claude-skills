@@ -107,7 +107,7 @@ webworks-agent-skills/
 ### Development
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
-- **[plans/](plans/)** - Development plans (historical)
+- **plans/** - Development plans (historical)
 
 ## Version Compatibility
 

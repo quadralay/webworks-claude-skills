@@ -3,8 +3,8 @@
 ## How to Contribute
 
 - Enhance existing skills (epublisher, automap, reverb)
+- Add new skills for other formats
 - Add new helper scripts
-- Improve documentation
 - Report bugs and suggest features
 
 ## Skill Structure
@@ -18,8 +18,9 @@ skills/skill-name/
 
 ## Development Guidelines
 
-- **Shell scripts:** Use bash, include error handling
-- **Documentation:** Clear language with examples
+- **Python scripts:** Use for parsing files and complex behavior
+- **Shell scripts:** Use bash for program wrapper scripts and include error handling
+- **Documentation:** Clear language with examples, follow pattern in other skills
 - **Testing:** Validate with real ePublisher projects
 
 ## Pull Requests
