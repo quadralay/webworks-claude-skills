@@ -32,7 +32,8 @@ Exit Codes:
 import argparse
 import json
 import sys
-import xml.etree.ElementTree as ET
+# Use defusedxml to prevent XXE attacks (CWE-611)
+import defusedxml.ElementTree as ET
 from pathlib import Path
 from typing import Optional
 from xml.dom import minidom
@@ -83,6 +84,85 @@ def confirm(message: str, default: bool = True) -> bool:
     if not response:
         return default
     return response in ('y', 'yes')
+
+
+def sanitize_filename(name: str) -> str:
+    """Sanitize filename to prevent path traversal and invalid characters."""
+    import re
+    # Remove path separators and special characters
+    name = re.sub(r'[^\w\-.]', '_', name)
+    # Remove leading dots and dashes
+    name = name.lstrip('.-')
+    # Ensure not empty
+    return name if name else "job"
+
+
+def validate_safe_path(base_dir: Path, user_path: str) -> Path:
+    """Validate path doesn't escape base directory."""
+    full_path = (base_dir / user_path).resolve()
+    try:
+        full_path.relative_to(base_dir.resolve())
+    except ValueError:
+        raise ValueError(f"Path traversal attempt detected: {user_path}")
+    return full_path
+
+
+def validate_config(config: dict) -> list[str]:
+    """Validate configuration before XML generation."""
+    errors = []
+
+    # Validate job name
+    if not config.get('name', '').strip():
+        errors.append("Job name cannot be empty")
+
+    # Validate stationery
+    if not config.get('stationery', '').strip():
+        errors.append("Stationery path cannot be empty")
+
+    # Validate targets
+    if not config.get('targets'):
+        errors.append("At least one target is required")
+
+    for i, target in enumerate(config.get('targets', [])):
+        if not target.get('name', '').strip():
+            errors.append(f"Target {i+1} name cannot be empty")
+        if not target.get('format', '').strip():
+            errors.append(f"Target {i+1} format cannot be empty")
+
+    # Validate groups (if present)
+    for i, group in enumerate(config.get('groups', [])):
+        if not group.get('name', '').strip():
+            errors.append(f"Group {i+1} name cannot be empty")
+
+    return errors
+
+
+def write_file_atomic(path: str, content: str, encoding: str = 'utf-8') -> None:
+    """Write file atomically using temp file + rename."""
+    import tempfile
+    import os
+    path_obj = Path(path)
+    dir_path = path_obj.parent
+
+    # Create temp file in same directory for atomic rename
+    fd, temp_path = tempfile.mkstemp(
+        dir=dir_path,
+        prefix=f'.{path_obj.name}.tmp',
+        suffix='.tmp'
+    )
+
+    try:
+        with os.fdopen(fd, 'w', encoding=encoding) as f:
+            f.write(content)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, str(path_obj))  # Atomic on most systems
+    except:
+        try:
+            os.unlink(temp_path)
+        except OSError:
+            pass
+        raise
 
 
 def parse_stationery(stationery_path: str) -> Optional[dict]:
@@ -259,8 +339,6 @@ def interactive_collect_groups() -> list[dict]:
             doc_path = prompt("    Document path")
             if not doc_path:
                 break
-            # Normalize path separators for Windows
-            doc_path = doc_path.replace('/', '\\')
             documents.append(doc_path)
 
         if documents:
@@ -389,6 +467,7 @@ def interactive_mode(stationery_path: str) -> Optional[dict]:
     # Get job name
     print(f"\n{CYAN}=== Job Configuration ==={NC}")
     job_name = prompt("Job name (e.g., 'en' for English locale)", "job")
+    job_name = sanitize_filename(job_name)
 
     # Calculate relative stationery path
     stationery_rel = prompt(
@@ -552,6 +631,13 @@ Examples:
             log_error(f"Invalid JSON in config file: {e}")
             return EXIT_FILE_ERROR
 
+        # Validate config
+        errors = validate_config(config)
+        if errors:
+            for error in errors:
+                log_error(error)
+            return EXIT_VALIDATION_ERROR
+
         # Generate XML
         xml_content = generate_job_xml(config)
 
@@ -567,9 +653,15 @@ Examples:
         # Determine output path
         output_path = args.output if args.output else f"{config.get('name', 'job')}.waj"
 
+        # Validate output path to prevent directory traversal
+        try:
+            validate_safe_path(Path.cwd(), output_path)
+        except ValueError as e:
+            log_error(str(e))
+            return EXIT_VALIDATION_ERROR
+
         # Write file
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(xml_content)
+        write_file_atomic(output_path, xml_content)
 
         log_success(f"Created: {output_path}")
         return EXIT_SUCCESS
@@ -584,6 +676,13 @@ Examples:
         config = interactive_mode(str(stationery_path))
         if not config:
             return EXIT_FILE_ERROR
+
+        # Validate config
+        errors = validate_config(config)
+        if errors:
+            for error in errors:
+                log_error(error)
+            return EXIT_VALIDATION_ERROR
 
         # Show summary
         print_summary(config)
@@ -602,9 +701,16 @@ Examples:
             return EXIT_CANCELLED
 
         if choice == 'e':
-            config_output = f"{config['name']}-config.json"
-            with open(config_output, 'w') as f:
-                json.dump(config, f, indent=2)
+            config_output = f"{sanitize_filename(config['name'])}-config.json"
+
+            # Validate config output path to prevent directory traversal
+            try:
+                validate_safe_path(Path.cwd(), config_output)
+            except ValueError as e:
+                log_error(str(e))
+                return EXIT_VALIDATION_ERROR
+
+            write_file_atomic(config_output, json.dumps(config, indent=2))
             log_success(f"Exported config: {config_output}")
             return EXIT_SUCCESS
 
@@ -612,8 +718,14 @@ Examples:
         xml_content = generate_job_xml(config)
         output_path = args.output if args.output else f"{config['name']}.waj"
 
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(xml_content)
+        # Validate output path to prevent directory traversal
+        try:
+            validate_safe_path(Path.cwd(), output_path)
+        except ValueError as e:
+            log_error(str(e))
+            return EXIT_VALIDATION_ERROR
+
+        write_file_atomic(output_path, xml_content)
 
         log_success(f"Created: {output_path}")
 

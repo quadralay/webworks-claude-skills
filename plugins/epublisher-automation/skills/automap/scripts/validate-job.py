@@ -24,7 +24,8 @@ Exit Codes:
 
 import argparse
 import sys
-import xml.etree.ElementTree as ET
+# Use defusedxml to prevent XXE attacks (CWE-611)
+import defusedxml.ElementTree as ET
 from pathlib import Path
 from typing import Optional
 
