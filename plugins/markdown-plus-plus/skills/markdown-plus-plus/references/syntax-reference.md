@@ -326,20 +326,22 @@ Included content:
 
 ### Syntax Options
 
-**JSON format (recommended for multiple keys):**
-```
-<!--markers:{"Key1": "value1", "Key2": "value2"}-->
-```
-
-**Simple format (single key):**
+**Preferred format (single key-value):**
 ```
 <!--marker:Key="value"-->
 ```
 
-**Multiple simple markers:**
+**Multiple markers (semicolon-separated):**
 ```
-<!--marker:Key1="value1"; marker:Key2="value2"-->
+<!--marker:Key1="value1" ; marker:Key2="value2"-->
 ```
+
+**JSON format (alternative for multiple keys):**
+```
+<!--markers:{"Key1": "value1", "Key2": "value2"}-->
+```
+
+Use `marker:key="value"` for single markers. Use semicolon-separated format for multiple.
 
 ### JSON Format Rules
 
@@ -484,28 +486,37 @@ Multiple commands in one comment, separated by semicolons:
 <!-- command1 ; command2 ; command3 -->
 ```
 
+### Order Priority
+
+When combining commands, use this order for consistency:
+
+1. `style:StyleName` - Custom style
+2. `multiline` - Multiline table indicator
+3. `marker:Key="value"` - Markers (one or more)
+4. `#alias-name` - Custom alias
+
 ### Supported Combinations
 
 | Command | Syntax in Combined |
 |---------|-------------------|
 | Style | `style:StyleName` |
-| Alias | `#alias-name` |
-| Marker (simple) | `marker:Key="value"` |
 | Multiline | `multiline` |
+| Marker (simple) | `marker:Key="value"` |
+| Alias | `#alias-name` |
 
 ### Examples
 
 ```markdown
-<!-- style:CustomStyle ; #my-alias -->
-# Heading with Style and Alias
+<!-- style:CustomHeading ; marker:Keywords="intro" ; #introduction -->
+# Introduction with Style, Marker, and Alias
 
-<!-- style:NoteBox ; marker:Keywords="important" -->
-> Important note with style and marker
-
-<!-- style:DataTable ; multiline -->
+<!-- style:DataTable ; multiline ; #feature-table -->
 | Column | Data |
 |--------|------|
 | Cell   | Multi-line content |
+
+<!-- style:NoteBox ; marker:Priority="high" ; #important-note -->
+> Important note with all attributes
 ```
 
 ### Whitespace
@@ -516,6 +527,65 @@ Spaces around semicolons are optional but recommended for readability:
 <!-- style:A;#b;marker:C="d" -->      # Valid
 <!-- style:A ; #b ; marker:C="d" -->  # Valid, more readable
 ```
+
+---
+
+## Inline Styles for Images and Links
+
+### Images
+
+Place style immediately before the image syntax:
+
+```markdown
+<!--style:CustomImage-->![Logo](images/logo.png "Company Logo")
+
+<!--style:ScreenshotStyle-->![Settings Screen](images/settings.png)
+
+<!--style:IconImage-->![Warning](icons/warning.svg)
+```
+
+### Links (Style Inside Link Text)
+
+Place style inside the link text brackets:
+
+```markdown
+[<!--style:CustomLink-->*Link text*](topics/file.md#anchor "Title")
+
+See the [<!--style:ImportantLink-->**API Reference**](api.md#auth) for details.
+
+Read the [<!--style:ExternalLink-->documentation](https://example.com).
+```
+
+The style applies to the formatted text within the link.
+
+---
+
+## Content Islands (Styled Blockquotes)
+
+Blockquotes with custom styles create "content islands" - self-contained content blocks useful for callouts, learning boxes, or enhanced layouts.
+
+```markdown
+<!--style:BQ_Learn-->
+> ## Learning Section
+>
+> This blockquote contains multiple elements:
+>
+> - Bullet point 1
+> - Bullet point 2
+>
+> ```python
+> def example():
+>     return "Code inside blockquote"
+> ```
+>
+> Final paragraph in the content island.
+```
+
+Content islands support:
+- Headings within the blockquote
+- Lists (ordered and unordered)
+- Code blocks
+- Nested formatting
 
 ---
 
@@ -532,6 +602,7 @@ The validation script checks for these issues:
 | MDPP005 | Circular include | Error |
 | MDPP006 | Missing include file | Warning |
 | MDPP007 | Invalid condition syntax | Error |
+| MDPP008 | Duplicate alias within file | Error |
 
 ---
 

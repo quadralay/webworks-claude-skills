@@ -63,15 +63,17 @@ This is just regular text that doesn't need a style.
 ### Custom Aliases
 
 **Use aliases for:**
+- **All important headings** to ensure stable URL endpoints
 - Stable links that survive document restructuring
 - Cross-document linking
 - Links to non-heading elements
 - Section anchors with custom names
 
 **Avoid aliases for:**
-- Every heading (auto-generated IDs usually suffice)
 - Temporary content
 - Internal drafts
+
+**Keep alias values unique within each file.** The validation script checks for duplicates.
 
 **Example - Good:**
 ```markdown
@@ -79,6 +81,11 @@ This is just regular text that doesn't need a style.
 ## Authenticating with the API
 
 Later: See [Authentication](#api-authentication) for details.
+```
+
+**Generate aliases automatically:**
+```bash
+python scripts/add-aliases.py document.md --levels 1,2,3
 ```
 
 ### Conditions
@@ -146,7 +153,17 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 - Excessive keyword stuffing
 - Markers that aren't processed by your output format
 
-**Example - Good:**
+**Preferred format (single key-value):**
+```markdown
+<!--marker:Keywords="installation, setup"-->
+```
+
+**Multiple markers:**
+```markdown
+<!--marker:Keywords="installation" ; marker:Category="User Guide"-->
+```
+
+**JSON format (alternative for complex metadata):**
 ```markdown
 <!--markers:{"Keywords": "installation, setup, getting started", "Category": "User Guide"}-->
 ```
@@ -163,6 +180,70 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 - Simple tabular data
 - Tables where standard Markdown works
 - Deeply nested content in cells
+
+### Combined Commands
+
+**Order priority:** style, multiline, marker(s), #alias
+
+```markdown
+<!-- style:ImportantHeading ; marker:Priority="high" ; #critical-section -->
+## Critical Section
+
+<!-- style:DataTable ; multiline ; #comparison-table -->
+| Column | Data |
+|--------|------|
+```
+
+**Avoid:** Inconsistent ordering that makes documents harder to read.
+
+### Inline Styling for Images
+
+**Use inline styles for:**
+- Logo images requiring specific formatting
+- Screenshots with consistent borders/shadows
+- Icons that need size control
+
+**Example:**
+```markdown
+<!--style:ScreenshotImage-->![Settings Panel](images/settings.png)
+
+<!--style:LogoImage-->![Company Logo](images/logo.svg)
+```
+
+### Inline Styling for Links
+
+**Place style inside link text brackets:**
+```markdown
+See [<!--style:ImportantLink-->**API Reference**](api.md#auth).
+
+Visit the [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
+```
+
+**Avoid:** Placing style before the entire link syntax (use inside brackets).
+
+### Content Islands (Styled Blockquotes)
+
+**Use content islands for:**
+- Learning boxes with multiple content types
+- Warning/caution callouts with lists
+- Tips with code examples
+- Any "block within a block" layout
+
+**Example:**
+```markdown
+<!--style:BQ_Learn-->
+> ## Key Concept
+>
+> This learning box contains:
+>
+> - Lists
+> - Code blocks
+> - Multiple paragraphs
+>
+> All within a styled container.
+```
+
+**Best practice:** Include a heading inside the blockquote for accessibility.
 
 ## Document Structure
 

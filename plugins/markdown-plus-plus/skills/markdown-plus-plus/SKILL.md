@@ -87,7 +87,7 @@ Use <!--style:ProductName-->*$product_name;* for branding.
 
 ### Custom Aliases
 
-Aliases create internal link anchors. They enable linking to specific elements.
+Aliases create stable internal link anchors. Use them for all important headings to ensure stable URL endpoints.
 
 ```markdown
 <!--#getting-started-->
@@ -110,6 +110,9 @@ See [API Reference](api.md#authentication) for auth details.
 - Alphanumeric, hyphens, underscores only
 - No spaces (alias ends at first space)
 - Must start with `#` inside the comment
+- **Keep alias values unique within each file**
+
+Use `scripts/add-aliases.py` to auto-generate aliases for headings.
 
 ### Conditions
 
@@ -189,20 +192,22 @@ Includes insert content from other Markdown++ files.
 
 Markers attach metadata to document elements for search, processing, or custom behavior.
 
-**JSON format (multiple keys):**
-```markdown
-<!--markers:{"Keywords": "api, documentation", "Author": "WebWorks"}-->
-```
-
-**Simple format (single key):**
+**Preferred format (single key-value):**
 ```markdown
 <!--marker:Keywords="api, documentation"-->
 ```
 
-**Multiple markers in one tag:**
+**Multiple markers in one comment:**
 ```markdown
-<!--marker:Keywords="api"; marker:Category="reference"-->
+<!--marker:Keywords="api" ; marker:Category="reference"-->
 ```
+
+**JSON format (multiple keys, alternative):**
+```markdown
+<!--markers:{"Keywords": "api, documentation", "Author": "WebWorks"}-->
+```
+
+Use `marker:key="value"` for single markers, semicolon-separated for multiple.
 
 ### Multiline Tables
 
@@ -229,8 +234,7 @@ Example: `$product_name;` |
 
 **With custom style:**
 ```markdown
-<!--style:DataTable-->
-<!-- multiline -->
+<!--style:DataTable; multiline -->
 | Column | Content |
 |--------|---------|
 | Cell   | Block content here |
@@ -240,15 +244,83 @@ Example: `$product_name;` |
 
 Multiple commands can appear in a single comment, separated by semicolons.
 
-```markdown
-<!-- style:CustomStyle ; #my-alias ; marker:Keywords="example" -->
-# Heading with Style, Alias, and Marker
+**Order priority:** style, multiline, marker(s), #alias
 
-<!-- style:ImportantNote ; #warning-section -->
-> This blockquote has both a custom style and an alias.
+```markdown
+<!-- style:CustomHeading ; marker:Keywords="intro" ; #introduction -->
+# Introduction
+
+<!-- style:DataTable ; multiline ; #feature-table -->
+| Feature | Description |
+|---------|-------------|
+| API     | REST endpoints |
+
+<!-- style:NoteBlock ; marker:Priority="high" ; #important-note -->
+> This blockquote has style, marker, and alias combined.
 ```
 
-**Order doesn't matter.** Whitespace around semicolons is optional.
+Whitespace around semicolons is optional.
+
+### Inline Styling for Images and Links
+
+Apply custom styles to images and links using inline style comments.
+
+**Images:**
+```markdown
+<!--style:CustomImage-->![Logo](images/logo.png "Company Logo")
+
+<!--style:ScreenshotStyle-->![Settings Screen](images/settings.png)
+```
+
+**Links (style inside link text):**
+```markdown
+[<!--style:CustomLink-->*Link text*](topics/file.md#anchor "Title")
+
+See the [<!--style:ImportantLink-->**API Reference**](api.md#auth).
+```
+
+### Content Islands (Styled Blockquotes)
+
+Blockquotes with custom styles create "content islands" - grouped content blocks useful for callouts, notes, or enhanced layouts.
+
+```markdown
+<!--style:BQ_Learn-->
+> ## Learning Section
+>
+> This blockquote contains multiple elements:
+>
+> - Bullet point 1
+> - Bullet point 2
+>
+> ```python
+> def example():
+>     return "Code inside blockquote"
+> ```
+>
+> Final paragraph in the content island.
+
+<!--style:BQ_Warning-->
+> **Warning:** This is a styled warning block.
+>
+> Take note of the following:
+> 1. First consideration
+> 2. Second consideration
+```
+
+### Nested Lists with Styling
+
+Apply custom styles to list containers:
+
+```markdown
+<!--style:ProcedureList-->
+1. First step
+   - Sub-item A
+   - Sub-item B
+2. Second step
+   1. Nested numbered item
+   2. Another nested item
+3. Third step
+```
 
 </syntax_examples>
 
@@ -272,6 +344,20 @@ python scripts/validate-mdpp.py document.md
 - Invalid variable names
 - Malformed marker JSON
 - Circular file includes
+- Duplicate alias values within a file
+
+## Alias Generation
+
+Generate unique aliases for headings:
+
+```bash
+python scripts/add-aliases.py document.md --levels 1,2,3
+```
+
+**Options:**
+- `--levels` - Comma-separated heading levels to process (e.g., `1,2,3`)
+- `--dry-run` - Preview changes without modifying file
+- `--prefix` - Add prefix to generated aliases
 
 See `references/syntax-reference.md` for complete syntax rules.
 

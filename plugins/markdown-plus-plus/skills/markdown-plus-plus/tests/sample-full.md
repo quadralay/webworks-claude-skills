@@ -235,30 +235,76 @@ Three lines total |
 
 ## Combined Commands Test
 
-### Style + Alias
+### Order Priority (style, multiline, marker(s), #alias)
 
-<!-- style:CustomStyle ; #combined-example -->
-## Combined Style and Alias Heading
+<!-- style:CustomHeading ; marker:Keywords="intro" ; #combined-example -->
+## Combined Style, Marker, and Alias Heading
+
+<!-- style:DataTable ; multiline ; #feature-table -->
+| Column | Data |
+|--------|------|
+| Cell | Multi-paragraph
+
+content here |
 
 ### Style + Marker
 
 <!-- style:ImportantSection ; marker:Priority="high" -->
 ## Important Section with Marker
 
-### Style + Alias + Marker
+### Style + Alias + Multiple Markers
 
-<!-- style:FeatureBox ; #feature-1 ; marker:Keywords="feature, important" -->
+<!-- style:FeatureBox ; marker:Keywords="feature" ; marker:Priority="high" ; #feature-1 -->
 ### Feature with All Attributes
 
-### Multiline + Style
+## Inline Styling Test
 
-<!--style:DataTable-->
-<!-- multiline -->
-| Column | Data |
-|--------|------|
-| Cell | Multi-paragraph
+### Styled Images
 
-content here |
+<!--style:CustomImage-->![Logo](images/logo.png "Company Logo")
+
+<!--style:ScreenshotStyle-->![Settings Screen](images/settings.png)
+
+### Styled Links
+
+See the [<!--style:ImportantLink-->**API Reference**](api.md#auth) for details.
+
+Visit [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
+
+## Content Islands Test
+
+<!--style:BQ_Learn-->
+> ## Learning Section
+>
+> This blockquote contains multiple elements:
+>
+> - Bullet point 1
+> - Bullet point 2
+>
+> ```python
+> def example():
+>     return "Code inside blockquote"
+> ```
+>
+> Final paragraph in the content island.
+
+<!--style:BQ_Warning-->
+> **Warning:** This is a styled warning block.
+>
+> Take note of the following:
+> 1. First consideration
+> 2. Second consideration
+
+## Nested Lists Test
+
+<!--style:ProcedureList-->
+1. First step
+   - Sub-item A
+   - Sub-item B
+2. Second step
+   1. Nested numbered item
+   2. Another nested item
+3. Third step
 
 ## Edge Cases
 

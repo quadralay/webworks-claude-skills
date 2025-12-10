@@ -148,6 +148,9 @@ def validate_file(filepath: str, verbose: bool = False) -> list[ValidationIssue]
     # Track open conditions for matching
     condition_stack = []
 
+    # Track aliases for uniqueness check
+    alias_locations: dict[str, int] = {}  # alias -> first line number
+
     for line_num, line in enumerate(lines, start=1):
 
         # Check for invalid variable names
@@ -235,6 +238,24 @@ def validate_file(filepath: str, verbose: bool = False) -> list[ValidationIssue]
                 ))
             elif verbose:
                 print(f"{Colors.CYAN}[VERBOSE]{Colors.NC} Line {line_num}: Include found: {include_path}")
+
+        # Check aliases for duplicates
+        for match in PATTERNS['alias'].finditer(line):
+            alias_name = match.group(1)
+            if alias_name in alias_locations:
+                issues.append(ValidationIssue(
+                    type=Severity.ERROR.value,
+                    code="MDPP008",
+                    message=f"Duplicate alias: #{alias_name}",
+                    file=filepath,
+                    line=line_num,
+                    context=match.group(0),
+                    suggestion=f"First defined on line {alias_locations[alias_name]}. Use unique alias values."
+                ))
+            else:
+                alias_locations[alias_name] = line_num
+                if verbose:
+                    print(f"{Colors.CYAN}[VERBOSE]{Colors.NC} Line {line_num}: Alias defined: #{alias_name}")
 
     # Check for unclosed conditions
     for opened_line, opened_expr in condition_stack:

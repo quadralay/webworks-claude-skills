@@ -489,6 +489,205 @@ Troubleshooting content with conditional visibility.
 
 ---
 
+## Example 8: Inline Styling for Images and Links
+
+Using custom styles for images and links within content.
+
+```markdown
+<!-- #media-examples ; marker:Keywords="images, links, styling" -->
+# Media and Link Styling Examples
+
+## Styled Images
+
+Use inline styles to control image presentation:
+
+<!--style:HeroImage-->![Product Hero](images/hero.png "Product Overview")
+
+Here's our logo: <!--style:LogoImage-->![Logo](images/logo.svg "Company Logo")
+
+Screenshots use a special style:
+
+<!--style:ScreenshotImage-->![Settings Panel](images/settings-screenshot.png)
+
+## Styled Links
+
+Apply styles inside link text for consistent link formatting:
+
+Visit our [<!--style:ExternalLink-->*documentation portal*](https://docs.example.com) for more information.
+
+See the [<!--style:ImportantLink-->**Getting Started Guide**](getting-started.md#introduction) to begin.
+
+Download the [<!--style:DownloadLink-->*latest release*]($download_url; "Download Now").
+```
+
+---
+
+## Example 9: Content Islands with Blockquotes
+
+Using styled blockquotes as "content islands" for rich callout boxes and learning sections.
+
+```markdown
+<!-- #content-islands ; marker:Category="layout" -->
+# Using Content Islands
+
+Content islands are styled blockquotes that contain complex content structures.
+
+## Learning Box
+
+<!--style:BQ_Learn-->
+> ## Key Concepts
+>
+> This learning box explains important concepts:
+>
+> 1. **Variables** - Use `$name;` syntax for reusable values
+> 2. **Conditions** - Wrap content with `<!--condition:name-->...<!--/condition-->`
+> 3. **Styles** - Apply with `<!--style:StyleName-->`
+>
+> ```python
+> # Example code in a content island
+> def process_document(content):
+>     return apply_extensions(content)
+> ```
+>
+> Try these concepts in your own documents!
+
+## Warning Box
+
+<!--style:BQ_Warning-->
+> **Warning: Data Loss Risk**
+>
+> Before proceeding, ensure you have:
+>
+> - Backed up your current configuration
+> - Saved all open documents
+> - Closed other applications using the database
+>
+> This operation cannot be undone.
+
+## Tip Box with Mixed Content
+
+<!--style:BQ_Tip-->
+> **Pro Tip: Keyboard Shortcuts**
+>
+> Speed up your workflow with these shortcuts:
+>
+> | Action | Windows | macOS |
+> |--------|---------|-------|
+> | Save | Ctrl+S | Cmd+S |
+> | Find | Ctrl+F | Cmd+F |
+> | Replace | Ctrl+H | Cmd+H |
+>
+> See [Keyboard Reference](shortcuts.md#all-shortcuts) for the complete list.
+```
+
+---
+
+## Example 10: Nested Lists with Styling
+
+Complex nested lists with custom styling for procedures and hierarchical content.
+
+```markdown
+<!-- #nested-lists ; marker:Keywords="procedures, lists" -->
+# Procedures and Nested Lists
+
+## Installation Procedure
+
+<!--style:ProcedureList-->
+1. **Download the installer**
+   - Go to $download_url;
+   - Select your platform:
+     - Windows 10/11 (64-bit)
+     - macOS 12+ (Apple Silicon or Intel)
+     - Linux (deb or rpm package)
+   - Click Download
+
+2. **Run the installer**
+   - Windows:
+     1. Double-click the `.exe` file
+     2. Accept the UAC prompt
+     3. Follow the wizard
+   - macOS:
+     1. Open the `.dmg` file
+     2. Drag to Applications
+     3. Eject the disk image
+   - Linux:
+     1. Open terminal in download folder
+     2. Run: `sudo dpkg -i $package_name;.deb`
+     3. Resolve dependencies: `sudo apt-get install -f`
+
+3. **Configure initial settings**
+   - Launch the application
+   - Complete the setup wizard:
+     - Enter license key
+     - Choose installation type:
+       - Typical (recommended)
+       - Custom
+       - Minimal
+     - Select components
+
+## Feature Checklist
+
+<!--style:ChecklistStyle-->
+- [ ] Core installation complete
+  - [ ] Main application installed
+  - [ ] Command-line tools installed
+  - [ ] Documentation installed
+- [ ] Configuration verified
+  - [ ] Database connection tested
+  - [ ] API credentials validated
+  - [ ] Notifications enabled
+- [ ] Integration setup
+  - [ ] SSO configured
+  - [ ] Webhooks registered
+  - [ ] Third-party apps connected
+```
+
+---
+
+## Example 11: Combined Commands
+
+Using multiple extensions together in single comments.
+
+```markdown
+<!-- markers:{"Author": "WebWorks", "Version": "3.0"} -->
+<!-- #combined-examples -->
+# Combined Extension Examples
+
+## Heading with Everything
+
+<!-- style:ImportantHeading ; marker:Priority="high" ; #critical-section -->
+## Critical Configuration Steps
+
+This section has a custom style, marker metadata, and a stable alias for linking.
+
+## Styled Multiline Table with Alias
+
+<!-- style:DataTable ; multiline ; #comparison-table -->
+| Feature | Description | Status |
+|---------|-------------|--------|
+| Authentication | OAuth 2.0 implementation.
+
+Supports:
+- Authorization Code flow
+- Client Credentials flow
+- Refresh tokens | Complete |
+| Rate Limiting | Configurable per-endpoint limits.
+
+Default: 100 requests/minute
+Maximum: 1000 requests/minute | In Progress |
+
+## Styled Content Island with Metadata
+
+<!-- style:BQ_Important ; marker:Category="alert" ; #important-notice -->
+> **Important Notice**
+>
+> This document describes features in version $version;.
+>
+> For earlier versions, see the [archive](archive.md#versions).
+```
+
+---
+
 ## Tips for Writing Markdown++
 
 1. **Use variables for repeated content** - Product names, versions, URLs
@@ -497,3 +696,6 @@ Troubleshooting content with conditional visibility.
 4. **Use styles for consistent formatting** - Tables, code blocks, callouts
 5. **Use aliases for stable links** - Section links that survive restructuring
 6. **Use markers for searchability** - Keywords, categories, metadata
+7. **Use content islands** - Blockquotes for rich callout boxes
+8. **Use combined commands** - Multiple extensions in one comment
+9. **Follow order priority** - style, multiline, marker(s), #alias
