@@ -1,37 +1,85 @@
-# WebWorks Claude Skills
+# docs: Update README to include both plugins
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Claude Code](https://img.shields.io/badge/Claude-Code-purple)](https://claude.ai/code)
+## Overview
 
+The main repository README only mentions the `epublisher-automation` plugin. The `markdown-plus-plus` plugin was added in PR #2 but the README was not updated. This plan updates the README to document both plugins with their skills.
+
+**Key Distinction:** The `markdown-plus-plus` plugin is standalone and does NOT require WebWorks ePublisher or AutoMap. It works with any Markdown++ documents.
+
+## Problem Statement
+
+- README only lists epublisher-automation plugin and its 3 skills
+- markdown-plus-plus plugin is not mentioned anywhere
+- Repository structure diagram is incomplete
+- Documentation links don't include markdown-plus-plus
+- No clarity that plugins have different requirements
+
+## Proposed Solution
+
+Update README.md to:
+1. Document both plugins in the "Available Skills" section (renamed to "Available Plugins")
+2. Update Quick Start with installation options for each plugin
+3. Clarify that markdown-plus-plus has no ePublisher requirement
+4. Update repository structure to show both plugins
+5. Add markdown-plus-plus documentation link
+
+## Acceptance Criteria
+
+- [ ] "Available Skills" section renamed to "Available Plugins" with subsections
+- [ ] Both plugins listed with their skills and descriptions
+- [ ] Quick Start shows installation commands for each plugin separately
+- [ ] Clear note that markdown-plus-plus works without ePublisher
+- [ ] Repository structure shows both plugin directories
+- [ ] Documentation section includes markdown-plus-plus skill link
+- [ ] Requirements section clarifies which requirements apply to which plugin
+
+## MVP Implementation
+
+### README.md
+
+Update the following sections:
+
+#### 1. Update tagline (line 8)
+
+```markdown
 AI-powered automation for WebWorks ePublisher and Markdown++ document authoring.
+```
 
-![Claude Code publishing an ePublisher project](images/readme-main.png)
+#### 2. Update "What is This?" section (lines 12-14)
 
+```markdown
 ## 🎯 What is This?
 
 WebWorks Claude Skills is a collection of Claude Code skills for documentation workflows:
 
 - **ePublisher Automation** - AI assistance for WebWorks ePublisher publishing, testing, and theming
 - **Markdown++** - Extended Markdown syntax with variables, conditions, styles, and more
+```
 
+#### 3. Replace "Quick Start" section (lines 16-27)
+
+```markdown
 ## ✨ Quick Start
 
+**For ePublisher workflows** (Claude Code only):
 ```
 /plugin marketplace add quadralay/webworks-claude-skills
+/plugin install epublisher-automation@webworks-claude-skills
 ```
 
-Then install the plugin you need:
-- **ePublisher workflows:** `/plugin install epublisher-automation@webworks-claude-skills`
-- **Markdown++ documents:** `/plugin install markdown-plus-plus@webworks-claude-skills`
+**For Markdown++ documents** (Claude Code or Claude Desktop):
+```
+/plugin marketplace add quadralay/webworks-claude-skills
+/plugin install markdown-plus-plus@webworks-claude-skills
+```
 
 Skills activate automatically based on your project context.
+```
 
+#### 4. Replace "Available Skills" section (lines 29-33)
+
+```markdown
 ## 🚀 Available Plugins
-
-| Plugin | Claude Code | Claude Desktop | Platform |
-|--------|-------------|----------------|----------|
-| epublisher-automation | ✅ | ❌ | Windows only |
-| markdown-plus-plus | ✅ | ✅ | Any platform |
 
 ### epublisher-automation
 
@@ -58,35 +106,11 @@ Read and write Markdown++ documents with extended syntax.
 **Requires:** Any platform, Claude Code or Claude Desktop
 
 > **Note:** Markdown++ is an extended Markdown format. While commonly used with ePublisher, the skill works independently for any Markdown++ document authoring.
-
-## 🎮 Example Workflows
-
-### Technical Writer
-
-```
-You: "Publish the project with all targets"
-Claude: Detects AutoMap, constructs command, publishes output, reports results
-
-You: "What targets are configured?"
-Claude: Parses project file, lists all targets with their output formats
-
-You: "Test the Reverb output for JavaScript errors"
-Claude: Launches browser, checks console, reports any issues
 ```
 
-### Documentation Designer
+#### 5. Add Markdown++ example workflow after "Documentation Designer" (after line 61)
 
-```
-You: "Extract the color variables from this Reverb theme"
-Claude: Parses SCSS, lists all color variables with current values
-
-You: "Generate overrides to change the primary color to #2563eb"
-Claude: Creates SCSS override file with proper variable mappings
-
-You: "Check if the CSH links are working"
-Claude: Analyzes all context-sensitive help links, reports broken ones
-```
-
+```markdown
 ### Markdown++ Author
 
 ```
@@ -99,30 +123,11 @@ Claude: Checks for unclosed conditions, invalid variables, duplicate aliases
 You: "Create a multiline table for these features"
 Claude: Generates properly formatted multiline table with continuation rows
 ```
-
-## 💡 Why WebWorks Claude Skills?
-
-### Traditional Approach
-```
-1. Open command prompt
-2. Navigate to AutoMap directory
-3. Remember correct syntax and parameters
-4. Manually check output for errors
-5. Open browser DevTools to debug issues
 ```
 
-### With WebWorks Claude Skills
-```
-You: "Publish the project and check for errors"
-Claude: Handles everything, reports results
-```
+#### 6. Update "Requirements" section (lines 86-95)
 
-**WebWorks Claude Skills provides:**
-- ✅ Natural language control of ePublisher workflows
-- ✅ Automatic tool detection and configuration
-- ✅ Intelligent error detection and reporting
-- ✅ Theme customization without manual SCSS editing
-
+```markdown
 ## 🔧 Requirements
 
 ### epublisher-automation plugin
@@ -140,7 +145,11 @@ Claude: Handles everything, reports results
 - **Any platform** (Windows, macOS, Linux)
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** or **[Claude Desktop](https://claude.ai/download)**
 - **Python 3.10+** (optional, for validation scripts)
+```
 
+#### 7. Update "Repository Structure" section (lines 97-112)
+
+```markdown
 ## 📂 Repository Structure
 
 ```
@@ -160,7 +169,11 @@ webworks-claude-skills/
 ├── CONTRIBUTING.md
 └── README.md
 ```
+```
 
+#### 8. Update "Documentation" section (lines 114-124)
+
+```markdown
 ## 📚 Documentation
 
 ### epublisher-automation Skills
@@ -176,23 +189,23 @@ webworks-claude-skills/
 ### Development
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 - **plans/** - Development plans (historical)
+```
 
-## 🤝 Contributing
+#### 9. Update footer (line 141)
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-**Priority areas:**
-- Enhancing existing skills
-- Adding new design skills for Reverb
-- Adding design skills for other output formats
-- Adding content generation skills
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Automate your documentation workflow with the power of AI.**
-
+```markdown
 🛠️ Built for [WebWorks ePublisher](https://www.webworks.com) & Markdown++ | 🤖 Powered by [Claude Code](https://claude.ai/code)
+```
+
+## Dependencies
+
+- README.md exists at repository root
+- Both plugins are already in marketplace.json
+- All skill SKILL.md files exist
+
+## References
+
+- Current README: `README.md`
+- Marketplace config: `.claude-plugin/marketplace.json`
+- markdown-plus-plus SKILL.md: `plugins/markdown-plus-plus/skills/markdown-plus-plus/SKILL.md`
+- epublisher-automation skills: `plugins/epublisher-automation/skills/*/SKILL.md`
