@@ -1,9 +1,7 @@
 # WebWorks Claude Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)](https://www.microsoft.com/windows)
 [![Claude Code](https://img.shields.io/badge/Claude-Code-purple)](https://claude.ai/code)
-[![ePublisher](https://img.shields.io/badge/ePublisher-2024.1+-green.svg)](https://www.webworks.com)
 
 AI-powered automation for WebWorks ePublisher and Markdown++ document authoring.
 
@@ -18,21 +16,22 @@ WebWorks Claude Skills is a collection of Claude Code skills for documentation w
 
 ## ✨ Quick Start
 
-**For ePublisher workflows** (Claude Code only):
 ```
 /plugin marketplace add quadralay/webworks-claude-skills
-/plugin install epublisher-automation@webworks-claude-skills
 ```
 
-**For Markdown++ documents** (Claude Code or Claude Desktop):
-```
-/plugin marketplace add quadralay/webworks-claude-skills
-/plugin install markdown-plus-plus@webworks-claude-skills
-```
+Then install the plugin you need:
+- **ePublisher workflows:** `/plugin install epublisher-automation@webworks-claude-skills`
+- **Markdown++ documents:** `/plugin install markdown-plus-plus@webworks-claude-skills`
 
 Skills activate automatically based on your project context.
 
 ## 🚀 Available Plugins
+
+| Plugin | Claude Code | Claude Desktop | Platform |
+|--------|-------------|----------------|----------|
+| epublisher-automation | ✅ | ❌ | Windows only |
+| markdown-plus-plus | ✅ | ✅ | Any platform |
 
 ### epublisher-automation
 
