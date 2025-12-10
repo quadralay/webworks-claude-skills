@@ -180,58 +180,71 @@ This section has an associated marker.
 ### Basic Multiline
 
 <!-- multiline -->
-| Feature | Description |
-|---------|-------------|
-| Variables | Store reusable values.
-
-Use `$name;` syntax. |
-| Styles | Apply formatting.
-
-Supports block and inline. |
+| Feature   | Description              |
+|-----------|--------------------------|
+| Variables | Store reusable values.   |
+|           | Use `$name;` syntax.     |
+|           |                          |
+| Styles    | Apply formatting.        |
+|           | Supports block & inline. |
 
 ### Multiline with Lists
 
 <!-- multiline -->
-| Step | Actions |
-|------|---------|
-| 1 | First step:
+| Step | Actions                  |
+|------|--------------------------|
+| 1    | First step:              |
+|      | - Sub-action A           |
+|      | - Sub-action B           |
+|      | - Sub-action C           |
+|      |                          |
+| 2    | Second step:             |
+|      | 1. Do this first         |
+|      | 2. Then do this          |
+|      | 3. Finally do this       |
 
-- Sub-action A
-- Sub-action B
-- Sub-action C |
-| 2 | Second step:
-
-1. Do this first
-2. Then do this
-3. Finally do this |
-
-### Multiline with Code
+### Multiline with Blockquotes
 
 <!-- multiline -->
-| Language | Example |
-|----------|---------|
-| Python | ```python
-def greet():
-    print("Hello")
-``` |
-| JavaScript | ```javascript
-function greet() {
-    console.log("Hello");
-}
-``` |
+| Topic   | Notes                    |
+|---------|--------------------------|
+| Warning | Important:               |
+|         | > **Note:** Be careful   |
+|         | > when making changes.   |
+|         |                          |
+| Tip     | Helpful hint:            |
+|         | > Use aliases for stable |
+|         | > URL endpoints.         |
+
+### Multiline with Block Styling
+
+<!-- multiline -->
+| Name | Details                  |
+|------|--------------------------|
+| Bob  | Lives in Dallas.         |
+|      | <!-- style:Hobbies -->   |
+|      | - Enjoys cycling         |
+|      | - Loves cooking          |
+|      |                          |
+| Mary | Lives in El Paso.        |
+|      | - Works as a teacher     |
+|      | - Likes painting         |
+
+### Multiline with Inline Styling
+
+<!-- multiline -->
+| Topic | Description              |
+|-------|--------------------------|
+| Intro | This paragraph has       |
+|       | <!--style:Emphasis-->**important** inline styling. |
 
 ### Multiline with Alignment
 
 <!-- multiline -->
-| Left | Center | Right |
-|:-----|:------:|------:|
-| Left aligned
-
-Multiple lines | Center aligned
-
-Also multiple | Right aligned
-
-Three lines total |
+| Left     | Center   | Right    |
+|:---------|:--------:|---------:|
+| L-align  | Centered | R-align  |
+|          | text     | content  |
 
 ## Combined Commands Test
 
@@ -241,11 +254,11 @@ Three lines total |
 ## Combined Style, Marker, and Alias Heading
 
 <!-- style:DataTable ; multiline ; #feature-table -->
-| Column | Data |
-|--------|------|
-| Cell | Multi-paragraph
-
-content here |
+| Column | Data                     |
+|--------|--------------------------|
+| Cell   | Multi-line content       |
+|        | - Item 1                 |
+|        | - Item 2                 |
 
 ### Style + Marker
 
@@ -297,6 +310,8 @@ Visit [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
 
 ## Nested Lists Test
 
+### Basic Nested List with Single Style
+
 <!--style:ProcedureList-->
 1. First step
    - Sub-item A
@@ -305,6 +320,17 @@ Visit [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
    1. Nested numbered item
    2. Another nested item
 3. Third step
+
+### Nested List with Multiple Styles (Proper Indentation)
+
+<!-- style:BulletList1 -->
+- Bullet 1
+
+  <!-- style:BulletList2 -->
+  - Bullet 2
+
+    <!-- style:BulletList3 -->
+    - Bullet 3
 
 ## Edge Cases
 

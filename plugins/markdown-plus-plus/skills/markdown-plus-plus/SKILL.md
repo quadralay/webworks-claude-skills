@@ -63,18 +63,34 @@ Styles override default formatting for elements. Placement depends on element ty
 
 <!--style:NoteBlock-->
 > This is a styled blockquote.
-
-<!--style:CodeExample-->
-```python
-def hello():
-    print("Hello")
 ```
+
+**IMPORTANT:** Block commands must be attached to the element (no blank line between):
+
+```markdown
+<!-- WRONG - blank line breaks the association -->
+<!--style:CustomParagraph-->
+
+This paragraph will NOT receive the style.
+
+<!-- CORRECT - command directly above element -->
+<!--style:CustomParagraph-->
+This paragraph receives the style.
 ```
 
 **Inline** (place immediately before the element, no space):
 ```markdown
 This is <!--style:Emphasis-->**important text**.
 Use <!--style:ProductName-->*$product_name;* for branding.
+```
+
+**Nested lists** (use proper indentation for nested styles):
+```markdown
+<!-- style:BulletList1 -->
+- Bullet 1
+
+  <!-- style:BulletList2 -->
+  - Bullet 2
 ```
 
 **Tables** (place above table):
@@ -211,33 +227,39 @@ Use `marker:key="value"` for single markers, semicolon-separated for multiple.
 
 ### Multiline Tables
 
-Multiline tables allow block content (lists, code, paragraphs) inside cells.
+Multiline tables allow block content (lists, blockquotes, styled elements) inside cells. Each row continues on subsequent lines using empty first cells, and rows are separated by an empty row.
 
 ```markdown
 <!-- multiline -->
-| Feature | Description |
-|---------|-------------|
-| Variables | Store reusable values.
-
-Example: `$product_name;` |
-| Conditions | Control content visibility.
-
-- Show for web
-- Hide for print |
+| Name | Details                  |
+|------|--------------------------|
+| Bob  | Lives in Dallas.         |
+|      | - Enjoys cycling         |
+|      | - Loves cooking          |
+|      |                          |
+| Mary | Lives in El Paso.        |
+|      | - Works as a teacher     |
+|      | - Likes painting         |
 ```
 
 **Rules:**
 - Add `<!-- multiline -->` on line above table
-- Empty row (cells with only whitespace) starts a new row
-- Cells can contain paragraphs, lists, code blocks
+- First content row starts the data
+- Continuation rows use `|      |` pattern (empty first cell continues previous row)
+- Empty row with cell borders (`|      |                          |`) separates rows
+- Cells can contain lists, blockquotes, custom styles, and other Markdown++ commands
 - Standard alignment syntax applies (`:---`, `---:`, `:---:`)
 
 **With custom style:**
 ```markdown
-<!--style:DataTable; multiline -->
-| Column | Content |
-|--------|---------|
-| Cell   | Block content here |
+<!-- style:DataTable ; multiline -->
+| Feature | Description              |
+|---------|--------------------------|
+| API     | REST endpoints.          |
+|         | - GET /users             |
+|         | - POST /users            |
+|         |                          |
+| Auth    | OAuth 2.0 support.       |
 ```
 
 ### Combined Commands

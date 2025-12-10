@@ -103,6 +103,23 @@ code here
 # Heading Text
 ```
 
+### Nested List Styling
+
+For nested lists, use proper indentation to match the list level:
+
+```markdown
+<!-- style:BulletList1 -->
+- Bullet 1
+
+  <!-- style:BulletList2 -->
+  - Bullet 2
+
+    <!-- style:BulletList3 -->
+    - Bullet 3
+```
+
+The style command must be indented to match the nested list item.
+
 ### Inline Placement
 
 ```markdown
@@ -397,60 +414,93 @@ Markers can be placed:
 <!-- multiline -->
 | Header 1 | Header 2 |
 |----------|----------|
-| Cell 1   | Cell 2   |
+| Cell 1   | Cell content here        |
+|          | - Continuation line 1    |
+|          | - Continuation line 2    |
+|          |                          |
+| Cell 2   | Next row starts here     |
 ```
 
-### Creating Multi-Paragraph Cells
+### Structure Rules
 
-Blank lines within a cell create multiple paragraphs:
+Multiline tables use a specific row structure:
+
+1. **First content row** - Contains the row identifier in the first cell
+2. **Continuation rows** - Empty first cell (`|          |`) continues the previous row
+3. **Row separator** - Empty row with cell borders separates table rows
+
+### Basic Example
 
 ```markdown
 <!-- multiline -->
-| Feature | Description |
-|---------|-------------|
-| Variables | Store reusable values.
-
-Use `$name;` syntax.
-
-Variables are resolved at build time. |
-| Styles | Apply custom formatting. |
+| Name | Details                  |
+|------|--------------------------|
+| Bob  | Lives in Dallas.         |
+|      | - Enjoys cycling         |
+|      | - Loves cooking          |
+|      |                          |
+| Mary | Lives in El Paso.        |
+|      | - Works as a teacher     |
+|      | - Likes painting         |
 ```
 
 ### Lists in Cells
 
 ```markdown
 <!-- multiline -->
-| Steps | Details |
-|-------|---------|
-| Install | 1. Download package
-2. Run installer
-3. Restart |
+| Feature    | Capabilities             |
+|------------|--------------------------|
+| Variables  | Reusable content:        |
+|            | - Product names          |
+|            | - Version numbers        |
+|            | - URLs                   |
+|            |                          |
+| Conditions | Control visibility:      |
+|            | 1. Platform-specific     |
+|            | 2. Output format         |
+|            | 3. Audience level        |
 ```
 
-### Code Blocks in Cells
+### Blockquotes in Cells
 
 ```markdown
 <!-- multiline -->
-| Example | Code |
-|---------|------|
-| Hello | ```python
-print("Hello")
-``` |
+| Topic   | Notes                    |
+|---------|--------------------------|
+| Warning | Important information:   |
+|         | > **Note:** Be careful   |
+|         | > when editing configs.  |
+|         |                          |
+| Tip     | Helpful hint:            |
+|         | > Use aliases for stable |
+|         | > URL endpoints.         |
 ```
 
-### Row Separation
+### Styled Content in Cells
 
-A row containing only empty cells (or whitespace) starts a new row:
+Block styles go on the preceding line, then the styled content follows:
 
 ```markdown
 <!-- multiline -->
-| A | B |
-|---|---|
-| Content spans
+| Name | Details                  |
+|------|--------------------------|
+| Bob  | Lives in Dallas.         |
+|      | <!-- style:Hobbies -->   |
+|      | - Enjoys cycling         |
+|      | - Loves cooking          |
+|      |                          |
+| Mary | Lives in El Paso.        |
+|      | - Works as a teacher     |
+```
 
-multiple lines |
-|   |   |
-| New row here | Second cell |
+For inline styles, no space between command and element:
+
+```markdown
+<!-- multiline -->
+| Topic | Description              |
+|-------|--------------------------|
+| Intro | This is                  |
+|       | <!--style:Emphasis-->**important** text. |
 ```
 
 ### Alignment
@@ -459,19 +509,23 @@ Standard Markdown alignment syntax works:
 
 ```markdown
 <!-- multiline -->
-| Left | Center | Right |
-|:-----|:------:|------:|
-| L    | C      | R     |
+| Left     | Center   | Right    |
+|:---------|:--------:|---------:|
+| L-align  | Centered | R-align  |
+|          | text     | content  |
 ```
 
 ### With Custom Styles
 
 ```markdown
-<!--style:DataTable-->
-<!-- multiline -->
-| Column | Data |
-|--------|------|
-| Cell   | Content |
+<!-- style:DataTable ; multiline -->
+| Feature | Description              |
+|---------|--------------------------|
+| API     | REST endpoints.          |
+|         | - GET /users             |
+|         | - POST /users            |
+|         |                          |
+| Auth    | OAuth 2.0 support.       |
 ```
 
 ---

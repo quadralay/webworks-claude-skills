@@ -214,57 +214,48 @@ When you first launch $product_name;, the setup wizard guides you through:
 
 ## Example 4: Multiline Tables
 
-Complex tables with rich content in cells.
+Complex tables with rich content in cells. Each row uses continuation lines (empty first cell) and is separated by an empty row with cell borders.
 
 ```markdown
 # Feature Comparison
 
-<!-- multiline -->
-<!--style:ComparisonTable-->
-| Feature | Free Plan | Pro Plan | Enterprise |
-|---------|-----------|----------|------------|
-| Users | Up to 5 users
-
-No additional users allowed | Up to 50 users
-
-$10/user after limit | Unlimited users
-
-Volume discounts available |
-| Storage | 5 GB total
-
-No expansion options | 100 GB total
-
-Additional storage: $5/50GB | Unlimited
-
-Custom retention policies |
-| Support | Community forum only
-
-- Self-service docs
-- FAQ section | Email support
-
-- 24-hour response
-- Priority queue | Dedicated support
-
-- Phone hotline
-- Slack channel
-- Named account manager |
-| Features | Basic features:
-
-- Core functionality
-- Standard reports
-- Mobile app | All Free features plus:
-
-- Advanced analytics
-- API access
-- Custom integrations
-- SSO support | All Pro features plus:
-
-- Custom development
-- On-premise option
-- SLA guarantee
-- Training included |
+<!-- style:ComparisonTable ; multiline -->
+| Plan       | Features                         |
+|------------|----------------------------------|
+| Free       | Basic access:                    |
+|            | - Up to 5 users                  |
+|            | - 5 GB storage                   |
+|            | - Community support              |
+|            |                                  |
+| Pro        | Everything in Free, plus:        |
+|            | - Up to 50 users                 |
+|            | - 100 GB storage                 |
+|            | - Email support (24hr response)  |
+|            | - API access                     |
+|            |                                  |
+| Enterprise | Everything in Pro, plus:         |
+|            | - Unlimited users                |
+|            | - Unlimited storage              |
+|            | - Dedicated support              |
+|            | - Custom development             |
+|            | - SLA guarantee                  |
 
 <!--marker:Keywords="pricing, plans, features, comparison"-->
+```
+
+### Multi-Column Multiline Example
+
+```markdown
+<!-- multiline -->
+| Component | Requirements             | Notes                    |
+|-----------|--------------------------|--------------------------|
+| Database  | PostgreSQL 14+           | Required for production. |
+|           | - 4 GB RAM minimum       | > **Tip:** Use SSD for   |
+|           | - 50 GB disk space       | > better performance.    |
+|           |                          |                          |
+| Web Server| Nginx or Apache          | Optional reverse proxy.  |
+|           | - SSL certificate        | - Handles HTTPS          |
+|           | - Gzip compression       | - Static file caching    |
 ```
 
 ---
@@ -663,18 +654,17 @@ This section has a custom style, marker metadata, and a stable alias for linking
 ## Styled Multiline Table with Alias
 
 <!-- style:DataTable ; multiline ; #comparison-table -->
-| Feature | Description | Status |
-|---------|-------------|--------|
-| Authentication | OAuth 2.0 implementation.
-
-Supports:
-- Authorization Code flow
-- Client Credentials flow
-- Refresh tokens | Complete |
-| Rate Limiting | Configurable per-endpoint limits.
-
-Default: 100 requests/minute
-Maximum: 1000 requests/minute | In Progress |
+| Feature        | Description              | Status      |
+|----------------|--------------------------|-------------|
+| Authentication | OAuth 2.0 implementation |             |
+|                | Supports:                | Complete    |
+|                | - Authorization Code     |             |
+|                | - Client Credentials     |             |
+|                | - Refresh tokens         |             |
+|                |                          |             |
+| Rate Limiting  | Per-endpoint limits      |             |
+|                | - Default: 100 req/min   | In Progress |
+|                | - Maximum: 1000 req/min  |             |
 
 ## Styled Content Island with Metadata
 

@@ -45,13 +45,31 @@ $intro_paragraph;  <!-- Too much content in a variable -->
 **Block vs. Inline:**
 - Use **block styles** for headings, paragraphs, lists, code blocks, tables
 - Use **inline styles** for emphasized text within paragraphs
+- Block commands must be attached (no blank line between command and element)
+- Inline commands have no space before the styled element
 
 **Example - Good:**
 ```markdown
 <!--style:WarningBox-->
 > **Warning:** This action cannot be undone.
 
-This is <!--style:UIElement-->**Settings**<!--style:Normal--> button.
+This is <!--style:UIElement-->**Settings** button.
+```
+
+**Example - Wrong (blank line breaks association):**
+```markdown
+<!--style:CustomParagraph-->
+
+This paragraph will NOT receive the style.
+```
+
+**Nested list styling (proper indentation):**
+```markdown
+<!-- style:BulletList1 -->
+- Bullet 1
+
+  <!-- style:BulletList2 -->
+  - Bullet 2
 ```
 
 **Example - Avoid:**
@@ -171,7 +189,7 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 ### Multiline Tables
 
 **Use multiline tables for:**
-- Complex data requiring lists or code in cells
+- Complex data requiring lists or blockquotes in cells
 - Feature comparisons with detailed descriptions
 - Reference tables with examples
 - Content that doesn't fit in single-line cells
@@ -179,7 +197,22 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 **Avoid multiline tables for:**
 - Simple tabular data
 - Tables where standard Markdown works
-- Deeply nested content in cells
+
+**Multiline table structure:**
+```markdown
+<!-- multiline -->
+| Name | Details                  |
+|------|--------------------------|
+| Bob  | Lives in Dallas.         |
+|      | - Enjoys cycling         |
+|      | - Loves cooking          |
+|      |                          |
+| Mary | Lives in El Paso.        |
+|      | - Works as a teacher     |
+```
+
+- Continuation rows use empty first cell (`|      |`)
+- Empty row with borders separates table rows
 
 ### Combined Commands
 
