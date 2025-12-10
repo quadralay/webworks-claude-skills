@@ -1,0 +1,20 @@
+{
+  "name": "markdown-plus-plus",
+  "version": "1.0.0",
+  "description": "Read and write Markdown++ documents with extended syntax for variables, conditions, styles, and more",
+  "author": "WebWorks",
+  "skills": [
+    {
+      "name": "markdown-plus-plus",
+      "path": "skills/markdown-plus-plus"
+    }
+  ],
+  "keywords": [
+    "markdown",
+    "markdown++",
+    "mdpp",
+    "documentation",
+    "webworks",
+    "epublisher"
+  ]
+}

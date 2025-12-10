@@ -1,0 +1,312 @@
+---
+name: markdown-plus-plus
+description: Read and write Markdown++ documents with extended syntax for variables, conditions, custom styles, file includes, and markers. Use when creating Markdown++ source documents for ePublisher, generating documentation with conditional content, or working with extended Markdown formats.
+---
+
+<objective>
+
+# markdown-plus-plus
+
+Read and write Markdown++ documents - an extended Markdown format with variables, conditions, custom styles, file includes, and markers.
+</objective>
+
+<overview>
+
+## Overview
+
+Markdown++ extends CommonMark with HTML comment-based extensions. All extensions (except variables) use HTML comments for backward compatibility with standard Markdown renderers.
+
+### Quick Reference
+
+| Extension | Syntax | Scope |
+|-----------|--------|-------|
+| Variables | `$variable_name;` | Inline - reusable content |
+| Styles | `<!--style:Name-->` | Block (above) or Inline (before) |
+| Aliases | `<!--#alias-name-->` | Anchor for `[text](#alias-name)` links |
+| Conditions | `<!--condition:name-->...<!--/condition-->` | Show/hide content by format |
+| Includes | `<!--include:path/to/file.md-->` | Insert file contents |
+| Markers | `<!--markers:{"Key": "val"}-->` | Metadata for search/processing |
+| Multiline Tables | `<!-- multiline -->` | Enable block content in cells |
+
+</overview>
+
+<syntax_examples>
+
+## Syntax Examples
+
+### Variables
+
+Variables store reusable values across documents. They use `$name;` syntax (dollar sign, name, semicolon).
+
+```markdown
+Welcome to $product_name;, version $version;.
+The **$product_name;** application supports...
+```
+
+**Rules:**
+- Alphanumeric characters, hyphens, underscores only
+- Must end with semicolon
+- No spaces in variable names
+- Case-sensitive: `$Product;` differs from `$product;`
+
+**Valid:** `$product_name;`, `$version-2;`, `$my_var;`
+**Invalid:** `$product name;` (space), `$product` (no semicolon)
+
+### Custom Styles
+
+Styles override default formatting for elements. Placement depends on element type.
+
+**Block-level** (place on line directly above element, no blank line):
+```markdown
+<!--style:CustomHeading-->
+# My Heading
+
+<!--style:NoteBlock-->
+> This is a styled blockquote.
+
+<!--style:CodeExample-->
+```python
+def hello():
+    print("Hello")
+```
+```
+
+**Inline** (place immediately before the element, no space):
+```markdown
+This is <!--style:Emphasis-->**important text**.
+Use <!--style:ProductName-->*$product_name;* for branding.
+```
+
+**Tables** (place above table):
+```markdown
+<!--style:DataTable-->
+| Column 1 | Column 2 |
+|----------|----------|
+| Data     | Data     |
+```
+
+### Custom Aliases
+
+Aliases create internal link anchors. They enable linking to specific elements.
+
+```markdown
+<!--#getting-started-->
+## Getting Started
+
+<!--#installation-steps-->
+### Installation
+
+Later in the document:
+See [Getting Started](#getting-started) for an introduction.
+Jump to [Installation](#installation-steps) for setup instructions.
+```
+
+**Cross-document links:**
+```markdown
+See [API Reference](api.md#authentication) for auth details.
+```
+
+**Rules:**
+- Alphanumeric, hyphens, underscores only
+- No spaces (alias ends at first space)
+- Must start with `#` inside the comment
+
+### Conditions
+
+Conditions show or hide content based on output format. Content between opening and closing tags is conditional.
+
+**Basic usage:**
+```markdown
+<!--condition:web-->
+Visit our [website](https://example.com) for updates.
+<!--/condition-->
+
+<!--condition:print-->
+See Appendix A for additional resources.
+<!--/condition-->
+```
+
+**Operators:**
+
+| Operator | Syntax | Meaning | Example |
+|----------|--------|---------|---------|
+| Space | `a b` | AND - all must be visible | `<!--condition:web production-->` |
+| Comma | `a,b` | OR - any can be visible | `<!--condition:web,print-->` |
+| `!` | `!a` | NOT - visible when hidden | `<!--condition:!internal-->` |
+
+**Precedence:** NOT (tightest) > AND (space) > OR (comma)
+
+**Complex examples:**
+```markdown
+<!--condition:!internal-->
+This appears when "internal" condition is hidden.
+<!--/condition-->
+
+<!--condition:web,print-->
+This appears in web OR print output.
+<!--/condition-->
+
+<!--condition:web production-->
+This appears only when BOTH web AND production are visible.
+<!--/condition-->
+
+<!--condition:!draft,web production-->
+Means: (!draft) OR (web AND production)
+<!--/condition-->
+```
+
+**Inline conditions:**
+```markdown
+Contact us at <!--condition:web-->[support@example.com](mailto:support@example.com)<!--/condition--><!--condition:print-->the address on the back cover<!--/condition-->.
+```
+
+### File Includes
+
+Includes insert content from other Markdown++ files.
+
+```markdown
+<!--include:shared/header.md-->
+
+# Main Content
+
+<!--include:../common/footer.md-->
+```
+
+**Rules:**
+- Paths are relative to the containing file
+- Recursive includes are supported
+- Circular includes are detected and prevented
+- Include must be alone on its line
+
+**With conditions:**
+```markdown
+<!--condition:web-->
+<!--include:web-only-content.md-->
+<!--/condition-->
+```
+
+### Markers (Metadata)
+
+Markers attach metadata to document elements for search, processing, or custom behavior.
+
+**JSON format (multiple keys):**
+```markdown
+<!--markers:{"Keywords": "api, documentation", "Author": "WebWorks"}-->
+```
+
+**Simple format (single key):**
+```markdown
+<!--marker:Keywords="api, documentation"-->
+```
+
+**Multiple markers in one tag:**
+```markdown
+<!--marker:Keywords="api"; marker:Category="reference"-->
+```
+
+### Multiline Tables
+
+Multiline tables allow block content (lists, code, paragraphs) inside cells.
+
+```markdown
+<!-- multiline -->
+| Feature | Description |
+|---------|-------------|
+| Variables | Store reusable values.
+
+Example: `$product_name;` |
+| Conditions | Control content visibility.
+
+- Show for web
+- Hide for print |
+```
+
+**Rules:**
+- Add `<!-- multiline -->` on line above table
+- Empty row (cells with only whitespace) starts a new row
+- Cells can contain paragraphs, lists, code blocks
+- Standard alignment syntax applies (`:---`, `---:`, `:---:`)
+
+**With custom style:**
+```markdown
+<!--style:DataTable-->
+<!-- multiline -->
+| Column | Content |
+|--------|---------|
+| Cell   | Block content here |
+```
+
+### Combined Commands
+
+Multiple commands can appear in a single comment, separated by semicolons.
+
+```markdown
+<!-- style:CustomStyle ; #my-alias ; marker:Keywords="example" -->
+# Heading with Style, Alias, and Marker
+
+<!-- style:ImportantNote ; #warning-section -->
+> This blockquote has both a custom style and an alias.
+```
+
+**Order doesn't matter.** Whitespace around semicolons is optional.
+
+</syntax_examples>
+
+<validation>
+
+## Validation
+
+Use the validation script to check Markdown++ syntax:
+
+```bash
+python scripts/validate-mdpp.py document.md
+```
+
+**Options:**
+- `--verbose` - Show detailed output
+- `--json` - Output errors as JSON
+- `--strict` - Treat warnings as errors
+
+**Common errors detected:**
+- Unclosed condition blocks
+- Invalid variable names
+- Malformed marker JSON
+- Circular file includes
+
+See `references/syntax-reference.md` for complete syntax rules.
+
+</validation>
+
+<references>
+
+## Reference Files
+
+- `references/syntax-reference.md` - Complete extension syntax documentation
+- `references/examples.md` - Real-world document examples
+- `references/best-practices.md` - When and how to use each extension
+
+</references>
+
+<related_skills>
+
+## Related Skills
+
+| Skill | Relationship |
+|-------|--------------|
+| epublisher | Understand project structure containing Markdown++ sources |
+| automap | Build ePublisher projects with Markdown++ source documents |
+| reverb | Test output generated from Markdown++ sources |
+
+</related_skills>
+
+<success_criteria>
+
+## Success Criteria
+
+- Markdown++ document uses correct syntax for all extensions
+- Variables use valid names (alphanumeric, hyphens, underscores)
+- Conditions have matching opening and closing tags
+- File includes use valid relative paths
+- Markers contain valid JSON (for `markers:` format)
+- No circular includes detected
+</success_criteria>
