@@ -65,7 +65,7 @@ Styles override default formatting for elements. Placement depends on element ty
 > This is a styled blockquote.
 ```
 
-**IMPORTANT:** Block commands must be attached to the element (no blank line between):
+**IMPORTANT:** Block commands must be attached to the element (no blank line between). Comment tags must be associated with a paragraph - they cannot float alone separated by whitespace.
 
 ```markdown
 <!-- WRONG - blank line breaks the association -->
@@ -213,17 +213,14 @@ Markers attach metadata to document elements for search, processing, or custom b
 <!--marker:Keywords="api, documentation"-->
 ```
 
-**Multiple markers in one comment:**
+**JSON format (multiple keys):**
 ```markdown
-<!--marker:Keywords="api" ; marker:Category="reference"-->
+<!--markers:{"Keywords": "api, documentation", "Description": "API reference guide"}-->
 ```
 
-**JSON format (multiple keys, alternative):**
-```markdown
-<!--markers:{"Keywords": "api, documentation", "Author": "WebWorks"}-->
-```
+Use `marker:key="value"` for single markers, JSON format for multiple.
 
-Use `marker:key="value"` for single markers, semicolon-separated for multiple.
+**Note:** `Keywords` and `Description` markers map to HTML meta tags in web output.
 
 ### Multiline Tables
 
@@ -301,12 +298,12 @@ Apply custom styles to images and links using inline style comments.
 See the [<!--style:ImportantLink-->**API Reference**](api.md#auth).
 ```
 
-### Content Islands (Styled Blockquotes)
+### Content Islands (Blockquotes)
 
-Blockquotes with custom styles create "content islands" - grouped content blocks useful for callouts, notes, or enhanced layouts.
+Blockquotes are an effective way to create "content islands" - grouped content blocks useful for callouts, notes, or enhanced layouts. Custom styles make them more configurable for different types of content islands.
 
+**Basic content island (no custom style):**
 ```markdown
-<!--style:BQ_Learn-->
 > ## Learning Section
 >
 > This blockquote contains multiple elements:
@@ -320,6 +317,14 @@ Blockquotes with custom styles create "content islands" - grouped content blocks
 > ```
 >
 > Final paragraph in the content island.
+```
+
+**Styled content islands (recommended for multiple island types):**
+```markdown
+<!--style:BQ_Learn-->
+> ## Learning Section
+>
+> This blockquote groups related learning content together.
 
 <!--style:BQ_Warning-->
 > **Warning:** This is a styled warning block.
@@ -343,6 +348,31 @@ Apply custom styles to list containers:
    2. Another nested item
 3. Third step
 ```
+
+### Document Structure
+
+**Topic map pattern** - A top-level file includes chapter-level files:
+
+```markdown
+<!--markers:{"Keywords": "user guide, documentation", "Description": "Complete user guide for the application"} ; #user-guide-->
+# User Guide
+
+<!--include:introduction.md-->
+
+<!--include:getting_started.md-->
+
+<!--include:configuration.md-->
+
+<!--condition:advanced-->
+<!--include:advanced_topics.md-->
+<!--/condition-->
+```
+
+**Key points:**
+- Markers and alias are combined in one comment attached to the title heading
+- `Keywords` and `Description` map to HTML meta tags
+- Includes pull in chapter-level content files
+- Conditions wrap audience-specific sections
 
 </syntax_examples>
 
@@ -389,9 +419,9 @@ See `references/syntax-reference.md` for complete syntax rules.
 
 ## Reference Files
 
-- `references/syntax-reference.md` - Complete extension syntax documentation
+- `references/syntax-reference.md` - Detailed syntax rules, edge cases, and validation codes
 - `references/examples.md` - Real-world document examples
-- `references/best-practices.md` - When and how to use each extension
+- `references/best-practices.md` - Usage guidance, naming conventions, and common mistakes
 
 </references>
 

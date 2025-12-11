@@ -96,6 +96,8 @@ code here
 | 1 | 2 |
 ```
 
+**Important:** Block commands must be attached to the element (no blank line between). Comment tags must be associated with a paragraph - they cannot float alone separated by whitespace.
+
 **Wrong - blank line breaks the association:**
 ```markdown
 <!--style:CustomHeading-->
@@ -141,16 +143,6 @@ This is <!--style: Emphasis--> **bold text**.
 | Spaces | Not allowed in style names |
 | Case | Typically PascalCase by convention |
 
-### Multiple Styles
-
-If multiple style tags appear before an element, the **last one** takes precedence:
-
-```markdown
-<!--style:StyleA-->
-<!--style:StyleB-->
-# This heading gets StyleB
-```
-
 ---
 
 ## Custom Aliases
@@ -189,12 +181,9 @@ See [Introduction](#introduction) for details.
 
 # Cross-document
 See [API Auth](api-reference.md#authentication) for auth info.
-
-# Reference-style
-See the [intro section][intro-ref] for more.
-
-[intro-ref]: #introduction
 ```
+
+**Note:** Reference-style links (`[text][ref]` with `[ref]: url`) are supported but generally not recommended. See the **Advanced Patterns** section in [best-practices.md](best-practices.md#link-references) for guidance on when to use them.
 
 ### Alias vs. Heading IDs
 
@@ -348,17 +337,12 @@ Included content:
 <!--marker:Key="value"-->
 ```
 
-**Multiple markers (semicolon-separated):**
-```
-<!--marker:Key1="value1" ; marker:Key2="value2"-->
-```
-
-**JSON format (alternative for multiple keys):**
+**JSON format (multiple keys):**
 ```
 <!--markers:{"Key1": "value1", "Key2": "value2"}-->
 ```
 
-Use `marker:key="value"` for single markers. Use semicolon-separated format for multiple.
+Use `marker:key="value"` for single markers, JSON format for multiple.
 
 ### JSON Format Rules
 
@@ -386,14 +370,7 @@ Markers can be placed:
 - At document start (document-level metadata)
 - Above elements (element-level metadata)
 
-```markdown
-<!--markers:{"Author": "WebWorks", "Version": "1.0"}-->
-
-# Document Title
-
-<!--marker:Keywords="introduction, overview"-->
-## Introduction
-```
+**Note:** `Keywords` and `Description` markers map to HTML meta tags in web output. See [SKILL.md](../SKILL.md#document-structure) for the recommended document structure combining markers with other commands.
 
 ### Common Use Cases
 
@@ -614,32 +591,18 @@ The style applies to the formatted text within the link.
 
 ---
 
-## Content Islands (Styled Blockquotes)
+## Content Islands (Blockquotes)
 
-Blockquotes with custom styles create "content islands" - self-contained content blocks useful for callouts, learning boxes, or enhanced layouts.
+Blockquotes create "content islands" - self-contained content blocks. See [SKILL.md](../SKILL.md#content-islands-blockquotes) for examples.
 
-```markdown
-<!--style:BQ_Learn-->
-> ## Learning Section
->
-> This blockquote contains multiple elements:
->
-> - Bullet point 1
-> - Bullet point 2
->
-> ```python
-> def example():
->     return "Code inside blockquote"
-> ```
->
-> Final paragraph in the content island.
-```
-
-Content islands support:
-- Headings within the blockquote
+**Supported content within blockquotes:**
+- Headings
 - Lists (ordered and unordered)
-- Code blocks
-- Nested formatting
+- Code blocks (fenced)
+- Nested formatting (bold, italic, links)
+- Other Markdown++ extensions (variables, conditions, inline styles)
+
+**Styling:** Place `<!--style:StyleName-->` on the line above the blockquote to apply a custom style.
 
 ---
 

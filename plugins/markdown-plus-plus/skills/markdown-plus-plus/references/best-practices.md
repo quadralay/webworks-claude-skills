@@ -141,21 +141,22 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 ### File Includes
 
 **Use includes for:**
-- Shared headers and footers
-- Boilerplate legal text
+- Topic map structure (top-level file includes chapters)
 - Reusable content blocks
 - Modular documentation structure
 - Common examples or code snippets
+- Boilerplate legal text
 
 **Avoid includes for:**
 - Very small content (inline it instead)
 - Content that varies significantly per use
 - Creating deeply nested include chains
 
-**Example - Good:**
+**Example - Topic map pattern:**
 ```markdown
-<!--include:shared/copyright-notice.md-->
-<!--include:chapters/installation.md-->
+<!--include:introduction.md-->
+<!--include:getting_started.md-->
+<!--include:configuration.md-->
 ```
 
 ### Markers
@@ -176,12 +177,7 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 <!--marker:Keywords="installation, setup"-->
 ```
 
-**Multiple markers:**
-```markdown
-<!--marker:Keywords="installation" ; marker:Category="User Guide"-->
-```
-
-**JSON format (alternative for complex metadata):**
+**JSON format (multiple markers):**
 ```markdown
 <!--markers:{"Keywords": "installation, setup, getting started", "Category": "User Guide"}-->
 ```
@@ -236,25 +232,16 @@ Click <!--condition:windows10-->Start<!--/condition--><!--condition:windows11-->
 - Screenshots with consistent borders/shadows
 - Icons that need size control
 
-**Example:**
-```markdown
-<!--style:ScreenshotImage-->![Settings Panel](images/settings.png)
-
-<!--style:LogoImage-->![Company Logo](images/logo.svg)
-```
-
 ### Inline Styling for Links
 
-**Place style inside link text brackets:**
-```markdown
-See [<!--style:ImportantLink-->**API Reference**](api.md#auth).
+**Use inline styles for:**
+- External links that need visual distinction
+- Important reference links
+- UI element links
 
-Visit the [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
-```
+**Key rule:** Place style inside the link text brackets, not before the entire link syntax.
 
-**Avoid:** Placing style before the entire link syntax (use inside brackets).
-
-### Content Islands (Styled Blockquotes)
+### Content Islands (Blockquotes)
 
 **Use content islands for:**
 - Learning boxes with multiple content types
@@ -262,48 +249,13 @@ Visit the [<!--style:ExternalLink-->*documentation*](https://docs.example.com).
 - Tips with code examples
 - Any "block within a block" layout
 
-**Example:**
-```markdown
-<!--style:BQ_Learn-->
-> ## Key Concept
->
-> This learning box contains:
->
-> - Lists
-> - Code blocks
-> - Multiple paragraphs
->
-> All within a styled container.
-```
-
-**Best practice:** Include a heading inside the blockquote for accessibility.
+**Best practice:** Include a heading inside the blockquote for accessibility. Use custom styles when you need different types of content islands (e.g., `BQ_Learn`, `BQ_Warning`).
 
 ## Document Structure
 
 ### Recommended Organization
 
-```markdown
-<!--markers:{"Author": "...", "Version": "..."}-->
-<!--#document-id-->
-
-# $document_title;
-
-<!--include:shared/header.md-->
-
-## Introduction
-
-Main content here...
-
-<!--condition:advanced-->
-## Advanced Topics
-
-Advanced content...
-<!--/condition-->
-
-<!--include:shared/footer.md-->
-
-<!--marker:Keywords="..."-->
-```
+See the **Document Structure** section in [SKILL.md](../SKILL.md#document-structure) for the recommended document template showing how to combine markers, aliases, includes, and conditions.
 
 ### Condition Placement
 
@@ -326,20 +278,20 @@ Content here...
 
 ### Include Organization
 
-Create a logical structure:
+Use the topic map pattern - a top-level file includes chapter-level files:
 
 ```
 docs/
-├── main.md              # Main document with includes
-├── shared/
-│   ├── header.md        # Common header
-│   └── footer.md        # Common footer
-├── chapters/
-│   ├── intro.md         # Introduction chapter
-│   └── features.md      # Features chapter
-└── examples/
+├── _user-guide.md       # Top-level topic map with includes
+├── introduction.md      # Introduction chapter
+├── getting_started.md   # Getting started chapter
+├── configuration.md     # Configuration chapter
+├── advanced_topics.md   # Advanced topics chapter
+└── shared/
     └── code-samples.md  # Reusable code examples
 ```
+
+The top-level file (`_user-guide.md`) contains the document title, markers, and includes for each chapter.
 
 ## Variable Naming Conventions
 
@@ -495,3 +447,50 @@ Custom styles map to:
 1. Stationery style definitions
 2. Format-specific CSS/XSL
 3. Output template configurations
+
+## Advanced Patterns
+
+### Link References
+
+Link references are a standard Markdown feature that allow defining link targets separately from their usage. While supported, they are **generally not recommended** for most documentation because they add indirection that makes content harder to understand and maintain.
+
+**Standard inline links (recommended):**
+```markdown
+See [Installation](#installation) for setup instructions.
+Visit the [API Documentation](https://docs.example.com/api).
+```
+
+**Link references (advanced):**
+```markdown
+See [Installation][install-guide] for setup instructions.
+Visit the [API Documentation][api-docs].
+
+[install-guide]: #installation
+[api-docs]: https://docs.example.com/api
+```
+
+**Why inline links are preferred:**
+- Self-contained and easier to understand
+- AI-assisted authoring works better with explicit links
+- No need to hunt for where references are defined
+- Simpler mental model for authors
+
+**When link references may be useful:**
+- Redirecting links based on document context (e.g., pointing to the latest API version)
+- Conditional link targets for different output formats
+- Very long URLs that clutter the text
+
+**Example - version redirection:**
+```markdown
+See the [API Reference][latest-api] for endpoint details.
+
+[latest-api]: apis/api-v2.0.md#reference
+```
+
+When a new API version is released, only the reference definition needs updating.
+
+**Tradeoffs:**
+- Adds complexity and indirection
+- Makes AI-generated content more difficult
+- Requires authors to look in multiple places
+- Harder to validate link integrity
