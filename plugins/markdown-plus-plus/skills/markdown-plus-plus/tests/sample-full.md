@@ -67,7 +67,8 @@ Another aliased section.
 <!--#detailed-alias-name-with-hyphens-->
 ### Section with Long Alias
 
-Aliases can have hyphens and underscores: <!--#alias_with_underscores-->
+<!--#alias_with_underscores-->
+Aliases can have hyphens and underscores.
 
 ### Links to Aliases
 
@@ -154,19 +155,20 @@ The following would include files (commented for testing):
 
 ## Markers Test
 
+<!--markers:{"Keywords": "test, sample, full", "Priority": "high"} ; #json-format-->
 ### JSON Format
 
-<!--markers:{"Keywords": "test, sample, full", "Priority": "high"}-->
-
-### Simple Format
+This section demonstrates JSON format for multiple markers.
 
 <!--marker:Keywords="api, documentation"-->
+### Simple Format
 
+This section demonstrates simple format for a single marker.
+
+<!--markers:{"Keywords": "multiple, test", "Category": "Test"} ; #multiple-markers-->
 ### Multiple Markers (JSON Format Required)
 
-<!--markers:{"Keywords": "multiple, test", "Category": "Test"}-->
-
-### Marker on Element
+This section demonstrates that multiple markers require JSON format.
 
 <!--marker:Section="features"-->
 ## Features Section
@@ -348,12 +350,6 @@ Not a variable: $with space;
 <!--condition:whitespace-->
 
 <!--/condition-->
-
-### Multiple Consecutive Styles
-
-<!--style:StyleA-->
-<!--style:StyleB-->
-## Heading Gets StyleB (Last Wins)
 
 ### Style with Extra Whitespace
 
