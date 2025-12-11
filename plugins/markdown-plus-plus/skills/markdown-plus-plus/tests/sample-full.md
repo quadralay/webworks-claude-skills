@@ -1,6 +1,4 @@
-<!--#document-start-->
-<!--markers:{"Author": "WebWorks", "Version": "1.0", "Category": "Test Document"}-->
-
+<!--markers:{"Keywords": "test, sample, complete, all-features", "Description": "Complete feature test for all Markdown++ extensions"} ; #document-start-->
 # $product_name; Complete Feature Test
 
 This document tests all Markdown++ extensions for validation purposes.
@@ -164,9 +162,9 @@ The following would include files (commented for testing):
 
 <!--marker:Keywords="api, documentation"-->
 
-### Multiple Simple Markers
+### Multiple Markers (JSON Format Required)
 
-<!--marker:Author="WebWorks"; marker:Category="Test"-->
+<!--markers:{"Keywords": "multiple, test", "Category": "Test"}-->
 
 ### Marker on Element
 
@@ -265,9 +263,9 @@ This section has an associated marker.
 <!-- style:ImportantSection ; marker:Priority="high" -->
 ## Important Section with Marker
 
-### Style + Alias + Multiple Markers
+### Style + Alias + Marker
 
-<!-- style:FeatureBox ; marker:Keywords="feature" ; marker:Priority="high" ; #feature-1 -->
+<!-- style:FeatureBox ; marker:Keywords="feature, priority" ; #feature-1 -->
 ### Feature with All Attributes
 
 ## Inline Styling Test
@@ -363,7 +361,5 @@ Not a variable: $with space;
 ## Heading with Spaced Style Tag
 
 ## Document End
-
-<!--marker:Keywords="complete, test, all-features"-->
 
 This completes the full Markdown++ feature test document.
