@@ -7,9 +7,7 @@ Real-world examples demonstrating common patterns and use cases.
 A typical product documentation page with variables, conditions, and styles.
 
 ```markdown
-<!--markers:{"Author": "Documentation Team", "Version": "2.0"}-->
-<!--#product-overview-->
-
+<!--markers:{"Keywords": "product overview, installation, configuration", "Description": "Complete product documentation for installation and setup"} ; #product-overview-->
 # $product_name; Overview
 
 Welcome to **$product_name;** version $version;. This guide covers installation, configuration, and basic usage.
@@ -72,8 +70,6 @@ Visit our [knowledge base](https://kb.example.com) or [community forum](https://
 <!--condition:print-->
 See Appendix B for troubleshooting guides.
 <!--/condition-->
-
-<!--marker:Keywords="installation, setup, requirements, $product_name;"-->
 ```
 
 ---
@@ -83,11 +79,10 @@ See Appendix B for troubleshooting guides.
 API documentation with code examples and conditional content.
 
 ```markdown
-<!--markers:{"Category": "API Reference", "API-Version": "2.0"}-->
-
+<!--markers:{"Keywords": "authentication, oauth, token, api", "Description": "API authentication guide using OAuth 2.0"} ; #authentication-->
 # Authentication API
 
-<!--#authentication-->
+<!--#api-overview-->
 ## Overview
 
 The $product_name; API uses OAuth 2.0 for authentication. All API requests must include a valid access token.
@@ -152,8 +147,6 @@ export DEBUG=true
 ```
 
 <!--/condition-->
-
-<!--marker:Keywords="authentication, oauth, token, api"-->
 ```
 
 ---
@@ -164,8 +157,7 @@ A user guide that includes shared content from multiple files.
 
 **Main file: `user-guide.md`**
 ```markdown
-<!--markers:{"Document-Type": "User Guide", "Audience": "End Users"}-->
-
+<!--markers:{"Keywords": "user guide, getting started, features", "Description": "End user guide for product setup and usage"} ; #user-guide-->
 # $product_name; User Guide
 
 <!--include:shared/header.md-->
@@ -239,8 +231,6 @@ Complex tables with rich content in cells. Each row uses continuation lines (emp
 |            | - Dedicated support              |
 |            | - Custom development             |
 |            | - SLA guarantee                  |
-
-<!--marker:Keywords="pricing, plans, features, comparison"-->
 ```
 
 ### Multi-Column Multiline Example
@@ -340,9 +330,7 @@ You should see: `$product_name; version $version;`
 Release notes with version-specific content.
 
 ```markdown
-<!--markers:{"Document-Type": "Release Notes"}-->
-<!--#release-notes-->
-
+<!--markers:{"Keywords": "release notes, changelog, version", "Description": "Release notes and changelog for latest version"} ; #release-notes-->
 # $product_name; Release Notes
 
 ## Version $version;
@@ -396,8 +384,6 @@ The application updates automatically. No action required.
 <!--condition:print-->
 See Section 5.2 for manual upgrade instructions.
 <!--/condition-->
-
-<!--marker:Keywords="release notes, version $version;, changelog"-->
 ```
 
 ---
@@ -474,8 +460,6 @@ Troubleshooting content with conditional visibility.
    <!--/condition-->
 
 3. Restart the application
-
-<!--marker:Keywords="troubleshooting, errors, performance, help"-->
 ```
 
 ---
@@ -485,7 +469,7 @@ Troubleshooting content with conditional visibility.
 Using custom styles for images and links within content.
 
 ```markdown
-<!-- #media-examples ; marker:Keywords="images, links, styling" -->
+<!--markers:{"Keywords": "images, links, styling", "Description": "Examples of styled images and links"} ; #media-examples-->
 # Media and Link Styling Examples
 
 ## Styled Images
@@ -518,7 +502,7 @@ Download the [<!--style:DownloadLink-->*latest release*]($download_url; "Downloa
 Using styled blockquotes as "content islands" for rich callout boxes and learning sections.
 
 ```markdown
-<!-- #content-islands ; marker:Category="layout" -->
+<!--markers:{"Keywords": "blockquotes, callouts, layout", "Description": "Content islands using styled blockquotes"} ; #content-islands-->
 # Using Content Islands
 
 Content islands are styled blockquotes that contain complex content structures.
@@ -578,7 +562,7 @@ Content islands are styled blockquotes that contain complex content structures.
 Complex nested lists with custom styling for procedures and hierarchical content.
 
 ```markdown
-<!-- #nested-lists ; marker:Keywords="procedures, lists" -->
+<!--markers:{"Keywords": "procedures, lists, installation", "Description": "Nested list examples for procedures and checklists"} ; #nested-lists-->
 # Procedures and Nested Lists
 
 ## Installation Procedure
@@ -640,13 +624,12 @@ Complex nested lists with custom styling for procedures and hierarchical content
 Using multiple extensions together in single comments.
 
 ```markdown
-<!-- markers:{"Author": "WebWorks", "Version": "3.0"} -->
-<!-- #combined-examples -->
+<!--markers:{"Keywords": "combined commands, extensions", "Description": "Examples of using multiple extensions together"} ; #combined-examples-->
 # Combined Extension Examples
 
 ## Heading with Everything
 
-<!-- style:ImportantHeading ; marker:Priority="high" ; #critical-section -->
+<!-- style:ImportantHeading ; marker:Keywords="critical, configuration" ; #critical-section -->
 ## Critical Configuration Steps
 
 This section has a custom style, marker metadata, and a stable alias for linking.
@@ -668,7 +651,7 @@ This section has a custom style, marker metadata, and a stable alias for linking
 
 ## Styled Content Island with Metadata
 
-<!-- style:BQ_Important ; marker:Category="alert" ; #important-notice -->
+<!-- style:BQ_Important ; marker:Keywords="important, notice" ; #important-notice -->
 > **Important Notice**
 >
 > This document describes features in version $version;.

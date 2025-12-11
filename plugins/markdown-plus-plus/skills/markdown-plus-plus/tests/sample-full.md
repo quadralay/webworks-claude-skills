@@ -1,6 +1,4 @@
-<!--#document-start-->
-<!--markers:{"Author": "WebWorks", "Version": "1.0", "Category": "Test Document"}-->
-
+<!--markers:{"Keywords": "test, sample, complete, all-features", "Description": "Complete feature test for all Markdown++ extensions"} ; #document-start-->
 # $product_name; Complete Feature Test
 
 This document tests all Markdown++ extensions for validation purposes.
@@ -69,7 +67,8 @@ Another aliased section.
 <!--#detailed-alias-name-with-hyphens-->
 ### Section with Long Alias
 
-Aliases can have hyphens and underscores: <!--#alias_with_underscores-->
+<!--#alias_with_underscores-->
+Aliases can have hyphens and underscores.
 
 ### Links to Aliases
 
@@ -156,19 +155,20 @@ The following would include files (commented for testing):
 
 ## Markers Test
 
+<!--markers:{"Keywords": "test, sample, full", "Priority": "high"} ; #json-format-->
 ### JSON Format
 
-<!--markers:{"Keywords": "test, sample, full", "Priority": "high"}-->
-
-### Simple Format
+This section demonstrates JSON format for multiple markers.
 
 <!--marker:Keywords="api, documentation"-->
+### Simple Format
 
-### Multiple Simple Markers
+This section demonstrates simple format for a single marker.
 
-<!--marker:Author="WebWorks"; marker:Category="Test"-->
+<!--markers:{"Keywords": "multiple, test", "Category": "Test"} ; #multiple-markers-->
+### Multiple Markers (JSON Format Required)
 
-### Marker on Element
+This section demonstrates that multiple markers require JSON format.
 
 <!--marker:Section="features"-->
 ## Features Section
@@ -265,9 +265,9 @@ This section has an associated marker.
 <!-- style:ImportantSection ; marker:Priority="high" -->
 ## Important Section with Marker
 
-### Style + Alias + Multiple Markers
+### Style + Alias + Marker
 
-<!-- style:FeatureBox ; marker:Keywords="feature" ; marker:Priority="high" ; #feature-1 -->
+<!-- style:FeatureBox ; marker:Keywords="feature, priority" ; #feature-1 -->
 ### Feature with All Attributes
 
 ## Inline Styling Test
@@ -351,19 +351,11 @@ Not a variable: $with space;
 
 <!--/condition-->
 
-### Multiple Consecutive Styles
-
-<!--style:StyleA-->
-<!--style:StyleB-->
-## Heading Gets StyleB (Last Wins)
-
 ### Style with Extra Whitespace
 
 <!-- style:SpacedStyle -->
 ## Heading with Spaced Style Tag
 
 ## Document End
-
-<!--marker:Keywords="complete, test, all-features"-->
 
 This completes the full Markdown++ feature test document.

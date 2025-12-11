@@ -43,9 +43,11 @@ This content appears when "internal" is NOT set.
 
 ## Markers
 
-<!--marker:Keywords="sample, test, basic"-->
-
+<!--marker:TopicAlias="TopicID"-->
 This paragraph has associated keywords.
+
+<!--marker:IndexMarker="fruit"-->
+This paragraph has an associated index term for "apple".
 
 ## Simple Table
 
