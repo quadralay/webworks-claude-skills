@@ -24,15 +24,6 @@ That's it. All skills activate automatically based on your project context.
 | **automap** | Automated publishing with AutoMap CLI |
 | **reverb** | Reverb 2.0 output testing, CSH analysis, SCSS theming |
 
-### Invoke a skill directly
-
-```
-skill: "webworks-claude-skills:markdown-plus-plus"
-skill: "webworks-claude-skills:epublisher"
-skill: "webworks-claude-skills:automap"
-skill: "webworks-claude-skills:reverb"
-```
-
 ## Example Workflows
 
 **Publishing:**
@@ -68,30 +59,27 @@ Claude: Generates SCSS override file with proper variable mappings
 | automap | Windows | ePublisher + AutoMap |
 | reverb | Windows | ePublisher + browser |
 
-## Documentation
+## Migration from v1.x
 
-Each skill includes comprehensive documentation:
+If you previously installed the separate plugins, uninstall them first:
 
-- [markdown-plus-plus/SKILL.md](plugins/webworks-claude-skills/skills/markdown-plus-plus/SKILL.md) - Markdown++ syntax reference
-- [epublisher/SKILL.md](plugins/webworks-claude-skills/skills/epublisher/SKILL.md) - ePublisher project knowledge
-- [automap/SKILL.md](plugins/webworks-claude-skills/skills/automap/SKILL.md) - Publishing automation
-- [reverb/SKILL.md](plugins/webworks-claude-skills/skills/reverb/SKILL.md) - Output testing
+```bash
+# Uninstall old plugins (if installed)
+claude mcp remove epublisher-automation@webworks-claude-skills
+claude mcp remove markdown-plus-plus@webworks-claude-skills
 
-## Repository Structure
-
+# Install new consolidated plugin
+claude mcp add quadralay/webworks-claude-skills
 ```
-webworks-claude-skills/
-├── plugins/webworks-claude-skills/
-│   ├── plugin.json
-│   └── skills/
-│       ├── markdown-plus-plus/
-│       ├── epublisher/
-│       ├── automap/
-│       └── reverb/
-├── docs/solutions/           # Learned patterns and solutions
-└── .claude-plugin/
-    └── marketplace.json
-```
+
+### Invocation changes
+
+| Old (v1.x) | New (v2.x) |
+|------------|------------|
+| `epublisher-automation:automap` | `webworks-claude-skills:automap` |
+| `epublisher-automation:epublisher` | `webworks-claude-skills:epublisher` |
+| `epublisher-automation:reverb` | `webworks-claude-skills:reverb` |
+| `markdown-plus-plus:markdown-plus-plus` | `webworks-claude-skills:markdown-plus-plus` |
 
 ## Contributing
 

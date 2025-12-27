@@ -58,3 +58,4 @@ test-results/
 # Claude Code specific
 .claude/local/
 .worktrees
+.claude/settings.local.json
