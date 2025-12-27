@@ -1,45 +1,30 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "webworks-claude-skills",
-  "version": "1.0.0",
-  "description": "Claude Code skills marketplace for WebWorks documentation tools including ePublisher, FrameMaker, and WebWorks utilities",
+  "version": "2.0.0",
+  "description": "Claude Code skills for WebWorks ePublisher platform: Markdown++ authoring, project management, AutoMap automation, and Reverb output testing",
   "owner": {
     "name": "Quadralay Corporation",
     "email": "support@webworks.com"
   },
   "plugins": [
     {
-      "name": "epublisher-automation",
-      "description": "Complete automation suite for WebWorks ePublisher including publishing automation, project management, and format customization",
-      "version": "1.0.0",
+      "name": "webworks-claude-skills",
+      "description": "Complete skills suite for WebWorks ePublisher platform including Markdown++ authoring, project management, AutoMap publishing automation, and Reverb output testing",
+      "version": "2.0.0",
       "author": {
         "name": "Quadralay Corporation",
         "url": "https://github.com/quadralay"
       },
-      "source": "./plugins/epublisher-automation",
+      "source": "plugins/webworks-claude-skills",
       "category": "development-tools",
-      "tags": ["epublisher", "automation", "publish", "automap", "reverb", "pdf"],
+      "tags": ["epublisher", "markdown", "markdown++", "automation", "publish", "automap", "reverb", "documentation", "single-sourcing"],
       "strict": false,
       "skills": [
-        "./skills/epublisher",
-        "./skills/automap",
-        "./skills/reverb"
-      ]
-    },
-    {
-      "name": "markdown-plus-plus",
-      "description": "Read and write Markdown++ documents with extended syntax for variables, conditions, custom styles, file includes, and markers for ePublisher",
-      "version": "1.0.0",
-      "author": {
-        "name": "Quadralay Corporation",
-        "url": "https://github.com/quadralay"
-      },
-      "source": "./plugins/markdown-plus-plus",
-      "category": "development-tools",
-      "tags": ["markdown", "documentation", "epublisher", "conditions", "variables", "styles"],
-      "strict": false,
-      "skills": [
-        "./skills/markdown-plus-plus"
+        "skills/markdown-plus-plus",
+        "skills/epublisher",
+        "skills/automap",
+        "skills/reverb"
       ]
     }
   ]

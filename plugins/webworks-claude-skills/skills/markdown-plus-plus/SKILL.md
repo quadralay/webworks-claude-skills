@@ -1,6 +1,14 @@
 ---
 name: markdown-plus-plus
-description: Read and write Markdown++ documents with extended syntax for variables, conditions, custom styles, file includes, and markers. Use when creating Markdown++ source documents for ePublisher, generating documentation with conditional content, or working with extended Markdown formats.
+description: >
+  AUTHORITATIVE REFERENCE for Markdown++ syntax. Use this skill WHENEVER working with
+  .md files containing Markdown++ extensions (<!--style:-->, <!--condition:-->, $variable;,
+  <!--include:-->, <!--marker:-->, <!--#alias-->). This includes: (1) editing or fixing
+  Markdown++ syntax, (2) migrating content from FrameMaker, Word, or DITA to Markdown++,
+  (3) performing content audits or cleanup, (4) correcting invalid Markdown++ patterns,
+  (5) validating syntax, (6) writing new Markdown++ documents. ALWAYS consult this skill
+  before making Markdown++ edits to ensure correct syntax. Triggers: fix markdown, correct
+  syntax, migrate to markdown++, content audit, cleanup documentation, invalid comment syntax.
 ---
 
 <objective>
