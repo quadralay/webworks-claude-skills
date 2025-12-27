@@ -63,11 +63,11 @@ Claude: Generates SCSS override file with proper variable mappings
 
 If you previously installed the separate plugins:
 
-```
-npx claude-plugins uninstall @quadralay/epublisher-automation
-npx claude-plugins uninstall @quadralay/markdown-plus-plus
-npx claude-plugins install @quadralay/webworks-claude-skills
-```
+1. Use `/plugin` to uninstall `epublisher-automation` and `markdown-plus-plus`
+2. Install the new consolidated plugin:
+   ```
+   npx claude-plugins install @quadralay/webworks-claude-skills
+   ```
 
 ### Invocation changes
 
