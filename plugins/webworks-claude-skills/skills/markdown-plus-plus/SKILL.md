@@ -155,11 +155,9 @@ See Appendix A for additional resources.
 
 **Operators:**
 
-| Operator | Syntax | Meaning | Example |
-|----------|--------|---------|---------|
-| Space | `a b` | AND - all must be visible | `<!--condition:web production-->` |
-| Comma | `a,b` | OR - any can be visible | `<!--condition:web,print-->` |
-| `!` | `!a` | NOT - visible when hidden | `<!--condition:!internal-->` |
+- **Space** (AND): `a b` - all must be visible. Example: `<!--condition:web production-->`
+- **Comma** (OR): `a,b` - any can be visible. Example: `<!--condition:web,print-->`
+- **Exclamation** (NOT): `!a` - visible when condition is hidden. Example: `<!--condition:!internal-->`
 
 **Precedence:** NOT (tightest) > AND (space) > OR (comma)
 
