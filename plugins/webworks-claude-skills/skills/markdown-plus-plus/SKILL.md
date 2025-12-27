@@ -226,7 +226,37 @@ Markers attach metadata to document elements for search, processing, or custom b
 
 Use `marker:key="value"` for single markers, JSON format for multiple.
 
-**Note:** `Keywords` and `Description` markers map to HTML meta tags in web output.
+**Common marker keys:**
+
+- **Keywords** — Maps to HTML meta keywords tag
+- **Description** — Maps to HTML meta description tag
+- **IndexMarker** — Creates index entries for generated output
+
+**Index markers:**
+
+Index markers create entries in generated indexes (back-of-book style).
+
+```markdown
+<!--marker:IndexMarker="creating projects"-->
+## Creating Projects
+```
+
+**Multiple entries** (comma-separated):
+```markdown
+<!--marker:IndexMarker="projects:creating,output:generating,targets"-->
+## Creating Projects
+```
+
+**Sub-entries** (colon for nesting):
+```markdown
+<!--marker:IndexMarker="source documents:opening,documents:opening from Manager"-->
+## Opening Source Documents
+```
+
+**Format rules:**
+- `primary` — Top-level index entry
+- `primary:secondary` — Nested entry under primary
+- Comma separates multiple entries
 
 ### Multiline Tables
 
