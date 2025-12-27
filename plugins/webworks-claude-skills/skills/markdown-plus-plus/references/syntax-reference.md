@@ -376,10 +376,37 @@ Markers can be placed:
 
 | Marker | Purpose |
 |--------|---------|
-| `Keywords` | Search keywords for Reverb |
+| `Keywords` | Search keywords for Reverb, maps to HTML meta |
+| `Description` | Document description, maps to HTML meta |
+| `IndexMarker` | Index entries (see below) |
 | `Author` | Document author |
 | `Category` | Content categorization |
 | `Passthrough` | Content that bypasses processing |
+
+### Index Markers
+
+Index markers create entries in generated indexes (back-of-book style).
+
+**Single entry:**
+```markdown
+<!--marker:IndexMarker="creating projects"-->
+## Creating Projects
+```
+
+**Multiple entries** (comma-separated):
+```markdown
+<!--marker:IndexMarker="projects:creating,output:generating,targets"-->
+```
+
+**Sub-entries** (colon for nesting):
+```markdown
+<!--marker:IndexMarker="source documents:opening,documents:opening from Manager"-->
+```
+
+**Format:**
+- `primary` — Top-level index entry
+- `primary:secondary` — Nested entry appears under primary
+- Comma separates multiple independent entries
 
 ---
 
