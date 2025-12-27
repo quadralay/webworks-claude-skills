@@ -2,18 +2,22 @@
 
 ## How to Contribute
 
-- Enhance existing skills (epublisher, automap, reverb)
-- Add new skills for other formats
-- Add new helper scripts
+- Enhance existing skills
+- Add new skills for other formats or workflows
+- Improve helper scripts
 - Report bugs and suggest features
 
-## Skill Structure
+## Repository Structure
 
 ```
-skills/skill-name/
-├── SKILL.md          # Skill definition (for Claude)
-├── scripts/          # Helper scripts
-└── references/       # Reference documentation
+plugins/webworks-claude-skills/
+├── plugin.json
+└── skills/
+    └── skill-name/
+        ├── SKILL.md           # Skill definition
+        ├── scripts/           # Helper scripts (optional)
+        │   └── lib/           # Shared Python modules
+        └── references/        # Reference documentation
 ```
 
 ## SKILL.md Authoring
@@ -29,9 +33,9 @@ See [docs/solutions/bash-syntax-errors-in-skill-tables.md](docs/solutions/bash-s
 
 ## Development Guidelines
 
-- **Python scripts:** Use for parsing files and complex behavior
-- **Shell scripts:** Use bash for program wrapper scripts and include error handling
-- **Documentation:** Clear language with examples, follow pattern in other skills
+- **Python scripts:** Parsing, validation, complex logic
+- **Shell scripts:** Program wrappers with error handling
+- **Documentation:** Clear language with examples
 - **Testing:** Validate with real ePublisher projects
 
 ## Pull Requests
