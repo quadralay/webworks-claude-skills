@@ -16,6 +16,17 @@ skills/skill-name/
 └── references/       # Reference documentation
 ```
 
+## SKILL.md Authoring
+
+Avoid these character sequences in markdown tables - they cause bash parsing errors during skill loading:
+
+- `` `!` `` (backtick-exclamation-backtick)
+- `` `$` `` (backtick-dollar-backtick)
+
+Use bullet lists instead of tables for syntax documentation with special characters.
+
+See [docs/solutions/bash-syntax-errors-in-skill-tables.md](docs/solutions/bash-syntax-errors-in-skill-tables.md) for details.
+
 ## Development Guidelines
 
 - **Python scripts:** Use for parsing files and complex behavior
