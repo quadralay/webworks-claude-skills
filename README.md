@@ -9,9 +9,10 @@ AI-powered skills for WebWorks ePublisher and Markdown++ authoring.
 
 ## Install
 
-```
-npx claude-plugins install @quadralay/webworks-claude-skills
-```
+In Claude Code, use `/plugin` to add the marketplace and install:
+
+1. Add marketplace: `https://github.com/quadralay/webworks-claude-skills`
+2. Install the `webworks-claude-skills` plugin
 
 All skills activate automatically based on your project context.
 
@@ -61,13 +62,10 @@ Claude: Generates SCSS override file with proper variable mappings
 
 ## Migration from v1.x
 
-If you previously installed the separate plugins:
+If you previously installed the separate plugins, use `/plugin` to:
 
-1. Use `/plugin` to uninstall `epublisher-automation` and `markdown-plus-plus`
-2. Install the new consolidated plugin:
-   ```
-   npx claude-plugins install @quadralay/webworks-claude-skills
-   ```
+1. Uninstall `epublisher-automation` and `markdown-plus-plus`
+2. Install the new `webworks-claude-skills` plugin
 
 ### Invocation changes
 
