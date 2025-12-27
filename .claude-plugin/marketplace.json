@@ -21,10 +21,10 @@
       "tags": ["epublisher", "markdown", "markdown++", "automation", "publish", "automap", "reverb", "documentation", "single-sourcing"],
       "strict": false,
       "skills": [
-        "skills/markdown-plus-plus",
-        "skills/epublisher",
-        "skills/automap",
-        "skills/reverb"
+        "./skills/markdown-plus-plus",
+        "./skills/epublisher",
+        "./skills/automap",
+        "./skills/reverb"
       ]
     }
   ]
