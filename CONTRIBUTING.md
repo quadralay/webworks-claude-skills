@@ -48,11 +48,30 @@ See [docs/solutions/bash-syntax-errors-in-skill-tables.md](docs/solutions/bash-s
 - **Documentation:** Clear language with examples
 - **Testing:** Validate with real ePublisher projects
 
+## Versioning
+
+Version numbers are **automatically incremented** when PRs merge to main.
+
+**Default behavior:** Patch version bump (e.g., 2.0.0 → 2.0.1)
+
+**To trigger a different bump type**, add a label to your PR:
+
+| Label | Bump Type | Example |
+|-------|-----------|---------|
+| (none) | patch | 2.0.0 → 2.0.1 |
+| `minor` | minor | 2.0.0 → 2.1.0 |
+| `major` | major | 2.0.0 → 3.0.0 |
+
+The GitHub Action updates all version locations automatically:
+- `plugins/webworks-claude-skills/plugin.json`
+- `.claude-plugin/marketplace.json` (both root and plugin entry)
+
 ## Pull Requests
 
 1. Fork and create a feature branch
 2. Test thoroughly
 3. Submit PR with clear description
+4. Add `minor` or `major` label if needed (patch is default)
 
 ## License
 
