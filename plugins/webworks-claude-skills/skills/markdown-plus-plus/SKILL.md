@@ -1,14 +1,6 @@
 ---
 name: markdown-plus-plus
-description: >
-  AUTHORITATIVE REFERENCE for Markdown++ syntax. Use this skill WHENEVER working with
-  .md files containing Markdown++ extensions (<!--style:-->, <!--condition:-->, $variable;,
-  <!--include:-->, <!--marker:-->, <!--#alias-->). This includes: (1) editing or fixing
-  Markdown++ syntax, (2) migrating content from FrameMaker, Word, or DITA to Markdown++,
-  (3) performing content audits or cleanup, (4) correcting invalid Markdown++ patterns,
-  (5) validating syntax, (6) writing new Markdown++ documents. ALWAYS consult this skill
-  before making Markdown++ edits to ensure correct syntax. Triggers: fix markdown, correct
-  syntax, migrate to markdown++, content audit, cleanup documentation, invalid comment syntax.
+description: Authoritative reference for Markdown++ syntax including styles, conditions, variables, includes, markers, and aliases. Use when editing, fixing, migrating, auditing, or validating Markdown++ documents.
 ---
 
 <objective>
@@ -26,15 +18,13 @@ Markdown++ extends CommonMark with HTML comment-based extensions. All extensions
 
 ### Quick Reference
 
-| Extension | Syntax | Scope |
-|-----------|--------|-------|
-| Variables | `$variable_name;` | Inline - reusable content |
-| Styles | `<!--style:Name-->` | Block (above) or Inline (before) |
-| Aliases | `<!--#alias-name-->` | Anchor for `[text](#alias-name)` links |
-| Conditions | `<!--condition:name-->...<!--/condition-->` | Show/hide content by format |
-| Includes | `<!--include:path/to/file.md-->` | Insert file contents |
-| Markers | `<!--markers:{"Key": "val"}-->` | Metadata for search/processing |
-| Multiline Tables | `<!-- multiline -->` | Enable block content in cells |
+- **Variables**: `$variable_name;` — Inline, reusable content
+- **Styles**: `<!--style:Name-->` — Block (above) or Inline (before)
+- **Aliases**: `<!--#alias-name-->` — Anchor for `[text](#alias-name)` links
+- **Conditions**: `<!--condition:name-->...<!--/condition-->` — Show/hide content by format
+- **Includes**: `<!--include:path/to/file.md-->` — Insert file contents
+- **Markers**: `<!--markers:{"Key": "val"}-->` — Metadata for search/processing
+- **Multiline Tables**: `<!-- multiline -->` — Enable block content in cells
 
 </overview>
 
@@ -101,12 +91,10 @@ Use <!--style:ProductName-->*$product_name;* for branding.
   - Bullet 2
 ```
 
-**Tables** (place above table):
+**Tables** (place style comment above table):
 ```markdown
 <!--style:DataTable-->
-| Column 1 | Column 2 |
-|----------|----------|
-| Data     | Data     |
+[table rows follow immediately below]
 ```
 
 ### Custom Aliases
@@ -264,36 +252,39 @@ Multiline tables allow block content (lists, blockquotes, styled elements) insid
 
 ```markdown
 <!-- multiline -->
-| Name | Details                  |
-|------|--------------------------|
-| Bob  | Lives in Dallas.         |
-|      | - Enjoys cycling         |
-|      | - Loves cooking          |
-|      |                          |
-| Mary | Lives in El Paso.        |
-|      | - Works as a teacher     |
-|      | - Likes painting         |
+Name   Details
+-----  --------------------------
+Bob    Lives in Dallas.
+       - Enjoys cycling
+       - Loves cooking
+       [empty row separates records]
+Mary   Lives in El Paso.
+       - Works as a teacher
 ```
+
+Note: In actual syntax, use standard markdown table pipes. Empty first cell continues previous row; empty row separates records.
 
 **Rules:**
 - Add `<!-- multiline -->` on line above table
 - First content row starts the data
-- Continuation rows use `|      |` pattern (empty first cell continues previous row)
-- Empty row with cell borders (`|      |                          |`) separates rows
+- Continuation rows have empty first cell (continues previous row)
+- Empty row with cell borders separates records
 - Cells can contain lists, blockquotes, custom styles, and other Markdown++ commands
 - Standard alignment syntax applies (`:---`, `---:`, `:---:`)
 
 **With custom style:**
 ```markdown
 <!-- style:DataTable ; multiline -->
-| Feature | Description              |
-|---------|--------------------------|
-| API     | REST endpoints.          |
-|         | - GET /users             |
-|         | - POST /users            |
-|         |                          |
-| Auth    | OAuth 2.0 support.       |
+Feature  Description
+-------  --------------------------
+API      REST endpoints.
+         - GET /users
+         - POST /users
+         [empty row]
+Auth     OAuth 2.0 support.
 ```
+
+Note: Use standard markdown table syntax with pipes in actual documents.
 
 ### Combined Commands
 
@@ -306,9 +297,7 @@ Multiple commands can appear in a single comment, separated by semicolons.
 # Introduction
 
 <!-- style:DataTable ; multiline ; #feature-table -->
-| Feature | Description |
-|---------|-------------|
-| API     | REST endpoints |
+[table with Feature and Description columns follows]
 
 <!-- style:NoteBlock ; marker:Priority="high" ; #important-note -->
 > This blockquote has style, marker, and alias combined.
@@ -465,11 +454,9 @@ See `references/syntax-reference.md` for complete syntax rules.
 
 ## Related Skills
 
-| Skill | Relationship |
-|-------|--------------|
-| epublisher | Understand project structure containing Markdown++ sources |
-| automap | Build ePublisher projects with Markdown++ source documents |
-| reverb | Test output generated from Markdown++ sources |
+- **epublisher** — Understand project structure containing Markdown++ sources
+- **automap** — Build ePublisher projects with Markdown++ source documents
+- **reverb** — Test output generated from Markdown++ sources
 
 </related_skills>
 
