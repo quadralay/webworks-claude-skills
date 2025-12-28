@@ -91,7 +91,7 @@ Use <!--style:ProductName-->*$product_name;* for branding.
   - Bullet 2
 ```
 
-**CRITICAL - Indentation alignment:** When a style comment is indented (inside a list item), the content on the following line **must also be at the same indentation level**. If they don't match, the style comment renders as visible code instead of being applied.
+**CRITICAL:** Indented style comments require matching indentation on the following content line. Mismatched indentation causes the style to render as visible text.
 
 ```markdown
 <!-- WRONG - style indented but content is not -->

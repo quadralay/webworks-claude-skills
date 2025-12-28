@@ -22,6 +22,16 @@ plugins/webworks-claude-skills/
 
 ## SKILL.md Authoring
 
+### Size Limit
+
+Keep SKILL.md files under **500 lines**. If a skill exceeds this limit:
+
+1. Move detailed examples to `references/examples.md`
+2. Move edge cases and validation rules to `references/syntax-reference.md`
+3. Keep only essential syntax and quick reference in SKILL.md
+
+### Special Characters
+
 Avoid these character sequences in markdown tables - they cause bash parsing errors during skill loading:
 
 - `` `!` `` (backtick-exclamation-backtick)
