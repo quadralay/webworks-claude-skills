@@ -1,15 +1,17 @@
 ---
 title: Bash Syntax Errors from Character Sequences in SKILL.md Tables
 category: skill-authoring
-problem_type: bash-syntax-error
-severity: high
-tags:
-  - skill-authoring
+component:
+  - skill-loading
   - bash-parsing
-  - markdown-tables
-  - special-characters
-discovered: 2025-12-27
-status: solved
+symptoms:
+  - Skill fails to load with bash syntax error
+  - "syntax error near unexpected token" message
+  - Error mentions backticks, pipes, or exclamation marks
+root_cause: Backticks, exclamation marks, and pipes in markdown tables are interpreted by bash during skill loading
+date_solved: 2025-12-27
+related_files:
+  - plugins/webworks-claude-skills/skills/markdown-plus-plus/SKILL.md
 ---
 
 # Bash Syntax Errors from Character Sequences in SKILL.md Tables

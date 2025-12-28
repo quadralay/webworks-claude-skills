@@ -1,3 +1,19 @@
+---
+title: Authoritative Skill Patterns
+category: skill-authoring
+component:
+  - skill-descriptions
+  - invocation-triggering
+symptoms:
+  - Skill not invoked when it should be
+  - Generic descriptions fail to trigger skill selection
+  - Users must manually invoke skills that should auto-activate
+root_cause: Skill descriptions lacking explicit authority claims, file patterns, and trigger phrases are not selected by Claude's skill matching
+date_solved: 2025-12-27
+related_files:
+  - plugins/webworks-claude-skills/skills/markdown-plus-plus/SKILL.md
+---
+
 # Authoritative Skill Patterns
 
 This document captures patterns for creating skills that serve as authoritative references and are automatically invoked when relevant.
