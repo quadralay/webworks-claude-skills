@@ -9,10 +9,12 @@ AI-powered skills for WebWorks ePublisher and Markdown++ authoring.
 
 ## Install
 
-In Claude Code, use `/plugin` to add the marketplace and install:
+In Claude Code:
 
-1. Add marketplace: `https://github.com/quadralay/webworks-claude-skills`
-2. Install the `webworks-claude-skills` plugin
+```
+/plugin marketplace add quadralay/webworks-claude-skills
+/plugin install webworks-claude-skills@webworks-claude-skills
+```
 
 All skills activate automatically based on your project context.
 

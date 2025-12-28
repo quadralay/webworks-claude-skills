@@ -2,13 +2,15 @@
 
 Use this prompt with Gemini (Nano Banana Pro) to generate the hero image for the README.
 
+**Value proposition to convey:** Claude Code with these skills can audit Markdown++ documents, identify syntax issues (indentation, list structure, style comments), automatically fix them, publish with AutoMap, and verify fixes via HTML diff comparison—turning hours of manual work into minutes.
+
 ---
 
 ## Prompt
 
 ```
 <work_surface>
-A polished UI mockup showing an AI coding assistant terminal interacting with documentation software. Style: modern tech product screenshot suitable for a GitHub README hero image.
+A polished UI mockup showing an AI coding assistant terminal performing documentation quality assurance. The terminal shows an iterative fix-and-verify workflow: analyzing Markdown++ syntax, applying automated fixes, publishing with ePublisher AutoMap, and comparing HTML output via diff. Style: modern tech product screenshot suitable for a GitHub README hero image.
 </work_surface>
 
 <layout>
@@ -24,17 +26,21 @@ Terminal window:
 - Minimize/maximize/close buttons on the right (─ □ ✕)
 - Tab bar showing "Claude Code" with PowerShell-style icon
 - Dark charcoal background (#0c0c0c)
-- User input line: "Build the project with all targets"
+- User input line: "Fix the Markdown++ syntax issues and verify"
 - AI response block showing:
-  - "Detecting AutoMap installation..."
-  - "Found: ePublisher 2024.1"
-  - "Building 3 targets..."
-  - Green checkmark with "Build complete"
+  - "Invoking markdown-plus-plus skill..."
+  - "Found 396 issues: substeps, indentation, styles"
+  - "Fixing letter lists → numbered (a→1, b→2)..."
+  - "Publishing baseline with AutoMap..."
+  - "Running HTML diff comparison..."
+  - Green checkmark with "Verified: 243 elements fixed"
 
 Preview panel:
-- Clean documentation page with header, navigation sidebar, content area
-- Professional help system appearance
-- Subtle "Reverb 2.0" styling
+- Split view showing diff comparison
+- Left: "baseline" label with red highlighted lines
+- Right: "modified" label with green highlighted lines
+- Code showing class="ProcedureSubStep1_Item" change
+- Professional documentation styling visible behind
 
 Visual accents:
 - Purple glow or highlight on AI response area
