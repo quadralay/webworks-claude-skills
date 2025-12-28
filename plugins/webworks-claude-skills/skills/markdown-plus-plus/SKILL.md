@@ -91,6 +91,22 @@ Use <!--style:ProductName-->*$product_name;* for branding.
   - Bullet 2
 ```
 
+**CRITICAL:** Indented style comments require matching indentation on the following content line. Mismatched indentation causes the style to render as visible text.
+
+```markdown
+<!-- WRONG - style indented but content is not -->
+1. Step content...
+
+   <!-- style:NoteIndent -->
+**Note:** This will NOT receive the style.
+
+<!-- CORRECT - both at same indentation -->
+1. Step content...
+
+   <!-- style:NoteIndent -->
+   **Note:** This correctly receives the style.
+```
+
 **Tables** (place style comment above table):
 ```markdown
 <!--style:DataTable-->
