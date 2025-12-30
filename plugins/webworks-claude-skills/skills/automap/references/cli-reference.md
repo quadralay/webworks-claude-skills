@@ -395,15 +395,6 @@ For complex projects, document standard build commands:
 "[AutoMap-Path]" -c -n -t "PDF - XSL-FO" project.wep
 ```
 
-### 9. Use --skip-reports for Automated Workflows (2025.1+)
-
-Skip report generation in CI/CD and agentic builds:
-```bash
-"[AutoMap-Path]" -c -n --skip-reports "[Project-File]"
-```
-
-Reports are useful for debugging but add overhead and file noise in automated pipelines.
-
 ## Integration with Scripts
 
 This reference complements the helper scripts:
