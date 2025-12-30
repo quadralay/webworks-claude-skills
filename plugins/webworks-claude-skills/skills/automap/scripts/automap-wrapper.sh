@@ -39,6 +39,7 @@ DETECT_SCRIPT="$SCRIPT_DIR/detect-installation.sh"
 CLEAN_BUILD=false
 CLEAN_DEPLOY=false
 NO_DEPLOY=false
+SKIP_REPORTS=false
 TARGET=""
 DEPLOY_FOLDER=""
 AUTOMAP_VERSION=""
@@ -96,6 +97,7 @@ OPTIONS:
     -l, --cleandeploy      Clean deployment location before copying output
     -t, --target TARGET    Build specific target only
     --deployfolder PATH    Override deployment destination
+    --skip-reports         Skip report pipelines (2025.1+)
     --verbose              Enable verbose output
     --quiet                Suppress informational messages
     --help                 Show this help message
@@ -113,6 +115,9 @@ EXAMPLES:
 
     # Build specific target
     $SCRIPT_NAME -c -n -t "WebWorks Reverb 2.0" project.wep
+
+    # Fast CI build (skip reports, 2025.1+)
+    $SCRIPT_NAME -c -n --skip-reports project.wep
 
     # Build with custom deployment and delete existing files at deployment location
     $SCRIPT_NAME -l --deployfolder "C:\\Output" project.wep
@@ -200,6 +205,11 @@ build_automap_command() {
     # Add deploy folder if specified
     if [ -n "$DEPLOY_FOLDER" ]; then
         cmd="$cmd --deployfolder \"$DEPLOY_FOLDER\""
+    fi
+
+    # Add skip reports flag (2025.1+)
+    if [ "$SKIP_REPORTS" = true ]; then
+        cmd="$cmd --skip-reports"
     fi
 
     # Add project file (always last)
@@ -311,6 +321,10 @@ while [[ $# -gt 0 ]]; do
             fi
             DEPLOY_FOLDER="$2"
             shift 2
+            ;;
+        --skip-reports)
+            SKIP_REPORTS=true
+            shift
             ;;
         --verbose)
             VERBOSE=true
