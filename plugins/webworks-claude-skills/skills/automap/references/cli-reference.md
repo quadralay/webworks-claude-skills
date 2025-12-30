@@ -414,6 +414,14 @@ Use this reference when:
 - [installation-detection.md](./installation-detection.md) - Finding AutoMap executable
 - [../SKILL.md](../SKILL.md) - Main skill documentation
 
+## Adding New CLI Options
+
+When adding a new AutoMap CLI option to this skill, update all three locations:
+
+1. **SKILL.md** - Add to Common Options table
+2. **cli-reference.md** - Add detailed documentation with examples
+3. **automap-wrapper.sh** - Add script support (5 locations: variable, usage, example, parsing, command building)
+
 ---
 
 **Version**: 1.1.0
