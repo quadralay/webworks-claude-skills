@@ -148,6 +148,7 @@ AutoMap.exe [options] <project-file>
 | `-log <path>` | Write log to file |
 | `-verbose` | Enable verbose output |
 | `-clean` | Clean before build |
+| `--skip-reports` | Skip report pipelines (2025.1+) |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>

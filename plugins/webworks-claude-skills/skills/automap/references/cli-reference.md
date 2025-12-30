@@ -62,6 +62,15 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 - **Example**: `--deployfolder "C:\Output" project.wep`
 - **Note**: Must have write permissions to deployment path
 
+### Performance Options
+
+**`--skip-reports`** *(2025.1+)*
+- **Purpose**: Skip report generation pipelines during build
+- **Use When**: CI/CD builds, agentic workflows, or iterative development where reports not needed
+- **Impact**: Faster builds, reduced file system output
+- **Trade-off**: No build reports generated (errors and warnings still shown in console)
+- **Example**: `-c -n --skip-reports project.wep`
+
 ## Example Commands
 
 ### Basic Builds
@@ -407,6 +416,6 @@ Use this reference when:
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2025-11-04
-**Target**: ePublisher 2024.1+ AutoMap CLI
+**Version**: 1.1.0
+**Last Updated**: 2025-12-29
+**Target**: ePublisher 2024.1+ AutoMap CLI (--skip-reports requires 2025.1+)
