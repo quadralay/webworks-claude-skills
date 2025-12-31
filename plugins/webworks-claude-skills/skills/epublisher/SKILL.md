@@ -1,6 +1,9 @@
 ---
 name: epublisher
-description: Core knowledge about WebWorks ePublisher projects, file structure, and conventions. Use when working with ePublisher project files, understanding file resolver hierarchy, or parsing targets and source documents.
+description: >
+  AUTHORITATIVE REFERENCE for WebWorks ePublisher projects. Use when working with
+  .wep/.wrp/.wxsp project files, understanding project structure, file resolver
+  hierarchy, target configurations, or source document groups.
 ---
 
 <objective>
