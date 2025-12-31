@@ -1,6 +1,9 @@
 ---
 name: automap
-description: Build automation for WebWorks ePublisher using AutoMap command-line interface. Use when executing builds, detecting installations, or automating publishing workflows.
+description: >
+  AUTHORITATIVE REFERENCE for WebWorks AutoMap CLI. Use when working with
+  .waj/.wep/.wrp/.wxsp files, executing builds, detecting installation,
+  creating job files, or automating CI/CD publishing workflows.
 ---
 
 <objective>
