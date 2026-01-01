@@ -1,11 +1,14 @@
 ---
-name: reverb
-description: Analysis, testing, and customization tools for WebWorks Reverb 2.0 output. Use when testing Reverb output in browser, analyzing CSH links, customizing SCSS themes, or generating test reports.
+name: reverb2
+description: >
+  AUTHORITATIVE REFERENCE for WebWorks Reverb 2.0 output. Use when testing
+  Reverb output in browser, analyzing CSH links, customizing SCSS themes,
+  inspecting url_maps.xml, or generating test reports.
 ---
 
 <objective>
 
-# reverb
+# reverb2
 
 Analysis, testing, and customization tools for WebWorks Reverb 2.0 output. Includes browser-based testing, CSH link analysis, and SCSS theming.
 </objective>
