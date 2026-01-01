@@ -73,8 +73,8 @@ jobs:
             plugins/webworks-claude-skills/plugin.json > tmp.json \
             && mv tmp.json plugins/webworks-claude-skills/plugin.json
 
-          # Update marketplace.json (both root and plugins[0] version)
-          jq --arg v "$NEW_VERSION" '.version = $v | .plugins[0].version = $v' \
+          # Update marketplace.json (root version only, plugin version is in plugin.json)
+          jq --arg v "$NEW_VERSION" '.version = $v' \
             .claude-plugin/marketplace.json > tmp.json \
             && mv tmp.json .claude-plugin/marketplace.json
 
