@@ -34,7 +34,7 @@ jobs:
       - name: Get current version
         id: current
         run: |
-          VERSION=$(jq -r '.version' plugins/webworks-claude-skills/plugin.json)
+          VERSION=$(jq -r '.version' plugins/webworks-claude-skills/.claude-plugin/plugin.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Calculate new version
@@ -70,8 +70,8 @@ jobs:
 
           # Update plugin.json
           jq --arg v "$NEW_VERSION" '.version = $v' \
-            plugins/webworks-claude-skills/plugin.json > tmp.json \
-            && mv tmp.json plugins/webworks-claude-skills/plugin.json
+            plugins/webworks-claude-skills/.claude-plugin/plugin.json > tmp.json \
+            && mv tmp.json plugins/webworks-claude-skills/.claude-plugin/plugin.json
 
           # Update marketplace.json (root version only, plugin version is in plugin.json)
           jq --arg v "$NEW_VERSION" '.version = $v' \
@@ -82,6 +82,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add plugins/webworks-claude-skills/plugin.json .claude-plugin/marketplace.json
+          git add plugins/webworks-claude-skills/.claude-plugin/plugin.json .claude-plugin/marketplace.json
           git commit -m "chore: bump version to ${{ steps.new.outputs.version }}"
           git push
