@@ -1,0 +1,24 @@
+{
+  "name": "webworks-claude-skills",
+  "version": "2.1.0",
+  "description": "Claude Code skills for WebWorks ePublisher platform - documentation publishing, content management, and automated builds",
+  "author": {
+    "name": "Quadralay Corporation",
+    "email": "support@webworks.com"
+  },
+  "homepage": "https://github.com/quadralay/webworks-claude-skills",
+  "repository": "https://github.com/quadralay/webworks-claude-skills",
+  "license": "MIT",
+  "keywords": [
+    "webworks",
+    "epublisher",
+    "markdown",
+    "markdown++",
+    "mdpp",
+    "documentation",
+    "reverb",
+    "automap",
+    "single-sourcing",
+    "publishing"
+  ]
+}
