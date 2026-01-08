@@ -1,26 +1,15 @@
 {
   "name": "webworks-claude-skills",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "Claude Code skills for WebWorks ePublisher platform: Markdown++ authoring, project management, AutoMap automation, and Reverb output testing",
-  "author": "Quadralay Corporation",
-  "skills": [
-    {
-      "name": "markdown-plus-plus",
-      "path": "skills/markdown-plus-plus"
-    },
-    {
-      "name": "epublisher",
-      "path": "skills/epublisher"
-    },
-    {
-      "name": "automap",
-      "path": "skills/automap"
-    },
-    {
-      "name": "reverb2",
-      "path": "skills/reverb2"
-    }
-  ],
+  "author": {
+    "name": "Quadralay Corporation",
+    "email": "support@webworks.com",
+    "url": "https://github.com/quadralay"
+  },
+  "homepage": "https://github.com/quadralay/webworks-claude-skills",
+  "repository": "https://github.com/quadralay/webworks-claude-skills",
+  "license": "MIT",
   "keywords": [
     "webworks",
     "epublisher",
