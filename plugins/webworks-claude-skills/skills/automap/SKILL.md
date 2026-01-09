@@ -139,7 +139,7 @@ Job files reference Stationery via `<Project path="..."/>`:
 ### Basic Syntax
 
 ```
-AutoMap.exe [options] <project-file>
+WebWorks.Automap.exe [options] <project-file>
 ```
 
 ### Common Options
