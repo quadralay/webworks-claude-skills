@@ -66,20 +66,34 @@ Do NOT use `detect-installation.sh` to find the CLI path and call it directly. T
 ### Run a Build
 
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name>]
+# Build single target (safe defaults: clean, no-deploy, skip-reports)
+./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep
+
+# CI/CD: Build all targets explicitly
+./scripts/automap-wrapper.sh --all-targets project.wep
+
+# Production: Deploy with reports
+./scripts/automap-wrapper.sh --deploy --with-reports -t "Target" project.wep
 ```
 
-The wrapper automatically detects the AutoMap installation and builds the specified target (or all targets if `-t` is omitted).
+The wrapper automatically detects the AutoMap installation and applies safe defaults.
 
-For multiple specific targets, use the long form: `--target="Target1", "Target2"`
+### Safe Defaults (v2.4.0+)
 
-### Recommended Options
+The wrapper now applies these options by default:
 
-| Option | Why Recommended |
-|--------|-----------------|
-| `-c` (clean) | Ensures consistent builds by starting fresh |
-| `-n` (nodeploy) | Prevents automatic deployment; deploy manually when ready |
-| `--skip-reports` | Reduces build time by skipping report pipelines *(2025.1+)* |
+| Default | Opt-Out Flag | Description |
+|---------|--------------|-------------|
+| `-c` (clean) | `--no-clean` | Clean build for consistency |
+| `-n` (no deploy) | `--deploy` | Prevent accidental overwrites |
+| `--skip-reports` | `--with-reports` | Faster builds *(2025.1+)* |
+
+### Interactive Target Selection
+
+When no target is specified:
+- **Single-target projects**: Auto-builds the only target
+- **Multi-target projects**: Prompts for selection (interactive mode)
+- **CI/CD (non-interactive)**: Requires `-t`, `--target=`, or `--all-targets`
 
 ### Caching for Multiple Builds
 
@@ -174,22 +188,29 @@ Job files reference Stationery via `<Project path="..."/>`:
 ./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
 ```
 
-### Wrapper-Only Options
+### Target Selection
+
+| Option | Description |
+|--------|-------------|
+| `-t <name>` | Build single target |
+| `--target=<name1>,<name2>` | Build multiple specific targets |
+| `--all-targets` | Build all targets (bypasses interactive selection) |
+
+### Build Options (Safe Defaults)
+
+| Option | Default | Opt-Out | Description |
+|--------|---------|---------|-------------|
+| `-c, --clean` | Enabled | `--no-clean` | Clean build |
+| `-n, --nodeploy` | Enabled | `--deploy` | Skip deployment |
+| `--skip-reports` | Enabled | `--with-reports` | Skip report pipelines *(2025.1+)* |
+| `-l, --cleandeploy` | Disabled | - | Clean deployment location |
+
+### Other Options
 
 | Option | Description |
 |--------|-------------|
 | `--verbose` | Show all build output (default: minimal) |
-
-### AutoMap CLI Options (Pass-Through)
-
-These options are passed directly to the AutoMap CLI:
-
-| Option | Description |
-|--------|-------------|
-| `-t <name>` or `--target=<name>, <name2>` | Build specific target(s) |
-| `-c, -clean` | Clean before build |
-| `-n, -nodeploy` | Skip deployment step |
-| `--skip-reports` | Skip report pipelines *(2025.1+)* |
+| `--deployfolder PATH` | Override deployment destination |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>
@@ -265,9 +286,9 @@ pip install defusedxml
 |------|---------|
 | 0 | Build successful |
 | 1 | Build failed |
-| 2 | Project file not found |
+| 2 | Invalid arguments / user cancelled |
 | 3 | AutoMap not installed |
-| 4 | Invalid target name |
+| 4 | Project file not found |
 </exit_codes>
 
 <common_workflows>
@@ -278,8 +299,8 @@ pip install defusedxml
 
 ```bash
 #!/bin/bash
-# Build and check result
-if ./scripts/automap-wrapper.sh -c -n --skip-reports project.wep; then
+# Build all targets (safe defaults applied automatically)
+if ./scripts/automap-wrapper.sh --all-targets project.wep; then
     echo "Build successful"
     # Deploy output...
 else
@@ -295,8 +316,19 @@ fi
 export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
 
 for project in projects/*.wep; do
-    ./scripts/automap-wrapper.sh -c -n --skip-reports "$project" || echo "Failed: $project"
+    # --all-targets required in non-interactive (CI) mode
+    ./scripts/automap-wrapper.sh --all-targets "$project" || echo "Failed: $project"
 done
+```
+
+### Interactive Development
+
+```bash
+# No target specified - prompts for selection if multiple targets exist
+./scripts/automap-wrapper.sh project.wep
+
+# Incremental build (skip clean)
+./scripts/automap-wrapper.sh --no-clean -t "WebWorks Reverb 2.0" project.wep
 ```
 </common_workflows>
 

@@ -4,14 +4,43 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 ## Table of Contents
 
+- [Migration from Previous Versions](#migration-from-previous-versions)
 - [Environment Variables](#environment-variables)
-- [Recommended Options](#recommended-options)
+- [Safe Defaults](#safe-defaults)
 - [Basic Command Pattern](#basic-command-pattern)
 - [Command Options](#command-options)
 - [Execution Guidelines](#execution-guidelines)
 - [Output Monitoring](#output-monitoring)
 - [Common Errors](#common-errors)
 - [Best Practices](#best-practices)
+
+## Migration from Previous Versions
+
+### Breaking Changes in v2.4.0
+
+**Safe Defaults**: The wrapper now applies `-c -n --skip-reports` by default.
+
+| Previous Command | New Equivalent |
+|-----------------|----------------|
+| `./wrapper.sh project.wep` | `./wrapper.sh --deploy --with-reports --no-clean project.wep` |
+| `./wrapper.sh -c -n project.wep` | `./wrapper.sh project.wep` |
+| `./wrapper.sh -c -n --skip-reports project.wep` | `./wrapper.sh project.wep` |
+
+**Interactive Target Selection**: Building all targets now requires explicit confirmation or `--all-targets` flag.
+
+| Previous Command | New Equivalent |
+|-----------------|----------------|
+| `./wrapper.sh -c -n project.wep` (CI) | `./wrapper.sh --all-targets project.wep` |
+
+**CI/CD Migration**: Add `--all-targets` to pipelines that build all targets:
+
+```bash
+# Before (v2.3.x and earlier)
+./automap-wrapper.sh -c -n --skip-reports project.wep
+
+# After (v2.4.0+)
+./automap-wrapper.sh --all-targets project.wep
+```
 
 ## Environment Variables
 
@@ -38,21 +67,32 @@ export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
 unset AUTOMAP_PATH
 ```
 
-## Recommended Options
+## Safe Defaults
 
-For most builds, use these options by default:
+The wrapper applies these safe defaults automatically (v2.4.0+):
+
+| Default | Opt-Out Flag | Purpose |
+|---------|--------------|---------|
+| `-c` (clean) | `--no-clean` | Ensures consistent builds |
+| `-n` (nodeploy) | `--deploy` | Prevents accidental overwrites |
+| `--skip-reports` | `--with-reports` | Faster builds *(2025.1+)* |
+
+These defaults provide predictable, fast builds suitable for iterative development and AI-assisted workflows.
+
+### Interactive Target Selection
+
+When no target is specified:
+- **Single-target projects**: Auto-selects the only target (no prompt)
+- **Multi-target projects**: Prompts for selection (interactive mode)
+- **Non-interactive mode (CI)**: Requires `-t`, `--target=`, or `--all-targets`
 
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports <project-file>
+# Interactive mode - shows numbered list for selection
+./scripts/automap-wrapper.sh project.wep
+
+# CI/CD mode - explicit all-targets flag required
+./scripts/automap-wrapper.sh --all-targets project.wep
 ```
-
-| Option | Why Recommended |
-|--------|-----------------|
-| `-c` (clean) | Ensures consistent builds by starting fresh |
-| `-n` (nodeploy) | Prevents automatic deployment; deploy manually when ready |
-| `--skip-reports` | Reduces build time by skipping report pipelines *(2025.1+)* |
-
-These options provide predictable, fast builds suitable for iterative development and AI-assisted workflows.
 
 ## Basic Command Pattern
 
@@ -98,11 +138,17 @@ Always use the wrapper script to execute builds:
 - **Syntax**:
   - Single target: `-t "WebWorks Reverb 2.0"`
   - Multiple targets: `--target="WebWorks Reverb 2.0", "PDF - XSL-FO"`
-  - All targets: omit `-t` or `--target=` entirely
 - **Examples**:
-  - Single target: `./scripts/automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" project.wep`
-  - Multiple targets: `./scripts/automap-wrapper.sh -c -n --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep`
+  - Single target: `./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep`
+  - Multiple targets: `./scripts/automap-wrapper.sh --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep`
 - **Note**: Target names must exactly match `TargetName` in project file (case-sensitive)
+
+**`--all-targets`**
+- **Purpose**: Build all targets in the project
+- **Use When**: CI/CD pipelines, batch builds, or when you want all outputs
+- **Impact**: Bypasses interactive target selection
+- **Example**: `./scripts/automap-wrapper.sh --all-targets project.wep`
+- **Note**: Required in non-interactive mode when no specific target is specified
 
 ### Deployment Control
 
@@ -222,13 +268,13 @@ The wrapper provides consistent exit codes:
 |-----------|---------|
 | 0 | Build succeeded |
 | 1 | Build failed |
-| 2 | Project file not found |
+| 2 | Invalid arguments / user cancelled |
 | 3 | AutoMap not installed |
-| 4 | Invalid target name |
+| 4 | Project file not found |
 
 **Check build status:**
 ```bash
-if ./scripts/automap-wrapper.sh -c -n --skip-reports project.wep; then
+if ./scripts/automap-wrapper.sh --all-targets project.wep; then
     echo "Build succeeded"
 else
     echo "Build failed with exit code: $?"
@@ -384,38 +430,34 @@ Error: Target 'Invalid Target Name' not found in project
 
 ## Best Practices
 
-### 1. Use Recommended Options by Default
+### 1. Safe Defaults Are Applied Automatically
 
-Start with the recommended options for most builds:
+The wrapper now applies `-c -n --skip-reports` by default (v2.4.0+):
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports project.wep
+# These are equivalent:
+./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 ```
 
-### 2. Clean Build for Production
+### 2. Production Builds with Deployment
 
-Use `-c -l` for production releases to ensure:
-- No stale cached files
-- Fresh transformation of all content
-- Clean deployment folder
-
+For production releases, opt-out of safe defaults:
 ```bash
-./scripts/automap-wrapper.sh -c -l --skip-reports project.wep
+./scripts/automap-wrapper.sh --deploy --with-reports -t "WebWorks Reverb 2.0" project.wep
 ```
 
-### 3. Use -n Flag During Development
+### 3. Use --all-targets for CI/CD
 
-Skip deployment during iterative development:
+Non-interactive environments require explicit target specification:
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports project.wep
+./scripts/automap-wrapper.sh --all-targets project.wep
 ```
-
-Check output in `Output/[TargetName]/` folder.
 
 ### 4. Build Specific Targets When Testing
 
 Save time by building only the target(s) you're working on:
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
+./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep
 ```
 
 ### 5. Cache Installation Path for Batch Builds
@@ -424,37 +466,30 @@ When building multiple projects, cache the installation path:
 ```bash
 export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
 
-./scripts/automap-wrapper.sh -c -n --skip-reports project1.wep
-./scripts/automap-wrapper.sh -c -n --skip-reports project2.wep
-./scripts/automap-wrapper.sh -c -n --skip-reports project3.wep
+./scripts/automap-wrapper.sh --all-targets project1.wep
+./scripts/automap-wrapper.sh --all-targets project2.wep
+./scripts/automap-wrapper.sh --all-targets project3.wep
 ```
 
 ### 6. Use Verbose Mode for Debugging
 
 When troubleshooting build issues:
 ```bash
-./scripts/automap-wrapper.sh --verbose -c -n project.wep
+./scripts/automap-wrapper.sh --verbose -t "WebWorks Reverb 2.0" project.wep
 ```
 
 ### 7. Capture Build Logs
 
 Save output for troubleshooting:
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports project.wep 2>&1 | tee build.log
+./scripts/automap-wrapper.sh -t "WebWorks Reverb 2.0" project.wep 2>&1 | tee build.log
 ```
 
-### 8. Document Standard Build Commands
+### 8. Incremental Builds During Development
 
-For complex projects, document your standard build commands:
+Use `--no-clean` for faster iterative builds:
 ```bash
-# Production build (clean + deploy)
-./scripts/automap-wrapper.sh -c -l --skip-reports project.wep
-
-# Development build (Reverb only)
-./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
-
-# Multiple targets
-./scripts/automap-wrapper.sh -c -n --skip-reports --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep
+./scripts/automap-wrapper.sh --no-clean -t "WebWorks Reverb 2.0" project.wep
 ```
 
 ## Script Reference
@@ -487,6 +522,6 @@ When adding a new AutoMap CLI option to this skill, update these locations:
 
 ---
 
-**Version**: 2.0.0
-**Last Updated**: 2026-01-09
+**Version**: 2.4.0
+**Last Updated**: 2026-01-10
 **Target**: ePublisher 2024.1+ AutoMap CLI (--skip-reports requires 2025.1+)
