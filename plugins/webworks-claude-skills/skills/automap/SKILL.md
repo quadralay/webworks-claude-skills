@@ -279,7 +279,7 @@ pip install defusedxml
 ```bash
 #!/bin/bash
 # Build and check result
-if ./automap-wrapper.sh project.wep "Production"; then
+if ./scripts/automap-wrapper.sh -c -n --skip-reports project.wep; then
     echo "Build successful"
     # Deploy output...
 else
@@ -291,8 +291,11 @@ fi
 ### Batch Building Multiple Projects
 
 ```bash
+# Cache installation path for efficiency
+export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+
 for project in projects/*.wep; do
-    ./automap-wrapper.sh "$project" || echo "Failed: $project"
+    ./scripts/automap-wrapper.sh -c -n --skip-reports "$project" || echo "Failed: $project"
 done
 ```
 </common_workflows>

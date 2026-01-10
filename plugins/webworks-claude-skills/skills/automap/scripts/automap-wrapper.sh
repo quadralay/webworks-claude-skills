@@ -41,6 +41,7 @@ CLEAN_DEPLOY=false
 NO_DEPLOY=false
 SKIP_REPORTS=false
 TARGET=""
+TARGET_MULTI=""
 DEPLOY_FOLDER=""
 VERBOSE=false
 
@@ -87,17 +88,21 @@ Wrapper script for WebWorks ePublisher AutoMap CLI with automatic detection
 and enhanced error reporting.
 
 REQUIRED:
-    <project-file>          Path to .wep, .wrp, or .wxsp project file
+    <project-file>          Path to .wep, .wrp, .waj, or .wxsp project/job file
 
 OPTIONS:
     -c, --clean            Clean build (remove cached files)
     -n, --nodeploy         Do not copy files to deployment location
     -l, --cleandeploy      Clean deployment location before copying output
-    -t, --target TARGET    Build specific target only
+    -t TARGET              Build single target only
+    --target=T1,T2,...     Build multiple specific targets
     --deployfolder PATH    Override deployment destination
     --skip-reports         Skip report pipelines (2025.1+)
     --verbose              Show all build output (default: minimal output)
     --help                 Show this help message
+
+ENVIRONMENT:
+    AUTOMAP_PATH           If set, use this path instead of auto-detection
 
 EXIT CODES:
     0    Build succeeded
@@ -110,8 +115,11 @@ EXAMPLES:
     # Build all targets with clean
     $SCRIPT_NAME -c -n project.wep
 
-    # Build specific target
+    # Build single target
     $SCRIPT_NAME -c -n -t "WebWorks Reverb 2.0" project.wep
+
+    # Build multiple targets
+    $SCRIPT_NAME -c -n --target="WebWorks Reverb 2.0","PDF - XSL-FO" project.wep
 
     # Fast CI build (skip reports, 2025.1+)
     $SCRIPT_NAME -c -n --skip-reports project.wep
@@ -137,9 +145,9 @@ validate_project_file() {
     fi
 
     # Check file extension
-    if [[ ! "$project_file" =~ \.(wep|wrp|wxsp)$ ]]; then
+    if [[ ! "$project_file" =~ \.(wep|wrp|waj|wxsp)$ ]]; then
         log_warning "Project file has unexpected extension: $project_file"
-        log_warning "Expected: .wep, .wrp, or .wxsp"
+        log_warning "Expected: .wep, .wrp, .waj, or .wxsp"
     fi
 
     return 0
@@ -207,8 +215,12 @@ build_automap_command() {
         cmd="$cmd -n"
     fi
 
-    # Add target if specified
-    if [ -n "$TARGET" ]; then
+    # Add target if specified (single or multiple)
+    if [ -n "$TARGET_MULTI" ]; then
+        # Multiple targets via --target=
+        cmd="$cmd --target=\"$TARGET_MULTI\""
+    elif [ -n "$TARGET" ]; then
+        # Single target via -t
         cmd="$cmd -t \"$TARGET\""
     fi
 
@@ -311,7 +323,7 @@ while [[ $# -gt 0 ]]; do
             CLEAN_BUILD=true
             shift
             ;;
-        -n)
+        -n|--nodeploy)
             NO_DEPLOY=true
             shift
             ;;
@@ -319,7 +331,7 @@ while [[ $# -gt 0 ]]; do
             CLEAN_DEPLOY=true
             shift
             ;;
-        -t|--target)
+        -t)
             if [ -z "${2:-}" ]; then
                 log_error "Missing TARGET argument"
                 usage
@@ -327,6 +339,10 @@ while [[ $# -gt 0 ]]; do
             fi
             TARGET="$2"
             shift 2
+            ;;
+        --target=*)
+            TARGET_MULTI="${1#--target=}"
+            shift
             ;;
         --deployfolder)
             if [ -z "${2:-}" ]; then
