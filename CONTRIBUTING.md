@@ -50,28 +50,34 @@ See [docs/solutions/bash-syntax-errors-in-skill-tables.md](docs/solutions/bash-s
 
 ## Versioning
 
-Version numbers are **automatically incremented** when PRs merge to main.
+Bump the plugin version **before creating a PR** using the bump script:
 
-**Default behavior:** Patch version bump (e.g., 2.0.0 → 2.0.1)
+```bash
+./scripts/bump-version.sh patch  # 2.1.0 → 2.1.1 (bug fixes)
+./scripts/bump-version.sh minor  # 2.1.0 → 2.2.0 (new features)
+./scripts/bump-version.sh major  # 2.1.0 → 3.0.0 (breaking changes)
+```
 
-**To trigger a different bump type**, add a label to your PR:
+The script updates both version locations automatically:
+- `plugins/webworks-claude-skills/.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json`
 
-| Label | Bump Type | Example |
-|-------|-----------|---------|
-| (none) | patch | 2.0.0 → 2.0.1 |
-| `minor` | minor | 2.0.0 → 2.1.0 |
-| `major` | major | 2.0.0 → 3.0.0 |
+**When to bump:**
 
-The GitHub Action updates all version locations automatically:
-- `plugins/webworks-claude-skills/plugin.json`
-- `.claude-plugin/marketplace.json` (both root and plugin entry)
+| Type | Use For | Example |
+|------|---------|---------|
+| `patch` | Bug fixes, docs, minor improvements | 2.1.0 → 2.1.1 |
+| `minor` | New skills, new features, enhancements | 2.1.0 → 2.2.0 |
+| `major` | Breaking changes, major restructuring | 2.1.0 → 3.0.0 |
+
+**Note:** Claude Code is aware of this workflow via CLAUDE.md and will run the bump script when preparing PRs.
 
 ## Pull Requests
 
 1. Fork and create a feature branch
 2. Test thoroughly
-3. Submit PR with clear description
-4. Add `minor` or `major` label if needed (patch is default)
+3. Run `./scripts/bump-version.sh <type>` to bump version
+4. Submit PR with clear description
 
 ## License
 
