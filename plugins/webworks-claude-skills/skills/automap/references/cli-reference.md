@@ -4,6 +4,8 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 ## Table of Contents
 
+- [Environment Variables](#environment-variables)
+- [Recommended Options](#recommended-options)
 - [Basic Command Pattern](#basic-command-pattern)
 - [Command Options](#command-options)
 - [Execution Guidelines](#execution-guidelines)
@@ -11,16 +13,59 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 - [Common Errors](#common-errors)
 - [Best Practices](#best-practices)
 
-## Basic Command Pattern
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `AUTOMAP_PATH` | Path to AutoMap CLI executable. If set, skips installation detection. |
+
+### Caching for Batch Builds
+
+For multiple consecutive builds, cache the installation path to avoid repeated detection:
 
 ```bash
-"[AutoMap-Path]" "[Project-File]" [Options]
+export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+
+# All subsequent builds skip detection
+./scripts/automap-wrapper.sh -c -n --skip-reports project1.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project2.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project3.wep
+```
+
+### Clearing the Cache
+
+```bash
+unset AUTOMAP_PATH
+```
+
+## Recommended Options
+
+For most builds, use these options by default:
+
+```bash
+./scripts/automap-wrapper.sh -c -n --skip-reports <project-file>
+```
+
+| Option | Why Recommended |
+|--------|-----------------|
+| `-c` (clean) | Ensures consistent builds by starting fresh |
+| `-n` (nodeploy) | Prevents automatic deployment; deploy manually when ready |
+| `--skip-reports` | Reduces build time by skipping report pipelines *(2025.1+)* |
+
+These options provide predictable, fast builds suitable for iterative development and AI-assisted workflows.
+
+## Basic Command Pattern
+
+Always use the wrapper script to execute builds:
+
+```bash
+./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
 ```
 
 **Components:**
-- `[AutoMap-Path]`: Full path to `WebWorks.Automap.exe` (CLI version)
-- `[Project-File]`: Full path to `.wep`, `.wrp`, or `.wxsp` project file
-- `[Options]`: Build configuration flags and parameters
+- `<project-file>`: Path to `.wep`, `.wrp`, or `.waj` project/job file
+- `[options]`: Build configuration flags (see below)
+- `[-t <target-name>]`: Optional single target (use `--target="Name1", "Name2"` for multiple)
 
 ## Command Options
 
@@ -46,12 +91,18 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 ### Target Selection
 
-**`-t, --target "[TargetName]"`**
-- **Purpose**: Build specific target only
-- **Use When**: Working on single output format
-- **Impact**: Faster builds, generates only specified target
-- **Example**: `-t "WebWorks Reverb 2.0" project.wep`
-- **Note**: Target name must exactly match `TargetName` in project file
+**`-t <TargetName>`** or **`--target=<TargetName1>, <TargetName2>`**
+- **Purpose**: Build specific target(s) only
+- **Use When**: Working on specific output format(s) rather than all targets
+- **Impact**: Faster builds, generates only specified target(s)
+- **Syntax**:
+  - Single target: `-t "WebWorks Reverb 2.0"`
+  - Multiple targets: `--target="WebWorks Reverb 2.0", "PDF - XSL-FO"`
+  - All targets: omit `-t` or `--target=` entirely
+- **Examples**:
+  - Single target: `./scripts/automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" project.wep`
+  - Multiple targets: `./scripts/automap-wrapper.sh -c -n --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep`
+- **Note**: Target names must exactly match `TargetName` in project file (case-sensitive)
 
 ### Deployment Control
 
@@ -98,96 +149,93 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 ### Basic Builds
 
-**Clean build all targets (no deploy):**
+**Clean build all targets (no deploy, skip reports):**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c -n --skip-reports project.wep
 ```
 
 **Clean build with deployment:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c -l --skip-reports project.wep
 ```
 
 ### Target-Specific Builds
 
-**Build only Reverb target:**
+**Build single target:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "WebWorks Reverb 2.0" "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 ```
 
-**Build only PDF target:**
+**Build multiple targets:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -n -t "PDF - XSL-FO" "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c -n --skip-reports --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep
 ```
 
 ### Custom Deployment
 
-**Deploy to web server:**
+**Deploy to network share:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c -l --deployfolder "\\WebServer\wwwroot\docs" "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c -l --skip-reports --deployfolder "\\\\WebServer\\wwwroot\\docs" project.wep
 ```
 
 **Deploy to local test folder:**
 ```bash
-"C:\Program Files\WebWorks\ePublisher\2024.1\ePublisher AutoMap\WebWorks.Automap.exe" -c --deployfolder "C:\TestOutput" "C:\projects\my-proj\my-proj.wep"
+./scripts/automap-wrapper.sh -c --skip-reports --deployfolder "C:\\TestOutput" project.wep
 ```
 
 ## Execution Guidelines
 
 ### Path Requirements
 
-1. **Always use absolute paths** for both executable and project files
+1. **Use absolute or relative paths** for project files
 2. **Quote paths containing spaces** - Most Windows paths have spaces
-3. **Use correct path separators**:
-   - Windows style: `C:\Path\To\File.wep`
-   - Unix style in bash: `/c/Path/To/File.wep` (cygpath conversion)
+3. **The wrapper handles path conversion** between Unix and Windows formats automatically
 
 ### Timeout Configuration
 
-Set appropriate timeout based on project size:
+Set appropriate timeout based on project size when using the Bash tool:
 
-| Project Size | Recommended Timeout | Command |
-|-------------|---------------------|---------|
-| Small (< 50 pages) | 2 minutes | Default |
-| Medium (50-200 pages) | 5 minutes | 300000ms |
-| Large (200-500 pages) | 10 minutes | 600000ms |
-| Very Large (> 500 pages) | 15 minutes | 900000ms |
-
-**Setting timeout in bash:**
-```bash
-# Use Bash tool with timeout parameter
-timeout 600000  # 10 minutes in milliseconds
-```
+| Project Size | Recommended Timeout |
+|-------------|---------------------|
+| Small (< 50 pages) | 2 minutes (default) |
+| Medium (50-200 pages) | 5 minutes (300000ms) |
+| Large (200-500 pages) | 10 minutes (600000ms) |
+| Very Large (> 500 pages) | 15 minutes (900000ms) |
 
 ### Output Capture
 
-**Capture both stdout and stderr:**
-```bash
-"[AutoMap-Path]" "[Project-File]" [Options] 2>&1
-```
-
 **Save output to log file:**
 ```bash
-"[AutoMap-Path]" "[Project-File]" [Options] > build.log 2>&1
+./scripts/automap-wrapper.sh -c -n --skip-reports project.wep > build.log 2>&1
+```
+
+**Verbose mode for debugging:**
+```bash
+./scripts/automap-wrapper.sh --verbose -c -n project.wep
 ```
 
 ### Exit Code Handling
 
+The wrapper provides consistent exit codes:
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Build succeeded |
+| 1 | Build failed |
+| 2 | Project file not found |
+| 3 | AutoMap not installed |
+| 4 | Invalid target name |
+
 **Check build status:**
 ```bash
-exit_code=$?
-if [ $exit_code -eq 0 ]; then
+if ./scripts/automap-wrapper.sh -c -n --skip-reports project.wep; then
     echo "Build succeeded"
 else
-    echo "Build failed with exit code: $exit_code"
+    echo "Build failed with exit code: $?"
 fi
 ```
 
-**Exit codes:**
-- `0` - Success
-- Non-zero - Failure (specific codes vary)
-
-## Output Monitoring
+## Output Monitoring (non-errors require verbose mode)
 
 ### Success Indicators
 
@@ -336,7 +384,14 @@ Error: Target 'Invalid Target Name' not found in project
 
 ## Best Practices
 
-### 1. Always Clean Build for Production
+### 1. Use Recommended Options by Default
+
+Start with the recommended options for most builds:
+```bash
+./scripts/automap-wrapper.sh -c -n --skip-reports project.wep
+```
+
+### 2. Clean Build for Production
 
 Use `-c -l` for production releases to ensure:
 - No stale cached files
@@ -344,93 +399,78 @@ Use `-c -l` for production releases to ensure:
 - Clean deployment folder
 
 ```bash
-"[AutoMap-Path]" -c -l "[Project-File]"
+./scripts/automap-wrapper.sh -c -l --skip-reports project.wep
 ```
 
-### 2. Use -n Flag During Development
+### 3. Use -n Flag During Development
 
 Skip deployment during iterative development:
 ```bash
-"[AutoMap-Path]" -c -n "[Project-File]"
+./scripts/automap-wrapper.sh -c -n --skip-reports project.wep
 ```
 
 Check output in `Output/[TargetName]/` folder.
 
-### 3. Build Specific Targets When Testing
+### 4. Build Specific Targets When Testing
 
-Save time by building only the target you're working on:
+Save time by building only the target(s) you're working on:
 ```bash
-"[AutoMap-Path]" -c -n -t "WebWorks Reverb 2.0" "[Project-File]"
+./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 ```
 
-### 4. Capture Build Logs
+### 5. Cache Installation Path for Batch Builds
 
-Always capture output for troubleshooting:
+When building multiple projects, cache the installation path:
 ```bash
-"[AutoMap-Path]" "[Project-File]" 2>&1 | tee build.log
+export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+
+./scripts/automap-wrapper.sh -c -n --skip-reports project1.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project2.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project3.wep
 ```
 
-### 5. Validate Before Building
+### 6. Use Verbose Mode for Debugging
 
-Check project health before executing build:
+When troubleshooting build issues:
 ```bash
-# Check targets exist
-./parse-targets.sh project.wep
-
-# Validate source files
-./manage-sources.sh --validate project.wep
-
-# Verify AutoMap installation
-./detect-installation.sh
+./scripts/automap-wrapper.sh --verbose -c -n project.wep
 ```
 
-### 6. Use Wrapper Script for Enhanced Error Handling
+### 7. Capture Build Logs
 
-The `automap-wrapper.sh` script provides:
-- Automatic error detection
-- Progress monitoring
-- Enhanced error messages
-- Build time reporting
-
+Save output for troubleshooting:
 ```bash
-./automap-wrapper.sh -c -l project.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project.wep 2>&1 | tee build.log
 ```
 
-### 7. Monitor Builds Actively
+### 8. Document Standard Build Commands
 
-Don't just execute and walk away:
-- Watch for error patterns in real-time
-- Note warnings that may affect output
-- Verify deployment location on success
-- Check exit code before considering build successful
-
-### 8. Document Build Commands
-
-For complex projects, document standard build commands:
+For complex projects, document your standard build commands:
 ```bash
-# Production build
-"[AutoMap-Path]" -c -l project.wep
+# Production build (clean + deploy)
+./scripts/automap-wrapper.sh -c -l --skip-reports project.wep
 
 # Development build (Reverb only)
-"[AutoMap-Path]" -c -n -t "WebWorks Reverb 2.0" project.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 
-# PDF only
-"[AutoMap-Path]" -c -n -t "PDF - XSL-FO" project.wep
+# Multiple targets
+./scripts/automap-wrapper.sh -c -n --skip-reports --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep
 ```
 
-## Integration with Scripts
+## Script Reference
 
-This reference complements the helper scripts:
+The wrapper is the primary execution interface:
 
-- **detect-installation.sh** - Finds AutoMap executable path
-- **automap-wrapper.sh** - Enhanced CLI wrapper with this reference built-in
-- **parse-targets.sh** - Lists valid target names for `-t` parameter
+| Script | Purpose |
+|--------|---------|
+| **automap-wrapper.sh** | Execute builds (primary interface) |
+| **detect-installation.sh** | Verify installation, cache path |
+| **parse-targets.sh** | List valid target names for `-t` parameter |
 
-Use this reference when:
-- Calling AutoMap directly without wrapper
-- Understanding wrapper script behavior
-- Debugging build failures
-- Optimizing build commands
+Use `detect-installation.sh` only for:
+- Verifying AutoMap is installed
+- Caching the path via `AUTOMAP_PATH` for batch builds
+- Debugging installation detection issues
 
 ## Related Documentation
 
@@ -439,14 +479,14 @@ Use this reference when:
 
 ## Adding New CLI Options
 
-When adding a new AutoMap CLI option to this skill, update all three locations:
+When adding a new AutoMap CLI option to this skill, update these locations:
 
-1. **SKILL.md** - Add to Common Options table
-2. **cli-reference.md** - Add detailed documentation with examples
-3. **automap-wrapper.sh** - Add script support (5 locations: variable, usage, example, parsing, command building)
+1. **SKILL.md** - Add to Wrapper Options or Pass-Through Options table
+2. **cli-reference.md** - Add detailed documentation with examples using wrapper
+3. **automap-wrapper.sh** - Add script support (variable, usage, parsing, command building)
 
 ---
 
-**Version**: 1.2.0
+**Version**: 2.0.0
 **Last Updated**: 2026-01-09
 **Target**: ePublisher 2024.1+ AutoMap CLI (--skip-reports requires 2025.1+)
