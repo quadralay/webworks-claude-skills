@@ -148,6 +148,24 @@ validate_project_file() {
 detect_automap_executable() {
     log_verbose "Detecting AutoMap installation..."
 
+    # Check for cached/override path first (AUTOMAP_PATH environment variable)
+    if [[ -n "${AUTOMAP_PATH:-}" ]]; then
+        log_verbose "Found AUTOMAP_PATH environment variable: $AUTOMAP_PATH"
+        # Validate the cached path exists
+        local unix_path
+        unix_path=$(cygpath "$AUTOMAP_PATH" 2>/dev/null || echo "$AUTOMAP_PATH")
+
+        if [[ -f "$unix_path" ]]; then
+            log_verbose "Using AutoMap from AUTOMAP_PATH: $AUTOMAP_PATH"
+            echo "$AUTOMAP_PATH"
+            return 0
+        else
+            log_error "AUTOMAP_PATH is set but executable not found: $AUTOMAP_PATH"
+            log_error "Unset AUTOMAP_PATH or set it to a valid path"
+            return 1
+        fi
+    fi
+
     if [ ! -x "$DETECT_SCRIPT" ]; then
         log_error "Detection script not found or not executable: $DETECT_SCRIPT"
         return 1

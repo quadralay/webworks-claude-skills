@@ -34,6 +34,19 @@ Job files inherit format configuration from Stationery projects (.wxsp), enablin
 **For job file details, see:** references/job-file-guide.md
 </overview>
 
+<usage>
+
+## How to Use This Skill
+
+**Always use the wrapper script to execute builds.** The wrapper:
+- Automatically detects the AutoMap installation
+- Handles path conversion between Unix and Windows formats
+- Provides consistent error handling and exit codes
+- Supports environment variable caching via `AUTOMAP_PATH`
+
+Do NOT use `detect-installation.sh` to find the CLI path and call it directly. The wrapper is the execution interface.
+</usage>
+
 <related_skills>
 
 ## Related Skills
@@ -49,21 +62,37 @@ Job files inherit format configuration from Stationery projects (.wxsp), enablin
 
 ## Quick Start
 
-### Detect Installation
-
-```bash
-./scripts/detect-installation.sh
-```
-
-Returns the path to AutoMap CLI executable if found.
-
 ### Run a Build
 
 ```bash
-./scripts/automap-wrapper.sh <project-file> [target-name]
+./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name>]
 ```
 
-Builds the specified target (or all targets if none specified).
+The wrapper automatically detects the AutoMap installation and builds the specified target (or all targets if none specified).
+
+### Recommended Options
+
+| Option | Why Recommended |
+|--------|-----------------|
+| `-c` (clean) | Ensures consistent builds by starting fresh |
+| `-n` (nodeploy) | Prevents automatic deployment; deploy manually when ready |
+| `--skip-reports` | Reduces build time by skipping report pipelines *(2025.1+)* |
+
+### Caching for Multiple Builds
+
+To cache the installation path for multiple consecutive builds:
+
+```bash
+export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+```
+
+### Verify Installation (Optional)
+
+To check if AutoMap is installed and where:
+
+```bash
+./scripts/detect-installation.sh --verbose
+```
 </quick_start>
 
 <job_files>
@@ -134,24 +163,32 @@ Job files reference Stationery via `<Project path="..."/>`:
 
 <cli_reference>
 
-## AutoMap CLI
+## Wrapper Options
 
 ### Basic Syntax
 
-```
-WebWorks.Automap.exe [options] <project-file>
+```bash
+./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
 ```
 
-### Common Options
+### Wrapper-Only Options
 
 | Option | Description |
 |--------|-------------|
-| `-target <name>` | Build specific target |
-| `-group <name>` | Build specific group |
+| `--verbose` | Show all build output (default: minimal) |
+
+### AutoMap CLI Options (Pass-Through)
+
+These options are passed directly to the AutoMap CLI:
+
+| Option | Description |
+|--------|-------------|
+| `-t, -target <name>` | Build specific target |
+| `-g, -group <name>` | Build specific group |
+| `-c, -clean` | Clean before build |
+| `-n, -nodeploy` | Skip deployment step |
 | `-log <path>` | Write log to file |
-| `-verbose` | Show all build output (default: minimal) |
-| `-clean` | Clean before build |
-| `--skip-reports` | Skip report pipelines (2025.1+) |
+| `--skip-reports` | Skip report pipelines *(2025.1+)* |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>

@@ -4,12 +4,55 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 
 ## Table of Contents
 
+- [Environment Variables](#environment-variables)
+- [Recommended Options](#recommended-options)
 - [Basic Command Pattern](#basic-command-pattern)
 - [Command Options](#command-options)
 - [Execution Guidelines](#execution-guidelines)
 - [Output Monitoring](#output-monitoring)
 - [Common Errors](#common-errors)
 - [Best Practices](#best-practices)
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `AUTOMAP_PATH` | Path to AutoMap CLI executable. If set, skips installation detection. |
+
+### Caching for Batch Builds
+
+For multiple consecutive builds, cache the installation path to avoid repeated detection:
+
+```bash
+export AUTOMAP_PATH=$(./scripts/detect-installation.sh)
+
+# All subsequent builds skip detection
+./scripts/automap-wrapper.sh -c -n --skip-reports project1.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project2.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports project3.wep
+```
+
+### Clearing the Cache
+
+```bash
+unset AUTOMAP_PATH
+```
+
+## Recommended Options
+
+For most builds, use these options by default:
+
+```bash
+./scripts/automap-wrapper.sh -c -n --skip-reports <project-file>
+```
+
+| Option | Why Recommended |
+|--------|-----------------|
+| `-c` (clean) | Ensures consistent builds by starting fresh |
+| `-n` (nodeploy) | Prevents automatic deployment; deploy manually when ready |
+| `--skip-reports` | Reduces build time by skipping report pipelines *(2025.1+)* |
+
+These options provide predictable, fast builds suitable for iterative development and AI-assisted workflows.
 
 ## Basic Command Pattern
 
@@ -447,6 +490,6 @@ When adding a new AutoMap CLI option to this skill, update all three locations:
 
 ---
 
-**Version**: 1.2.0
+**Version**: 1.3.0
 **Last Updated**: 2026-01-09
 **Target**: ePublisher 2024.1+ AutoMap CLI (--skip-reports requires 2025.1+)
