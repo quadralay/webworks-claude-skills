@@ -261,9 +261,9 @@ BUILD OPTIONS (safe defaults - opt out as needed):
     -l, --cleandeploy      Clean deployment location before copying
 
 OTHER OPTIONS:
-    --deployfolder PATH    Override deployment destination
-    --verbose              Show all build output (default: minimal)
-    --help                 Show this help message
+    -d, --deployfolder=PATH  Override deployment destination (implies --deploy)
+    --verbose                Show all build output (default: minimal)
+    --help                   Show this help message
 
 ENVIRONMENT:
     AUTOMAP_PATH           If set, use this path instead of auto-detection
@@ -390,7 +390,7 @@ build_automap_command() {
 
     # Add deploy folder if specified
     if [ -n "$DEPLOY_FOLDER" ]; then
-        cmd="$cmd --deployfolder \"$DEPLOY_FOLDER\""
+        cmd="$cmd --deployfolder=\"$DEPLOY_FOLDER\""
     fi
 
     # Add skip reports flag (2025.1+)
@@ -508,15 +508,20 @@ while [[ $# -gt 0 ]]; do
             TARGET_MULTI="${1#--target=}"
             shift
             ;;
-        --deployfolder)
+        -d)
             if [ -z "${2:-}" ]; then
-                log_error "Missing PATH argument"
+                log_error "Missing PATH argument for -d"
                 usage
                 exit 2
             fi
             DEPLOY_FOLDER="$2"
             NO_DEPLOY=false  # Deployfolder implies deployment enabled
             shift 2
+            ;;
+        --deployfolder=*)
+            DEPLOY_FOLDER="${1#--deployfolder=}"
+            NO_DEPLOY=false  # Deployfolder implies deployment enabled
+            shift
             ;;
         --skip-reports)
             SKIP_REPORTS=true
