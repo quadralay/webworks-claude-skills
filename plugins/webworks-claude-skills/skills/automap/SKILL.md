@@ -149,10 +149,9 @@ WebWorks.Automap.exe [options] <project-file>
 | `-target <name>` | Build specific target |
 | `-group <name>` | Build specific group |
 | `-log <path>` | Write log to file |
-| `-verbose` | Enable verbose output |
+| `-verbose` | Show all build output (default: minimal) |
 | `-clean` | Clean before build |
 | `--skip-reports` | Skip report pipelines (2025.1+) |
-| `--errors-only` | Minimal output for AI/automation (wrapper only) |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>

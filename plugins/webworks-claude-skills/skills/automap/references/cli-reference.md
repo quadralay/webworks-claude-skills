@@ -71,28 +71,28 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 - **Trade-off**: No build reports generated (errors and warnings still shown in console)
 - **Example**: `-c -n --skip-reports project.wep`
 
-### Output Control Options
+### Output Control
 
-**`--errors-only`** *(wrapper script only)*
-- **Purpose**: Suppress stdout while preserving stderr (errors and warnings)
-- **Use When**: Claude Code or AI assistants are reading output, CI/CD pipelines where verbose output increases token costs, batch processing multiple projects
-- **Impact**: Minimal output - only errors, warnings, and final build status displayed
-- **Trade-off**: No progress indicators or informational messages
-- **Example**: `./automap-wrapper.sh --errors-only -c -n project.wep`
+**Default behavior:** The wrapper runs in minimal output mode, showing only errors and final build status. This is optimized for AI-assisted workflows where verbose output increases token costs.
 
-**Comparison with --quiet:**
-| Flag | Behavior |
-|------|----------|
-| `--quiet` | Suppresses INFO messages but shows progress |
-| `--errors-only` | Suppresses ALL stdout, shows only stderr + final status |
+**`--verbose`** *(wrapper script only)*
+- **Purpose**: Show all build output including progress messages
+- **Use When**: Debugging build issues or monitoring progress manually
+- **Impact**: Full output with progress indicators and informational messages
+- **Example**: `./automap-wrapper.sh --verbose -c -n project.wep`
 
-**Output in --errors-only mode:**
+**Default output:**
 ```
-[INFO] Building... (errors-only mode)
 [SUCCESS] Build completed in 45s
 ```
 
-**Note**: This flag is available in `automap-wrapper.sh`, not the native AutoMap CLI.
+**Verbose output:**
+```
+[INFO] Executing AutoMap...
+[INFO] Processing chapter1.md...
+[INFO] Generating WebWorks Reverb 2.0...
+[SUCCESS] Build completed in 45s
+```
 
 ## Example Commands
 
