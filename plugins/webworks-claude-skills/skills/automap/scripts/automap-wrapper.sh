@@ -515,6 +515,7 @@ while [[ $# -gt 0 ]]; do
                 exit 2
             fi
             DEPLOY_FOLDER="$2"
+            NO_DEPLOY=false  # Deployfolder implies deployment enabled
             shift 2
             ;;
         --skip-reports)
