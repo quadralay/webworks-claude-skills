@@ -60,5 +60,6 @@ test-results/
 .worktrees
 .claude/settings.local.json
 
-# Auto-generated Claude memory files
+# Auto-generated Claude memory files (not root CLAUDE.md which is tracked)
 **/CLAUDE.md
+!/CLAUDE.md
