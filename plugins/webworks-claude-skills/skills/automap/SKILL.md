@@ -152,6 +152,7 @@ WebWorks.Automap.exe [options] <project-file>
 | `-verbose` | Enable verbose output |
 | `-clean` | Clean before build |
 | `--skip-reports` | Skip report pipelines (2025.1+) |
+| `--errors-only` | Minimal output for AI/automation (wrapper only) |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
 </cli_reference>

@@ -45,6 +45,7 @@ DEPLOY_FOLDER=""
 AUTOMAP_VERSION=""
 VERBOSE=false
 QUIET=false
+ERRORS_ONLY=false
 
 # Color codes for output
 RED='\033[0;31m'
@@ -100,6 +101,7 @@ OPTIONS:
     --skip-reports         Skip report pipelines (2025.1+)
     --verbose              Enable verbose output
     --quiet                Suppress informational messages
+    --errors-only          Show only errors and final status (minimal output)
     --help                 Show this help message
 
 EXIT CODES:
@@ -122,8 +124,11 @@ EXAMPLES:
     # Build with custom deployment and delete existing files at deployment location
     $SCRIPT_NAME -l --deployfolder "C:\\Output" project.wep
 
-    # Quiet mode (errors only)
+    # Quiet mode (suppress info messages)
     $SCRIPT_NAME --quiet -c -n project.wep
+
+    # Minimal output for AI/automation (suppress all stdout)
+    $SCRIPT_NAME --errors-only -c -n project.wep
 EOF
 }
 
@@ -258,30 +263,37 @@ parse_automap_output() {
 
 execute_automap() {
     local cmd="$1"
+    local exit_code=0
+    local start_time end_time duration
 
-    log_info "Executing AutoMap..."
-    log_verbose "Command: $cmd"
-
-    local start_time
     start_time=$(date +%s)
 
-    # Execute command and capture output line by line
-    local exit_code=0
-    eval "$cmd" 2>&1 | while IFS= read -r line; do
-        parse_automap_output "$line"
-    done || exit_code=$?
+    if [ "$ERRORS_ONLY" = true ]; then
+        # Minimal output mode: suppress stdout, stderr passes through naturally
+        log_info "Building... (errors-only mode)"
 
-    local end_time
+        eval "$cmd" > /dev/null
+        exit_code=$?
+    else
+        # Standard mode: parse all output
+        log_info "Executing AutoMap..."
+        log_verbose "Command: $cmd"
+
+        eval "$cmd" 2>&1 | while IFS= read -r line; do
+            parse_automap_output "$line"
+        done || exit_code=$?
+    fi
+
     end_time=$(date +%s)
-    local duration=$((end_time - start_time))
+    duration=$((end_time - start_time))
 
     if [ $exit_code -eq 0 ]; then
         log_success "Build completed in ${duration}s"
-        return 0
     else
         log_error "Build failed with exit code $exit_code after ${duration}s"
-        return 1
     fi
+
+    return $exit_code
 }
 
 #
@@ -334,6 +346,10 @@ while [[ $# -gt 0 ]]; do
             QUIET=true
             shift
             ;;
+        --errors-only)
+            ERRORS_ONLY=true
+            shift
+            ;;
         --help|-h)
             usage
             exit 0
@@ -372,6 +388,11 @@ fi
 #
 # Main Execution
 #
+
+# Errors-only implies quiet (suppress INFO messages)
+if [ "$ERRORS_ONLY" = true ]; then
+    QUIET=true
+fi
 
 log_verbose "Starting AutoMap wrapper..."
 log_verbose "Project file: $PROJECT_FILE"

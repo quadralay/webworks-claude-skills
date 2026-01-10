@@ -71,6 +71,29 @@ Complete reference for WebWorks ePublisher AutoMap command-line interface option
 - **Trade-off**: No build reports generated (errors and warnings still shown in console)
 - **Example**: `-c -n --skip-reports project.wep`
 
+### Output Control Options
+
+**`--errors-only`** *(wrapper script only)*
+- **Purpose**: Suppress stdout while preserving stderr (errors and warnings)
+- **Use When**: Claude Code or AI assistants are reading output, CI/CD pipelines where verbose output increases token costs, batch processing multiple projects
+- **Impact**: Minimal output - only errors, warnings, and final build status displayed
+- **Trade-off**: No progress indicators or informational messages
+- **Example**: `./automap-wrapper.sh --errors-only -c -n project.wep`
+
+**Comparison with --quiet:**
+| Flag | Behavior |
+|------|----------|
+| `--quiet` | Suppresses INFO messages but shows progress |
+| `--errors-only` | Suppresses ALL stdout, shows only stderr + final status |
+
+**Output in --errors-only mode:**
+```
+[INFO] Building... (errors-only mode)
+[SUCCESS] Build completed in 45s
+```
+
+**Note**: This flag is available in `automap-wrapper.sh`, not the native AutoMap CLI.
+
 ## Example Commands
 
 ### Basic Builds
@@ -424,6 +447,6 @@ When adding a new AutoMap CLI option to this skill, update all three locations:
 
 ---
 
-**Version**: 1.1.0
-**Last Updated**: 2025-12-29
+**Version**: 1.2.0
+**Last Updated**: 2026-01-09
 **Target**: ePublisher 2024.1+ AutoMap CLI (--skip-reports requires 2025.1+)
