@@ -35,13 +35,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_NAME="$(basename "$0")"
 DETECT_SCRIPT="$SCRIPT_DIR/detect-installation.sh"
 
-# Default options
-CLEAN_BUILD=false
+# Default options (safe defaults: clean, no-deploy, skip-reports enabled)
+CLEAN_BUILD=true
 CLEAN_DEPLOY=false
-NO_DEPLOY=false
-SKIP_REPORTS=false
+NO_DEPLOY=true
+SKIP_REPORTS=true
 TARGET=""
 TARGET_MULTI=""
+ALL_TARGETS=false
 DEPLOY_FOLDER=""
 VERBOSE=false
 
@@ -80,26 +81,189 @@ log_verbose() {
     fi
 }
 
+#
+# Target Selection Functions
+#
+
+extract_targets() {
+    local project_file="$1"
+
+    # Convert to Unix path for reading
+    local unix_path
+    unix_path=$(cygpath "$project_file" 2>/dev/null || echo "$project_file")
+
+    # Determine file type and extract targets
+    case "$project_file" in
+        *.waj)
+            # Job files: <Target name="...">
+            grep -oP '<Target[^>]*\sname="[^"]*"' "$unix_path" 2>/dev/null | \
+                grep -oP 'name="[^"]*"' | sed 's/name="//;s/"$//'
+            ;;
+        *.wep|*.wrp|*.wxsp)
+            # Project files: <Format TargetName="...">
+            grep -oP 'TargetName="[^"]*"' "$unix_path" 2>/dev/null | \
+                sed 's/TargetName="//;s/"$//'
+            ;;
+    esac
+}
+
+parse_selection() {
+    local input="$1"
+    local max="$2"
+
+    # Handle 'a' or 'all' for all targets
+    if [[ "$input" =~ ^[aA](ll)?$ ]]; then
+        seq 1 "$max"
+        return 0
+    fi
+
+    # Split by comma and process each part
+    IFS=',' read -ra parts <<< "$input"
+    for part in "${parts[@]}"; do
+        part=$(echo "$part" | tr -d ' ')  # Remove spaces
+
+        if [[ "$part" =~ ^([0-9]+)-([0-9]+)$ ]]; then
+            # Range: 1-3
+            local start="${BASH_REMATCH[1]}"
+            local end="${BASH_REMATCH[2]}"
+            if [[ $start -ge 1 && $end -le $max && $start -le $end ]]; then
+                seq "$start" "$end"
+            else
+                return 1  # Invalid range
+            fi
+        elif [[ "$part" =~ ^[0-9]+$ ]]; then
+            # Single number
+            if [[ $part -ge 1 && $part -le $max ]]; then
+                echo "$part"
+            else
+                return 1  # Out of range
+            fi
+        else
+            return 1  # Invalid format
+        fi
+    done | sort -nu  # Sort and deduplicate
+
+    return 0
+}
+
+select_targets() {
+    local project_file="$1"
+    local -a targets
+    local attempts=0
+    local max_attempts=3
+
+    # Extract available targets
+    mapfile -t targets < <(extract_targets "$project_file")
+
+    if [[ ${#targets[@]} -eq 0 ]]; then
+        log_error "No targets found in project file"
+        return 1
+    fi
+
+    # Single target optimization: auto-select without prompting (works in both modes)
+    if [[ ${#targets[@]} -eq 1 ]]; then
+        TARGET="${targets[0]}"
+        log_info "Single target found, auto-selecting: $TARGET"
+        return 0
+    fi
+
+    # Multi-target + Non-interactive mode: require explicit --all-targets
+    if [[ ! -t 0 ]]; then
+        log_error "No target specified in non-interactive mode."
+        log_error "Use -t TARGET, --target=TARGETS, or --all-targets"
+        log_error ""
+        log_error "Available targets:"
+        for i in "${!targets[@]}"; do
+            log_error "  - ${targets[$i]}"
+        done
+        return 1
+    fi
+
+    log_warning "No target specified. Available targets:"
+    echo ""
+    for i in "${!targets[@]}"; do
+        printf "  %d) %s\n" "$((i + 1))" "${targets[$i]}"
+    done
+    printf "  a) All targets\n"
+    echo ""
+
+    while [[ $attempts -lt $max_attempts ]]; do
+        read -r -p "Select target(s) [1-${#targets[@]}, comma-separated, ranges like 1-3, or 'a' for all]: " selection
+
+        # Empty input = cancel
+        if [[ -z "$selection" ]]; then
+            log_info "Build cancelled."
+            return 1
+        fi
+
+        # Parse selection
+        local -a selected_indices
+        if mapfile -t selected_indices < <(parse_selection "$selection" "${#targets[@]}"); then
+            if [[ ${#selected_indices[@]} -gt 0 ]]; then
+                # Build the target list
+                local -a selected_targets=()
+                for idx in "${selected_indices[@]}"; do
+                    selected_targets+=("${targets[$((idx - 1))]}")
+                done
+
+                # Set TARGET_MULTI for multiple targets, TARGET for single
+                if [[ ${#selected_targets[@]} -eq 1 ]]; then
+                    TARGET="${selected_targets[0]}"
+                elif [[ ${#selected_targets[@]} -eq ${#targets[@]} ]]; then
+                    ALL_TARGETS=true
+                else
+                    # Join with comma for --target= syntax
+                    TARGET_MULTI=$(IFS=','; echo "${selected_targets[*]}")
+                fi
+
+                log_info "Selected: ${selected_targets[*]}"
+                return 0
+            fi
+        fi
+
+        ((attempts++))
+        if [[ $attempts -lt $max_attempts ]]; then
+            log_warning "Invalid selection. Please try again. ($((max_attempts - attempts)) attempts remaining)"
+        fi
+    done
+
+    log_error "Too many invalid attempts. Build cancelled."
+    return 1
+}
+
 usage() {
     cat <<EOF
 Usage: $SCRIPT_NAME [OPTIONS] <project-file>
 
 Wrapper script for WebWorks ePublisher AutoMap CLI with automatic detection
-and enhanced error reporting.
+and safe defaults for development workflows.
 
 REQUIRED:
     <project-file>          Path to .wep, .wrp, .waj, or .wxsp project/job file
 
-OPTIONS:
-    -c, --clean            Clean build (remove cached files)
-    -n, --nodeploy         Do not copy files to deployment location
-    -l, --cleandeploy      Clean deployment location before copying output
+TARGET SELECTION:
     -t TARGET              Build single target only
     --target=T1,T2,...     Build multiple specific targets
-    --deployfolder PATH    Override deployment destination
-    --skip-reports         Skip report pipelines (2025.1+)
-    --verbose              Show all build output (default: minimal output)
-    --help                 Show this help message
+    --all-targets          Build all targets (bypasses interactive selection)
+
+    If no target is specified:
+    - Single-target projects: auto-selects the only target
+    - Multi-target projects: prompts for selection (interactive mode)
+    - Non-interactive mode: requires -t, --target=, or --all-targets
+
+BUILD OPTIONS (safe defaults - opt out as needed):
+    -c, --clean            Clean build [DEFAULT: enabled]
+    --no-clean             Disable clean build (incremental)
+    -n, --nodeploy         Do not deploy output [DEFAULT: enabled]
+    --deploy               Enable deployment to output location
+    --skip-reports         Skip report pipelines [DEFAULT: enabled, 2025.1+]
+    --with-reports         Generate reports
+    -l, --cleandeploy      Clean deployment location before copying
+
+OTHER OPTIONS:
+    -d, --deployfolder=PATH  Override deployment destination (implies --deploy)
+    --verbose                Show all build output (default: minimal)
+    --help                   Show this help message
 
 ENVIRONMENT:
     AUTOMAP_PATH           If set, use this path instead of auto-detection
@@ -107,28 +271,28 @@ ENVIRONMENT:
 EXIT CODES:
     0    Build succeeded
     1    Build failed
-    2    Invalid arguments
+    2    Invalid arguments / user cancelled
     3    AutoMap not found
     4    Project file not found
 
 EXAMPLES:
-    # Build all targets with clean
-    $SCRIPT_NAME -c -n project.wep
-
-    # Build single target
-    $SCRIPT_NAME -c -n -t "WebWorks Reverb 2.0" project.wep
+    # Build single target (safe defaults applied: clean, no-deploy, skip-reports)
+    $SCRIPT_NAME -t "WebWorks Reverb 2.0" project.wep
 
     # Build multiple targets
-    $SCRIPT_NAME -c -n --target="WebWorks Reverb 2.0","PDF - XSL-FO" project.wep
+    $SCRIPT_NAME --target="WebWorks Reverb 2.0","PDF - XSL-FO" project.wep
 
-    # Fast CI build (skip reports, 2025.1+)
-    $SCRIPT_NAME -c -n --skip-reports project.wep
+    # CI/CD: Build all targets explicitly
+    $SCRIPT_NAME --all-targets project.wep
 
-    # Build with custom deployment and delete existing files at deployment location
-    $SCRIPT_NAME -l --deployfolder "C:\\Output" project.wep
+    # Production release: deploy with reports
+    $SCRIPT_NAME --deploy --with-reports -t "WebWorks Reverb 2.0" project.wep
 
-    # Verbose mode (show all build output)
-    $SCRIPT_NAME --verbose -c -n project.wep
+    # Incremental build during development
+    $SCRIPT_NAME --no-clean -t "WebWorks Reverb 2.0" project.wep
+
+    # Interactive mode: no target specified, prompts for selection
+    $SCRIPT_NAME project.wep
 EOF
 }
 
@@ -226,7 +390,7 @@ build_automap_command() {
 
     # Add deploy folder if specified
     if [ -n "$DEPLOY_FOLDER" ]; then
-        cmd="$cmd --deployfolder \"$DEPLOY_FOLDER\""
+        cmd="$cmd --deployfolder=\"$DEPLOY_FOLDER\""
     fi
 
     # Add skip reports flag (2025.1+)
@@ -344,17 +508,39 @@ while [[ $# -gt 0 ]]; do
             TARGET_MULTI="${1#--target=}"
             shift
             ;;
-        --deployfolder)
+        -d)
             if [ -z "${2:-}" ]; then
-                log_error "Missing PATH argument"
+                log_error "Missing PATH argument for -d"
                 usage
                 exit 2
             fi
             DEPLOY_FOLDER="$2"
+            NO_DEPLOY=false  # Deployfolder implies deployment enabled
             shift 2
+            ;;
+        --deployfolder=*)
+            DEPLOY_FOLDER="${1#--deployfolder=}"
+            NO_DEPLOY=false  # Deployfolder implies deployment enabled
+            shift
             ;;
         --skip-reports)
             SKIP_REPORTS=true
+            shift
+            ;;
+        --with-reports)
+            SKIP_REPORTS=false
+            shift
+            ;;
+        --no-clean)
+            CLEAN_BUILD=false
+            shift
+            ;;
+        --deploy)
+            NO_DEPLOY=false
+            shift
+            ;;
+        --all-targets)
+            ALL_TARGETS=true
             shift
             ;;
         --verbose)
@@ -394,6 +580,19 @@ fi
 
 if ! validate_project_file "$PROJECT_FILE"; then
     exit 4
+fi
+
+# Check for conflicting flags
+if [[ -n "$TARGET" || -n "$TARGET_MULTI" ]] && [[ "$ALL_TARGETS" = true ]]; then
+    log_error "Cannot specify both -t/--target= and --all-targets"
+    exit 2
+fi
+
+# Interactive target selection when no target specified
+if [[ -z "$TARGET" && -z "$TARGET_MULTI" && "$ALL_TARGETS" != true ]]; then
+    if ! select_targets "$PROJECT_FILE"; then
+        exit 2
+    fi
 fi
 
 #
