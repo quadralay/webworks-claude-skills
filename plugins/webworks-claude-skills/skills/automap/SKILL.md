@@ -43,6 +43,7 @@ Job files inherit format configuration from Stationery projects (.wxsp), enablin
 - Handles path conversion between Unix and Windows formats
 - Provides consistent error handling and exit codes
 - Supports environment variable caching via `AUTOMAP_PATH`
+- Provides minimal token usage impact by default
 
 Do NOT use `detect-installation.sh` to find the CLI path and call it directly. The wrapper is the execution interface.
 </usage>
@@ -65,10 +66,10 @@ Do NOT use `detect-installation.sh` to find the CLI path and call it directly. T
 ### Run a Build
 
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name>]
+./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name> ...]
 ```
 
-The wrapper automatically detects the AutoMap installation and builds the specified target (or all targets if none specified).
+The wrapper automatically detects the AutoMap installation and builds the specified target(s) (or all targets if none specified).
 
 ### Recommended Options
 
@@ -168,7 +169,7 @@ Job files reference Stationery via `<Project path="..."/>`:
 ### Basic Syntax
 
 ```bash
-./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
+./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name> ...]
 ```
 
 ### Wrapper-Only Options
@@ -183,11 +184,9 @@ These options are passed directly to the AutoMap CLI:
 
 | Option | Description |
 |--------|-------------|
-| `-t, -target <name>` | Build specific target |
-| `-g, -group <name>` | Build specific group |
+| `-t, -target <name> [...]` | Build specific target(s) |
 | `-c, -clean` | Clean before build |
 | `-n, -nodeploy` | Skip deployment step |
-| `-log <path>` | Write log to file |
 | `--skip-reports` | Skip report pipelines *(2025.1+)* |
 
 **For complete CLI reference with examples, see:** references/cli-reference.md
@@ -216,7 +215,7 @@ These options are passed directly to the AutoMap CLI:
 ### Build Wrapper
 
 ```bash
-./automap-wrapper.sh <project-or-job-file> [target-name] [options]
+./automap-wrapper.sh <project-or-job-file> [target-name ...] [options]
 ```
 
 Supports both project files (.wep) and job files (.waj).
