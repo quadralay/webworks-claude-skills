@@ -389,10 +389,9 @@ fi
 # Main Execution
 #
 
-# Handle flag conflicts
-if [ "$ERRORS_ONLY" = true ] && [ "$VERBOSE" = true ]; then
-    log_warning "Conflicting flags: --errors-only and --verbose. Using --errors-only."
-    VERBOSE=false
+# Errors-only implies quiet (suppress INFO messages)
+if [ "$ERRORS_ONLY" = true ]; then
+    QUIET=true
 fi
 
 log_verbose "Starting AutoMap wrapper..."
