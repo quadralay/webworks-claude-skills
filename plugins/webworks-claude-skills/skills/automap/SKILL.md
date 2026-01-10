@@ -66,10 +66,12 @@ Do NOT use `detect-installation.sh` to find the CLI path and call it directly. T
 ### Run a Build
 
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name> ...]
+./scripts/automap-wrapper.sh -c -n --skip-reports <project-file> [-t <target-name>]
 ```
 
-The wrapper automatically detects the AutoMap installation and builds the specified target(s) (or all targets if none specified).
+The wrapper automatically detects the AutoMap installation and builds the specified target (or all targets if `-t` is omitted).
+
+For multiple specific targets, use the long form: `--target="Target1", "Target2"`
 
 ### Recommended Options
 
@@ -169,7 +171,7 @@ Job files reference Stationery via `<Project path="..."/>`:
 ### Basic Syntax
 
 ```bash
-./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name> ...]
+./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
 ```
 
 ### Wrapper-Only Options
@@ -184,7 +186,7 @@ These options are passed directly to the AutoMap CLI:
 
 | Option | Description |
 |--------|-------------|
-| `-t, -target <name> [...]` | Build specific target(s) |
+| `-t <name>` or `--target=<name>, <name2>` | Build specific target(s) |
 | `-c, -clean` | Clean before build |
 | `-n, -nodeploy` | Skip deployment step |
 | `--skip-reports` | Skip report pipelines *(2025.1+)* |
@@ -215,10 +217,10 @@ These options are passed directly to the AutoMap CLI:
 ### Build Wrapper
 
 ```bash
-./automap-wrapper.sh <project-or-job-file> [target-name ...] [options]
+./automap-wrapper.sh [options] <project-or-job-file> [-t <target-name>]
 ```
 
-Supports both project files (.wep) and job files (.waj).
+Supports both project files (.wep) and job files (.waj). For multiple targets use `--target="Name1", "Name2"`.
 </scripts>
 
 <references>

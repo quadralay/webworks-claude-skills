@@ -59,13 +59,13 @@ These options provide predictable, fast builds suitable for iterative developmen
 Always use the wrapper script to execute builds:
 
 ```bash
-./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name> ...]
+./scripts/automap-wrapper.sh [options] <project-file> [-t <target-name>]
 ```
 
 **Components:**
 - `<project-file>`: Path to `.wep`, `.wrp`, or `.waj` project/job file
 - `[options]`: Build configuration flags (see below)
-- `[-t <target-name> ...]`: Optional target name(s) to build specific formats
+- `[-t <target-name>]`: Optional single target (use `--target="Name1", "Name2"` for multiple)
 
 ## Command Options
 
@@ -91,13 +91,17 @@ Always use the wrapper script to execute builds:
 
 ### Target Selection
 
-**`-t, --target "<TargetName>" ["<TargetName2>" ...]`**
+**`-t <TargetName>`** or **`--target=<TargetName1>, <TargetName2>`**
 - **Purpose**: Build specific target(s) only
 - **Use When**: Working on specific output format(s) rather than all targets
 - **Impact**: Faster builds, generates only specified target(s)
+- **Syntax**:
+  - Single target: `-t "WebWorks Reverb 2.0"`
+  - Multiple targets: `--target="WebWorks Reverb 2.0", "PDF - XSL-FO"`
+  - All targets: omit `-t` or `--target=` entirely
 - **Examples**:
   - Single target: `./scripts/automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" project.wep`
-  - Multiple targets: `./scripts/automap-wrapper.sh -c -n -t "WebWorks Reverb 2.0" -t "PDF - XSL-FO" project.wep`
+  - Multiple targets: `./scripts/automap-wrapper.sh -c -n --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep`
 - **Note**: Target names must exactly match `TargetName` in project file (case-sensitive)
 
 ### Deployment Control
@@ -157,14 +161,14 @@ Always use the wrapper script to execute builds:
 
 ### Target-Specific Builds
 
-**Build only Reverb target:**
+**Build single target:**
 ```bash
 ./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 ```
 
 **Build multiple targets:**
 ```bash
-./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" -t "PDF - XSL-FO" project.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep
 ```
 
 ### Custom Deployment
@@ -450,7 +454,7 @@ For complex projects, document your standard build commands:
 ./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" project.wep
 
 # Multiple targets
-./scripts/automap-wrapper.sh -c -n --skip-reports -t "WebWorks Reverb 2.0" -t "PDF - XSL-FO" project.wep
+./scripts/automap-wrapper.sh -c -n --skip-reports --target="WebWorks Reverb 2.0", "PDF - XSL-FO" project.wep
 ```
 
 ## Script Reference
