@@ -42,7 +42,6 @@ NO_DEPLOY=false
 SKIP_REPORTS=false
 TARGET=""
 DEPLOY_FOLDER=""
-AUTOMAP_VERSION=""
 VERBOSE=false
 
 # Color codes for output
@@ -147,8 +146,6 @@ validate_project_file() {
 }
 
 detect_automap_executable() {
-    local version="$1"
-
     log_verbose "Detecting AutoMap installation..."
 
     if [ ! -x "$DETECT_SCRIPT" ]; then
@@ -164,9 +161,6 @@ detect_automap_executable() {
     local automap_path
     if ! automap_path=$("$DETECT_SCRIPT" "${detect_args[@]}"); then
         log_error "AutoMap installation not found"
-        if [ -n "$version" ]; then
-            log_error "Requested version: $version"
-        fi
         return 1
     fi
 
@@ -376,7 +370,7 @@ log_verbose "Starting AutoMap wrapper..."
 log_verbose "Project file: $PROJECT_FILE"
 
 # Detect AutoMap installation
-if ! automap_path=$(detect_automap_executable "$AUTOMAP_VERSION"); then
+if ! automap_path=$(detect_automap_executable); then
     exit 3
 fi
 
